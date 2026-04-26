@@ -23,6 +23,9 @@ class VeiculoController {
             case 'POST':
                 $this->createVeiculo();
                 break;
+            case 'PUT':
+                $this->updateVeiculo($id);
+                break;
             default:
                 http_response_code(405);
                 echo json_encode(["erro" => "Método HTTP não permitido."]);
@@ -109,5 +112,64 @@ class VeiculoController {
             echo json_encode(["erro" => "Dados incompletos. Categoria, marca, modelo e placa são obrigatórios."]);
         }
     }
+
+    private function updateVeiculo($id) {
+        if (empty($id)) {
+            http_response_code(400);
+            echo json_encode(["erro" => "O ID do veículo é obrigatório para atualização."]);
+            return;
+        }
+
+        $data = json_decode(file_get_contents("php://input"));
+
+        if (empty($data)) {
+            http_response_code(400);
+            echo json_encode(["erro" => "Nenhum dado enviado para atualização."]);
+            return;
+        }
+
+        $campos = [];
+        $parametros = [":id" => $id];
+
+        if (isset($data->categoria_id)) { $campos[] = "categoria_id = :categoria_id"; $parametros[":categoria_id"] = $data->categoria_id; }
+        if (isset($data->marca)) { $campos[] = "marca = :marca"; $parametros[":marca"] = $data->marca; }
+        if (isset($data->modelo)) { $campos[] = "modelo = :modelo"; $parametros[":modelo"] = $data->modelo; }
+        if (isset($data->ano)) { $campos[] = "ano = :ano"; $parametros[":ano"] = $data->ano; }
+        if (isset($data->placa)) { $campos[] = "placa = :placa"; $parametros[":placa"] = $data->placa; }
+        if (isset($data->chassi)) { $campos[] = "chassi = :chassi"; $parametros[":chassi"] = $data->chassi; }
+        if (isset($data->status_disponibilidade)) { $campos[] = "status_disponibilidade = :status_disponibilidade"; $parametros[":status_disponibilidade"] = $data->status_disponibilidade; }
+        if (isset($data->imagem_url)) { $campos[] = "imagem_url = :imagem_url"; $parametros[":imagem_url"] = $data->imagem_url; }
+        if (property_exists($data, 'ativo')) { $campos[] = "ativo = :ativo"; $parametros[":ativo"] = $data->ativo; }
+
+        if (empty($campos)) {
+            http_response_code(400);
+            echo json_encode(["erro" => "Nenhum campo válido fornecido para atualização."]);
+            return;
+        }
+
+        $query = "UPDATE veiculos SET " . implode(", ", $campos) . " WHERE id = :id";
+        $stmt = $this->db->prepare($query);
+
+        try {
+            if ($stmt->execute($parametros)) {
+                if ($stmt->rowCount() > 0) {
+                    http_response_code(200);
+                    echo json_encode(["status" => "success", "mensagem" => "Veículo atualizado com sucesso."]);
+                } else {
+                    http_response_code(404);
+                    echo json_encode(["status" => "warning", "mensagem" => "Nenhuma alteração feita. ID não encontrado ou dados iguais."]);
+                }
+            }
+        } catch (PDOException $e) {
+            http_response_code(400);
+            // Código 23000 = Violação de restrição UNIQUE (Placa ou Chassi já existem)
+            if ($e->getCode() == 23000) {
+                echo json_encode(["erro" => "Placa ou Chassi já cadastrados em outro veículo."]);
+            } else {
+                echo json_encode(["erro" => "Erro interno ao atualizar veículo: " . $e->getMessage()]);
+            }
+        }
+    }
+
 }
 ?>

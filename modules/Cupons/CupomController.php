@@ -15,6 +15,8 @@ class CupomController {
             $this->getCupons();
         } elseif ($method === 'POST') {
             $this->createCupom();
+        } elseif ($method === 'PUT') {
+           $this->updateCupom($id);
         } else {
             http_response_code(405);
             echo json_encode(["erro" => "Método HTTP não permitido."]);
@@ -68,5 +70,82 @@ class CupomController {
             echo json_encode(["erro" => "Dados incompletos. Código, tipo, valor e validade são obrigatórios."]);
         }
     }
+
+    private function updateCupom($id) {
+        if (empty($id)) {
+            http_response_code(400);
+            echo json_encode(["erro" => "O ID do cupom é obrigatório para atualização."]);
+            return;
+        }
+
+        $data = json_decode(file_get_contents("php://input"));
+
+        if (empty($data)) {
+            http_response_code(400);
+            echo json_encode(["erro" => "Nenhum dado enviado para atualização."]);
+            return;
+        }
+
+        $campos = [];
+        $parametros = [":id" => $id];
+
+        // Mapeamento corrigido conforme a sua tabela
+        if (isset($data->codigo)) {
+            $campos[] = "codigo = :codigo";
+            $parametros[":codigo"] = $data->codigo;
+        }
+        if (isset($data->descricao)) {
+            $campos[] = "descricao = :descricao";
+            $parametros[":descricao"] = $data->descricao;
+        }
+        if (isset($data->tipo_desconto)) {
+            $campos[] = "tipo_desconto = :tipo_desconto";
+            $parametros[":tipo_desconto"] = $data->tipo_desconto;
+        }
+        if (isset($data->valor_desconto)) { // <-- Corrigido aqui!
+            $campos[] = "valor_desconto = :valor_desconto";
+            $parametros[":valor_desconto"] = $data->valor_desconto;
+        }
+        if (isset($data->data_inicio)) {
+            $campos[] = "data_inicio = :data_inicio";
+            $parametros[":data_inicio"] = $data->data_inicio;
+        }
+        if (isset($data->data_validade)) {
+            $campos[] = "data_validade = :data_validade";
+            $parametros[":data_validade"] = $data->data_validade;
+        }
+        if (isset($data->limite_usos)) {
+            $campos[] = "limite_usos = :limite_usos";
+            $parametros[":limite_usos"] = $data->limite_usos;
+        }
+        if (isset($data->ativo)) {
+            $campos[] = "ativo = :ativo";
+            $parametros[":ativo"] = $data->ativo;
+        }
+
+        if (empty($campos)) {
+            http_response_code(400);
+            echo json_encode(["erro" => "Nenhum campo válido fornecido para atualização."]);
+            return;
+        }
+
+        // ATENÇÃO: Substitua 'cupons' pelo nome real da sua tabela, se for diferente
+        $query = "UPDATE cupons SET " . implode(", ", $campos) . " WHERE id = :id";
+        $stmt = $this->db->prepare($query);
+
+        if ($stmt->execute($parametros)) {
+            if ($stmt->rowCount() > 0) {
+                http_response_code(200);
+                echo json_encode(["status" => "success", "mensagem" => "Cupom atualizado com sucesso."]);
+            } else {
+                http_response_code(404);
+                echo json_encode(["status" => "warning", "mensagem" => "Nenhuma alteração feita. ID não encontrado ou dados iguais."]);
+            }
+        } else {
+            http_response_code(500);
+            echo json_encode(["erro" => "Erro interno ao atualizar o cupom."]);
+        }
+    }
+
 }
 ?>
