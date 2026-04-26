@@ -1,0 +1,8 @@
+RewriteEngine On
+
+# Define a base como a pasta onde este arquivo está
+RewriteBase /DriverLux/public/
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ index.php [QSA,L]
