@@ -15,6 +15,8 @@ class KMController {
             $this->getOpcoesKM();
         } elseif ($method === 'POST') {
             $this->createOpcaoKM();
+        } elseif ($method === 'PUT') {
+            $this->updateOpcaoKM($id);
         } else {
             http_response_code(405);
             echo json_encode(["erro" => "Método HTTP não permitido."]);
@@ -60,5 +62,74 @@ class KMController {
             echo json_encode(["erro" => "Dados incompletos. Nome e valor_diario são obrigatórios."]);
         }
     }
+
+    private function updateOpcaoKM($id) {
+        if (empty($id)) {
+            http_response_code(400);
+            echo json_encode(["erro" => "O ID da opção de KM é obrigatório para atualização."]);
+            return;
+        }
+
+        $data = json_decode(file_get_contents("php://input"));
+
+        if (empty($data)) {
+            http_response_code(400);
+            echo json_encode(["erro" => "Nenhum dado enviado para atualização."]);
+            return;
+        }
+
+        $campos = [];
+        $parametros = [":id" => $id];
+
+        if (isset($data->nome)) {
+            $campos[] = "nome = :nome";
+            $parametros[":nome"] = $data->nome;
+        }
+        
+        // Usamos property_exists para aceitar o envio de 'null' no JSON
+        if (property_exists($data, 'limite_km')) {
+            $campos[] = "limite_km = :limite_km";
+            $parametros[":limite_km"] = $data->limite_km;
+        }
+        
+        if (isset($data->valor_diario)) {
+            $campos[] = "valor_diario = :valor_diario";
+            $parametros[":valor_diario"] = $data->valor_diario;
+        }
+        
+        // O mesmo vale para a taxa extra, permitindo zerar (null)
+        if (property_exists($data, 'taxa_km_excedente')) {
+            $campos[] = "taxa_km_excedente = :taxa_km_excedente";
+            $parametros[":taxa_km_excedente"] = $data->taxa_km_excedente;
+        }
+        
+        if (isset($data->ativo)) {
+            $campos[] = "ativo = :ativo";
+            $parametros[":ativo"] = $data->ativo;
+        }
+
+        if (empty($campos)) {
+            http_response_code(400);
+            echo json_encode(["erro" => "Nenhum campo válido fornecido para atualização."]);
+            return;
+        }
+
+        $query = "UPDATE opcoes_quilometragem SET " . implode(", ", $campos) . " WHERE id = :id";
+        $stmt = $this->db->prepare($query);
+
+        if ($stmt->execute($parametros)) {
+            if ($stmt->rowCount() > 0) {
+                http_response_code(200);
+                echo json_encode(["status" => "success", "mensagem" => "Opção de KM atualizada com sucesso."]);
+            } else {
+                http_response_code(404);
+                echo json_encode(["status" => "warning", "mensagem" => "Nenhuma alteração feita. ID não encontrado ou dados iguais."]);
+            }
+        } else {
+            http_response_code(500);
+            echo json_encode(["erro" => "Erro interno ao atualizar a opção de KM."]);
+        }
+    }
+
 }
 ?>
