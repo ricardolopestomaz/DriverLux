@@ -25,5 +25,3 @@ Entre as principais funcionalidades do sistema estão:
 - Cadastro de veículos de luxo
 - Controle de disponibilidade dos carros
 - Registro e gerenciamento de locações
-
----
