@@ -13,7 +13,7 @@
 ---
 ## 📌 Links úteis
 <small>
-📅 <a href="https://github.com/ricardolopestomaz/DriverLux/blob/develop/docs/sprint-01.md">Planejamento de Sprints</a><br>
+📅 <a href="https://github.com/ricardolopestomaz/DriverLux/blob/develop/docs/sprints/sprint-01.md">Planejamento de Sprints</a><br>
 📊 <a href="https://trello.com/b/jGLr2fuT/projeto-engenharia-de-sofware">Planejamento no Trello</a><br>
 🎨 <a href="https://www.figma.com/design/i5DIkwI1BkifdePI8TkGH0/DriverLux?node-id=0-1&t=Y8u0nTKAGELsBTqX-1">Protótipo no Figma</a><br>
 📗 <a href="https://github.com/ricardolopestomaz/DriverLux/blob/develop/docs/requisitos-funcionais.md">Requisitos Funcionais</a><br>
