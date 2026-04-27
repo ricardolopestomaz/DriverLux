@@ -34,6 +34,9 @@ class ProtecaoController {
     }
 
     private function createProtecao() {
+        // 🔒 Segurança Admin
+        $this->verificarAcessoAdmin();
+
         $data = json_decode(file_get_contents("php://input"));
 
         if (!empty($data->nome) && isset($data->valor_diario)) {
@@ -60,6 +63,9 @@ class ProtecaoController {
     }
 
     private function updateProtecao($id) {
+        // 🔒 Segurança Admin
+        $this->verificarAcessoAdmin();
+
         if (empty($id)) {
             http_response_code(400);
             echo json_encode(["erro" => "O ID da proteção é obrigatório para atualização."]);
@@ -116,6 +122,29 @@ class ProtecaoController {
             echo json_encode(["erro" => "Erro interno ao atualizar a proteção."]);
         }
     }
+
+    // SEGURANÇA E AUTORIZAÇÃO (Nível Admin)
+    private function verificarAcessoAdmin() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Verifica se está logado
+        if (!isset($_SESSION['usuario_id'])) {
+            http_response_code(401);
+            echo json_encode(["status" => "error", "erro" => "Acesso negado. Faça login primeiro!"]);
+            exit;
+        }
+
+        // Verifica se é admin
+        if ($_SESSION['usuario_perfil'] !== 'admin') {
+            http_response_code(403);
+            echo json_encode(["status" => "error", "erro" => "Acesso negado. Apenas administradores podem gerenciar pacotes de proteção."]);
+            exit;
+        }
+    }
+
+    
 
 }
 ?>

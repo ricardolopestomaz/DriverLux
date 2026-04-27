@@ -1,7 +1,5 @@
 <?php
-// /modules/Usuarios/UsuarioController.php
 
-// Usa __DIR__ para garantir o caminho correto independentemente de onde o script é chamado
 require_once __DIR__ . '/../../config/db_connect.php';
 
 class UsuarioController {
@@ -15,14 +13,25 @@ class UsuarioController {
     public function handleRequest($method, $id) {
         switch ($method) {
             case 'GET':
-                if ($id) {
+                $url = $_SERVER['REQUEST_URI'];
+                // Se a URL tiver '/me', ele chama a função da sessão
+                if (strpos($url, '/me') !== false) {
+                    $this->me();
+                } elseif ($id) {
                     $this->getUsuario($id);
                 } else {
                     $this->getUsuarios();
                 }
                 break;
             case 'POST':
-                $this->createUsuario();
+                $url = $_SERVER['REQUEST_URI'];
+                if (strpos($url, '/login') !== false) {
+                    $this->login();
+                } elseif (strpos($url, '/logout') !== false) {
+                    $this->logout();
+                } else {
+                    $this->createUsuario();
+                }
                 break;
             case 'PUT':
                 $this->updateUsuario($id);
@@ -98,7 +107,22 @@ class UsuarioController {
         }
     }
 
-                private function updateUsuario($id) {
+    private function updateUsuario($id) {
+
+        $this->verificarAutenticacao();
+
+        // Pega os dados de quem está logando
+        $id_logado = $_SESSION['usuario_id'];
+        $perfil_logado = $_SESSION['usuario_perfil'];
+
+        // Se o usuário NÃO for 'admin' e o ID != do ID dele mesmo: BLOQUEIA!
+
+        if ($perfil_logado !== 'admin' && $id_logado != $id) {
+            http_response_code(403); // 403 = Proibido (Forbidden)
+            echo json_encode(["status" => "error", "erro" => "Acesso negado. Você só pode alterar o seu próprio cadastro."]);
+            return;
+        }
+
         if (empty($id)) {
             http_response_code(400);
             echo json_encode(["erro" => "O ID do usuário é obrigatório para atualização."]);
@@ -169,6 +193,92 @@ class UsuarioController {
             } else {
                 echo json_encode(["erro" => "Erro interno ao atualizar usuário: " . $e->getMessage()]);
             }
+        }
+    }
+
+    private function login(){
+        // Lê o JSON enviado
+        $data = json_decode(file_get_contents("php://input"));
+
+        if (!empty($data->email) && !empty($data->senha)) {
+            // Busca o usuário no banco pelo e-mail
+            $query = "SELECT id, nome, email, senha_hash, perfil FROM usuarios WHERE email = :email LIMIT 1";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(":email", $data->email);
+            $stmt->execute();
+
+            $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Verifica se achou o usuário e a senha descriptografada
+            if ($usuario && password_verify($data->senha, $usuario['senha_hash'])) {
+                
+                session_start();
+
+                // Sessao
+                $_SESSION['usuario_id'] = $usuario['id'];
+                $_SESSION['usuario_perfil'] = $usuario['perfil'];
+                $_SESSION['usuario_nome'] = $usuario['nome'];
+
+                http_response_code(200);
+                echo json_encode([
+                    "status" => "success", 
+                    "mensagem" => "Login realizado com sucesso!", 
+                    "perfil" => $usuario['perfil']
+                ]);
+            } else {
+                http_response_code(401); // 401 = Não autorizado
+                echo json_encode(["status" => "error", "erro" => "E-mail ou senha incorretos."]);
+            }
+        } else {
+            http_response_code(400); // 400 = Requisição ruim
+            echo json_encode(["status" => "error", "erro" => "E-mail e senha são obrigatórios."]);
+        }
+    }
+
+    private function logout() {
+        session_start();
+        session_destroy();
+
+        http_response_code(200);
+        echo json_encode(["status" => "success", "mensagem" => "Logout realizado com sucesso."]);
+    }
+
+    // Segurança
+    private function verificarAutenticacao() {
+        session_start();
+        
+        // Se a variável de sessão NÃO existir, ele barra!
+        if (!isset($_SESSION['usuario_id'])) {
+            http_response_code(401);
+            echo json_encode([
+                "status" => "error", 
+                "erro" => "Acesso negado. Você precisa fazer login primeiro!"
+            ]);
+            exit; // O 'exit' mata o processo
+        }
+    }
+
+    private function me() {
+        session_start();
+        
+        if (isset($_SESSION['usuario_id'])) {
+            http_response_code(200);
+            echo json_encode([
+                "status" => "success",
+                "logado" => true,
+                "usuario" => [
+                    "id" => $_SESSION['usuario_id'],
+                    "nome" => $_SESSION['usuario_nome'],
+                    "perfil" => $_SESSION['usuario_perfil']
+                ]
+            ]);
+        } else {
+            http_response_code(401);
+            echo json_encode([
+                "status" => "error", 
+                "logado" => false, 
+                "mensagem" => "Nenhum usuário logado no momento."
+            ]);
         }
     }
 

@@ -34,6 +34,9 @@ class CupomController {
     }
 
     private function createCupom() {
+        // 🔒 Segurança Admin
+        $this->verificarAcessoAdmin();
+
         $data = json_decode(file_get_contents("php://input"));
 
         if (!empty($data->codigo) && !empty($data->tipo_desconto) && isset($data->valor_desconto) && !empty($data->data_validade)) {
@@ -72,6 +75,9 @@ class CupomController {
     }
 
     private function updateCupom($id) {
+        // 🔒 Segurança Admin
+        $this->verificarAcessoAdmin();
+
         if (empty($id)) {
             http_response_code(400);
             echo json_encode(["erro" => "O ID do cupom é obrigatório para atualização."]);
@@ -144,6 +150,25 @@ class CupomController {
         } else {
             http_response_code(500);
             echo json_encode(["erro" => "Erro interno ao atualizar o cupom."]);
+        }
+    }
+
+    // SEGURANÇA E AUTORIZAÇÃO (Nível Admin)
+    private function verificarAcessoAdmin() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if (!isset($_SESSION['usuario_id'])) {
+            http_response_code(401);
+            echo json_encode(["status" => "error", "erro" => "Acesso negado. Faça login primeiro!"]);
+            exit;
+        }
+
+        if ($_SESSION['usuario_perfil'] !== 'admin') {
+            http_response_code(403);
+            echo json_encode(["status" => "error", "erro" => "Acesso negado. Apenas administradores podem gerenciar cupons."]);
+            exit;
         }
     }
 
