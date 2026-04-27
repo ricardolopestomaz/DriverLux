@@ -1,1 +1,0 @@
-# 📚 Requisitos Não Funcionais 
