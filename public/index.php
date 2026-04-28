@@ -1,19 +1,23 @@
 <?php
 // /public/index.php
 
-// 1. Defina a raiz do projeto para facilitar os requires
+// 1. Defina a raiz do projeto
 define('ROOT_PATH', dirname(__DIR__));
 
+// 2. Captura e limpa a URI
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = explode('/', trim($uri, '/'));
 
+// Remove 'DriverLux' e 'public' da jogada para não confundir o roteador
 if (isset($uri[0]) && strtolower($uri[0]) === 'driverlux') array_shift($uri);
 if (isset($uri[0]) && strtolower($uri[0]) === 'public') array_shift($uri);
 
 $isApi = isset($uri[0]) && $uri[0] === 'api';
 
 if ($isApi) {
-    // MODO API (Retorna apenas JSON)
+    // ==========================================
+    // MODO API
+    // ==========================================
     header("Access-Control-Allow-Origin: *");
     header("Content-Type: application/json; charset=UTF-8");
     header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
@@ -22,13 +26,26 @@ if ($isApi) {
 
     $method = $_SERVER['REQUEST_METHOD'];
     $resource = isset($uri[1]) ? $uri[1] : null; 
-    $id = isset($uri[2]) ? (int)$uri[2] : null;
+    $subResource = isset($uri[2]) ? $uri[2] : null;
+    
+    $id = is_numeric($subResource) ? (int)$subResource : null;
+    $action = !is_numeric($subResource) ? $subResource : null;
 
     switch ($resource) {
         case 'usuarios':
             require_once ROOT_PATH . '/modules/Usuarios/UsuarioController.php';
             $controller = new UsuarioController();
-            $controller->handleRequest($method, $id);
+
+            if ($action === 'login') {
+                $controller->login($method); 
+            } elseif ($action === null || is_numeric($subResource)) {
+                // Se não for uma ação de texto (como login), segue o fluxo normal de CRUD
+                $controller->handleRequest($method, $id);
+            } else {
+                // Se digitaram /usuarios/qualquercoisa que não existe
+                http_response_code(404);
+                echo json_encode(["erro" => "Ação não encontrada."], JSON_UNESCAPED_UNICODE);
+            }
             break;
             
         case 'veiculos':
@@ -36,6 +53,7 @@ if ($isApi) {
             $controller = new VeiculoController();
             $controller->handleRequest($method, $id);
             break;
+
         case 'categorias':
             require_once ROOT_PATH . '/modules/Categorias/CategoriaController.php';
             $controller = new CategoriaController();
@@ -53,6 +71,7 @@ if ($isApi) {
             $controller = new KMController();
             $controller->handleRequest($method, $id);
             break;
+
         case 'cupons':
             require_once ROOT_PATH . '/modules/Cupons/CupomController.php';
             $controller = new CupomController();
@@ -73,31 +92,31 @@ if ($isApi) {
 
 } else {
     // ==========================================
-    // MODO SITE (Retorna páginas HTML)
+    // MODO SITE (Retorna páginas HTML/PHP)
     // ==========================================
     header("Content-Type: text/html; charset=UTF-8");
     
     $page = !empty($uri[0]) ? $uri[0] : 'home';
+    
+    // Usando DIRECTORY_SEPARATOR para garantir que o Windows entenda o caminho
+    $basePath = ROOT_PATH . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR;
+    $filePhp = $basePath . $page . ".php";
+    $fileHtml = $basePath . $page . ".html";
 
-    switch ($page) {
-        case 'home':
-            require_once ROOT_PATH . '/views/home.php';
-            break;
-            
-        case 'sobre':
-            require_once ROOT_PATH . '/views/sobre.php';
-            break;
-            
-        default:
-            http_response_code(404);
-            // Garante que o arquivo existe antes de chamar
-            $file404 = ROOT_PATH . '/views/404.php';
-            if (file_exists($file404)) {
-                require_once $file404;
-            } else {
-                echo "<h1>404 Not Found</h1><p>Crie o arquivo /views/404.php para personalizar esta tela.</p>";
-            }
-            break;
+    if (file_exists($filePhp)) {
+        require_once $filePhp;
+    } elseif (file_exists($fileHtml)) {
+        readfile($fileHtml);
+    } else {
+        http_response_code(404);
+        $file404 = $basePath . "404.php";
+        
+        if (file_exists($file404)) {
+            require_once $file404;
+        } else {
+            echo "<h1>404 ;-;</h1>";
+            echo "<p>Página <strong>" . htmlspecialchars($page) . "</strong> não encontrada.</p>";
+            echo "<a href='/DriverLux/home'>Voltar para o início</a>";
+        }
     }
 }
-?>
