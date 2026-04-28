@@ -33,6 +33,7 @@ class VeiculoController {
         }
     }
 
+    // 🟢 ROTA PÚBLICA
     private function getVeiculos() {
         // Traz os dados do carro E da categoria correspondente
         $query = "SELECT 
@@ -45,7 +46,7 @@ class VeiculoController {
         $stmt = $this->db->prepare($query);
         $stmt->execute();
         
-        $veiculos = $stmt->fetchAll();
+        $veiculos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         http_response_code(200);
         echo json_encode([
@@ -55,6 +56,7 @@ class VeiculoController {
         ]);
     }
 
+    // 🟢 ROTA PÚBLICA
     private function getVeiculo($id) {
         $query = "SELECT 
                     v.id, v.marca, v.modelo, v.ano, v.placa, v.chassi, v.status_disponibilidade, v.imagem_url,
@@ -68,7 +70,7 @@ class VeiculoController {
         $stmt->execute();
         
         if ($stmt->rowCount() > 0) {
-            $veiculo = $stmt->fetch();
+            $veiculo = $stmt->fetch(PDO::FETCH_ASSOC);
             http_response_code(200);
             echo json_encode(["status" => "success", "data" => $veiculo]);
         } else {
@@ -77,7 +79,11 @@ class VeiculoController {
         }
     }
 
+    // 🔴 ROTA ADMIN
     private function createVeiculo() {
+        // 🔒 Chama a segurança antes de ler qualquer dado
+        $this->verificarAcessoAdmin();
+
         $data = json_decode(file_get_contents("php://input"));
 
         if (!empty($data->categoria_id) && !empty($data->marca) && !empty($data->modelo) && !empty($data->placa)) {
@@ -113,7 +119,11 @@ class VeiculoController {
         }
     }
 
+    // 🔴 ROTA ADMIN
     private function updateVeiculo($id) {
+        // 🔒 Chama a segurança antes de ler qualquer dado
+        $this->verificarAcessoAdmin();
+
         if (empty($id)) {
             http_response_code(400);
             echo json_encode(["erro" => "O ID do veículo é obrigatório para atualização."]);
@@ -168,6 +178,34 @@ class VeiculoController {
             } else {
                 echo json_encode(["erro" => "Erro interno ao atualizar veículo: " . $e->getMessage()]);
             }
+        }
+    }
+
+    // SEGURANÇA E AUTORIZAÇÃO
+    private function verificarAcessoAdmin() {
+        // Evita erro caso a sessão já tenha sido iniciada por outro script
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Verifica se tem ALGUÉM logado
+        if (!isset($_SESSION['usuario_id'])) {
+            http_response_code(401);
+            echo json_encode([
+                "status" => "error", 
+                "erro" => "Acesso negado. Você precisa fazer login primeiro!"
+            ]);
+            exit; // O 'exit' mata o processo imediatamente
+        }
+
+        // Verifica seé ADMIN
+        if ($_SESSION['usuario_perfil'] !== 'admin') {
+            http_response_code(403);
+            echo json_encode([
+                "status" => "error", 
+                "erro" => "Acesso negado. Apenas administradores podem gerenciar a frota."
+            ]);
+            exit; // O 'exit' mata o processo imediatamente
         }
     }
 

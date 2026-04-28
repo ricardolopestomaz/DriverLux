@@ -34,6 +34,8 @@ class CategoriaController {
     }
 
     private function createCategoria() {
+        $this->verificarAcessoAdmin(); // 🔒 Segurança Admin
+
         $data = json_decode(file_get_contents("php://input"));
 
         if (!empty($data->nome) && isset($data->valor_base_diaria)) {
@@ -64,14 +66,16 @@ class CategoriaController {
     }
 
     private function updateCategoria($id) {
-        // 1. Verifica se o ID foi passado
+        $this->verificarAcessoAdmin(); // 🔒 Segurança Admin
+
+        // Verifica se o ID foi passado
         if (empty($id)) {
             http_response_code(400);
             echo json_encode(["erro" => "O ID da categoria é obrigatório para atualização."]);
             return;
         }
 
-        // 2. Captura os dados do corpo da requisição
+        // Captura os dados do corpo da requisição
         $data = json_decode(file_get_contents("php://input"));
 
         if (empty($data)) {
@@ -80,7 +84,7 @@ class CategoriaController {
             return;
         }
 
-        // 3. Construtor Dinâmico de Query
+        // Construtor Dinâmico de Query
         $campos = [];
         $parametros = [":id" => $id];
 
@@ -112,7 +116,7 @@ class CategoriaController {
             return;
         }
 
-        // 4. Monta e executa a SQL
+        // Monta e executa a SQL
         $query = "UPDATE categorias_veiculos SET " . implode(", ", $campos) . " WHERE id = :id";
         $stmt = $this->db->prepare($query);
 
@@ -129,5 +133,25 @@ class CategoriaController {
             echo json_encode(["erro" => "Erro interno ao atualizar a categoria."]);
         }
     }
+
+    // SEGURANÇA E AUTORIZAÇÃO (Nível Admin)
+    private function verificarAcessoAdmin() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if (!isset($_SESSION['usuario_id'])) {
+            http_response_code(401);
+            echo json_encode(["status" => "error", "erro" => "Acesso negado. Faça login primeiro!"]);
+            exit;
+        }
+
+        if ($_SESSION['usuario_perfil'] !== 'admin') {
+            http_response_code(403);
+            echo json_encode(["status" => "error", "erro" => "Acesso negado. Apenas administradores podem gerenciar categorias."]);
+            exit;
+        }
+    }
+
 }
 ?>

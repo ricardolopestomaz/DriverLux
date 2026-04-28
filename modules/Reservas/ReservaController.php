@@ -59,11 +59,15 @@ class ReservaController {
     }
 
     private function createReserva() {
+        // 🔒 Chama a segurança
+        $this->verificarAutenticacao();
         $data = json_decode(file_get_contents("php://input"));
 
+        // 🔒 Pega o ID do usuário diretamente da Sessão (Garante que ele só reserva para ele mesmo)
+        $id_do_usuario_logado = $_SESSION['usuario_id'];
+
         // Verificação básica dos dados primordiais
-        if (!empty($data->usuario_id) && !empty($data->veiculo_id) && !empty($data->data_retirada) && !empty($data->data_devolucao) && isset($data->valor_total_previsto)) {
-            
+        if (!empty($id_do_usuario_logado) && !empty($data->veiculo_id) && !empty($data->data_retirada) && !empty($data->data_devolucao) && isset($data->valor_total_previsto)) {            
             $query = "INSERT INTO reservas (
                         usuario_id, veiculo_id, pacote_protecao_id, opcao_quilometragem_id, cupom_id,
                         local_retirada, local_devolucao, data_retirada, data_devolucao,
@@ -76,7 +80,10 @@ class ReservaController {
             
             $stmt = $this->db->prepare($query);
 
-            $stmt->bindParam(":usuario_id", $data->usuario_id);
+            // 🔒 Injeta o ID seguro da sessão no banco de dados
+
+            $stmt->bindParam(":usuario_id", $id_do_usuario_logado);
+            
             $stmt->bindParam(":veiculo_id", $data->veiculo_id);
             $stmt->bindParam(":pacote_protecao_id", $data->pacote_protecao_id);
             $stmt->bindParam(":opcao_quilometragem_id", $data->opcao_quilometragem_id);
@@ -178,6 +185,23 @@ class ReservaController {
         } else {
             http_response_code(500);
             echo json_encode(["erro" => "Erro interno ao atualizar a reserva."]);
+        }
+    }
+
+    // SEGURANÇA E AUTORIZAÇÃO (Nível Cliente)
+    private function verificarAutenticacao() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Verifica se existe alguém logado
+        if (!isset($_SESSION['usuario_id'])) {
+            http_response_code(401);
+            echo json_encode([
+                "status" => "error", 
+                "erro" => "Acesso negado. Você precisa fazer login para realizar uma reserva!"
+            ]);
+            exit; // Mata o processo e impede a reserva
         }
     }
 

@@ -34,6 +34,9 @@ class KMController {
     }
 
     private function createOpcaoKM() {
+        // 🔒 Chama a segurança de Admin
+        $this->verificarAcessoAdmin();
+
         $data = json_decode(file_get_contents("php://input"));
 
         if (!empty($data->nome) && isset($data->valor_diario)) {
@@ -64,6 +67,9 @@ class KMController {
     }
 
     private function updateOpcaoKM($id) {
+        // 🔒 Chama a segurança de Admin
+        $this->verificarAcessoAdmin();
+
         if (empty($id)) {
             http_response_code(400);
             echo json_encode(["erro" => "O ID da opção de KM é obrigatório para atualização."]);
@@ -128,6 +134,34 @@ class KMController {
         } else {
             http_response_code(500);
             echo json_encode(["erro" => "Erro interno ao atualizar a opção de KM."]);
+        }
+    }
+
+
+    // SEGURANÇA E AUTORIZAÇÃO (Nível Admin)
+    private function verificarAcessoAdmin() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Verifica se tem ALGUÉM logado
+        if (!isset($_SESSION['usuario_id'])) {
+            http_response_code(401);
+            echo json_encode([
+                "status" => "error", 
+                "erro" => "Acesso negado. Você precisa fazer login primeiro!"
+            ]);
+            exit;
+        }
+
+        // Verifica se é ADMIN
+        if ($_SESSION['usuario_perfil'] !== 'admin') {
+            http_response_code(403);
+            echo json_encode([
+                "status" => "error", 
+                "erro" => "Acesso negado. Apenas administradores podem gerenciar planos de quilometragem."
+            ]);
+            exit;
         }
     }
 
