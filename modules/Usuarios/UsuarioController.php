@@ -24,10 +24,9 @@ class UsuarioController {
                 }
                 break;
             case 'POST':
-                $url = $_SERVER['REQUEST_URI'];
-                if (strpos($url, '/login') !== false) {
+                if ($id === 'login' || $action === 'login') {
                     $this->login();
-                } elseif (strpos($url, '/logout') !== false) {
+                } elseif ($id === 'logout' || $action === 'logout') {
                     $this->logout();
                 } else {
                     $this->createUsuario();
@@ -196,7 +195,13 @@ class UsuarioController {
         }
     }
 
-    private function login(){
+    public function login($method = null){
+        if ($method !== 'POST') {
+            http_response_code(405); // Método não permitido
+            echo json_encode(["erro" => "Para logar, envie um POST com email e senha."]);
+            return;
+        }
+
         // Lê o JSON enviado
         $data = json_decode(file_get_contents("php://input"));
 
