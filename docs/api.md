@@ -138,8 +138,49 @@ foreach ($dados['data'] as $categoria) {
 
 ---
 
-## 🔒 Segurança e Regras de Negócio
-Validação: A API valida campos obrigatórios e formatos de data/valor.<br>
-Integridade: Veículos dependem de um categoria_id válido já existente no banco.<br>
-Cupons: Verificação automática de validade e limite de usos.
+## 🔒 Segurança, Autenticação e Regras de Negócio
+A API do DriverLux utiliza Sessões PHP ($_SESSION) para gerenciar a autenticação e autorização dos usuários.
+
+1. **Fluxo de Sessão (Para Desenvolvedores Front-end)**
+    - Login (`/usuarios/login`): Ao enviar e-mail e senha, a API valida os dados e envia um cookie invisível (PHPSESSID) para o navegador. Esse cookie é a chave de acesso.
+
+    - Recuperação de Sessão (`/usuarios/me`): Toda vez que a página sofrer um Refresh (F5), o Front-end deve fazer uma requisição `GET` para esta rota. Ela verifica o cookie e devolve quem está logado, permitindo remontar o cabeçalho (ocultar botões de login, exibir nome do usuário).
+
+2. **Controle de Acesso por Perfil (Para Desenvolvedores Back-end)**
+    Rotas sensíveis (como deletar veículos ou ver o painel financeiro) são restritas a **administradores**.
+
+    **Como implementar nas Controllers:**<br>
+    Sempre que criar uma rota exclusiva para o dono da locadora, adicione a verificação de perfil no início do método utilizando os dados da `$_SESSION`:
+    ```php
+    private function createVeiculo() {
+        // 1. Verifica se tem ALGUÉM logado (Se não tiver, a função mata o processo aqui)
+        $this->verificarAutenticacao();
+
+        // 2. Verifica se a pessoa logada TEM PERMISSÃO DE ADMIN
+        if ($_SESSION['usuario_perfil'] !== 'admin') {
+            http_response_code(403); // 403 = Forbidden
+            echo json_encode([
+                "status" => "error",
+                "erro" => "Acesso negado. Apenas administradores podem realizar esta ação."
+            ]);
+            return; // Retorna para impedir a execução do resto do código
+        }
+
+        // ... Continua o fluxo normal de criação do veículo ...
+    }
+    
+    ```
+<br>
+
+3. **Prevenção de Falhas de Autorização (IDOR)**<br>
+Para garantir que um cliente comum não altere os dados de outro cliente (IDOR), as funções de atualização (`PUT /usuarios/{id}`)<br> comparam o ID enviado na URL com o ID armazenado na sessão (`$_SESSION['usuario_id']`). O cliente só pode atualizar o próprio cadastro.
+
+<br>
+
+4. **Regras Gerais de Negócio**
+- **Validação:** A API valida campos obrigatórios, senhas (que são salvas criptografadas via `password_hash`) e verifica duplicidade de e-mails/CPFs.
+
+- **Integridade:** Veículos dependem de um `categoria_id` válido já existente no banco.
+
+- **Cupons:** Verificação automática de validade (datas) e limite de usos disponíveis.
 
