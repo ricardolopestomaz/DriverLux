@@ -91,6 +91,7 @@ class UsuarioController {
                 if ($stmt->execute()) {
                     http_response_code(201);
                     echo json_encode(["mensagem" => "Usuário criado com sucesso."]);
+                    exit;
                 }
             } catch (PDOException $e) {
                 http_response_code(400);
