@@ -15,11 +15,11 @@ body {
 .topo {
   height: 88px;
   background: #3b0567;
+  color: #000; /* CORREÇÃO 1: Garante que "Minhas Reservas" fique branco */
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 42px;
-  color: #fff;
 }
 
 .logo {
@@ -37,6 +37,7 @@ body {
   text-decoration: none;
   font-size: 14px;
   font-weight: 800;
+  transition: color 0.3s;
 }
 
 .topo nav a:hover {
@@ -104,6 +105,7 @@ body {
   color: #4b0082;
   font-weight: 900;
   cursor: pointer;
+<<<<<<< HEAD
   font-size: 14px;
   transition: 0.3s;
   white-space: nowrap;
@@ -111,6 +113,13 @@ body {
 
 .busca button:hover {
   background: #ffb300;
+=======
+  transition: transform 0.2s;
+}
+
+.busca button:hover {
+    transform: scale(1.02);
+>>>>>>> f1a362e8c028949288cee49e6fbad256678446b7
 }
 
 /* HERO */
@@ -130,11 +139,17 @@ body {
   max-width: 620px;
 }
 
+/* CORREÇÃO 2: Separei as cores dos spans de acordo com o fundo */
 .hero-texto span,
-.destaques span,
 .cta span {
   font-weight: 900;
-  color: #5b009f;
+  color: #5b009f; /* Texto roxo porque o fundo destas sessões é claro */
+  letter-spacing: 1px;
+}
+
+.destaques span {
+  font-weight: 900;
+  color: #ffc400; /* Texto amarelo porque o fundo da sessão destaques é roxo escuro */
   letter-spacing: 1px;
   font-size: 13px;
 }
@@ -340,6 +355,7 @@ body {
   border-radius: 5px;
   text-decoration: none;
   font-size: 30px;
+<<<<<<< HEAD
   transition: all 0.3s;
   background: transparent;
 }
@@ -347,6 +363,14 @@ body {
 .card a:hover {
   background: #8014e8;
   color: #fff;
+=======
+  transition: 0.3s;
+}
+
+.card a:hover {
+    background: #8014e8;
+    color: #fff;
+>>>>>>> f1a362e8c028949288cee49e6fbad256678446b7
 }
 
 /* CTA */
@@ -396,6 +420,10 @@ body {
 
 .beneficios p {
   margin: 0;
+}
+
+#boas-vindas-nome{
+  color: #fff;
 }
 
 /* RESPONSIVO */
