@@ -1,5 +1,14 @@
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css">
+<!DOCTYPE html>
+<!--views/admin.html-->
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DriverLux - Aluguel de Carros de Luxo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
 
 <header class="topo">
   <img src="assets/img/logo.png" class="logo" alt="DriverLux">
@@ -9,11 +18,15 @@
     <a href="#">GESTÃO DE FROTAS</a>
     <a href="#">SEMINOVOS</a>
     <a href="#">LUX - CARRO POR ASSINATURA</a>
+    <a href="#">LOGIN | CADASTRAR</a>
   </nav>
 
-  <div class="login">
-    <strong>MINHAS RESERVAS</strong>
-    <registro-login modo="popover"></registro-login>
+  <div class="login-area">
+    <span class="reservas">MINHAS RESERVAS</span>
+
+    <button id="btn-login" class="btn-login">
+      LOGIN | CADASTRAR
+    </button>
   </div>
 </header>
 
@@ -79,7 +92,7 @@
 
     <article class="card">
       <span class="tag">DESTAQUE</span>
-      <img src="public/assets/img/mercedes.jpg" alt="Mercedes AMG GT">
+      <img src="assets/img/mercedes.jpg" alt="Mercedes AMG GT">
       <h3>MERCEDES AMG GT</h3>
       <p>Luxo extremo com DNA de corrida.</p>
       <small>A PARTIR DE</small>
@@ -104,4 +117,23 @@
   </div>
 </section>
 
+<registro-login modo="popover"></registro-login>
+
 <script src="assets/js/registro-login.js"></script>
+<script>
+document.getElementById('btn-login').addEventListener('click', function(e) {
+  e.preventDefault();
+
+  const registroLogin = document.querySelector('registro-login');
+
+  if (registroLogin && registroLogin.shadowRoot) {
+    const authContainer = registroLogin.shadowRoot.getElementById('auth-container');
+    if (authContainer) {
+      authContainer.classList.remove('hidden');
+    }
+  }
+});
+</script>S
+
+</body>
+</html>

@@ -51,6 +51,19 @@ body {
   font-size: 14px;
 }
 
+.login a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.login a:hover {
+  color: #ffc400;
+}
+
 /* BUSCA */
 
 .busca {
@@ -75,21 +88,29 @@ body {
   padding: 0 18px;
   font-size: 15px;
   outline: none;
+  flex: 1;
 }
 
 .busca input:first-child {
-  width: 420px;
+  flex: 1.5;
 }
 
 .busca button {
   height: 48px;
   border: none;
   border-radius: 6px;
-  padding: 0 18px;
+  padding: 0 20px;
   background: #ffc400;
   color: #4b0082;
   font-weight: 900;
   cursor: pointer;
+  font-size: 14px;
+  transition: 0.3s;
+  white-space: nowrap;
+}
+
+.busca button:hover {
+  background: #ffb300;
 }
 
 /* HERO */
@@ -115,6 +136,7 @@ body {
   font-weight: 900;
   color: #5b009f;
   letter-spacing: 1px;
+  font-size: 13px;
 }
 
 .hero-texto h1 {
@@ -129,6 +151,12 @@ body {
   font-size: 20px;
   line-height: 1.5;
   max-width: 560px;
+  color: #3b0567;
+}
+
+.hero-texto p b {
+  font-weight: 900;
+  color: #5b009f;
 }
 
 .botoes {
@@ -139,12 +167,16 @@ body {
 
 .btn {
   display: inline-block;
-  padding: 18px 42px;
+  padding: 16px 40px;
   border-radius: 6px;
   text-decoration: none;
   font-weight: 900;
-  font-size: 16px;
-  transition: 0.3s;
+  font-size: 15px;
+  transition: all 0.3s;
+  cursor: pointer;
+  border: none;
+  text-align: center;
+  min-width: 180px;
 }
 
 .btn.roxo {
@@ -155,6 +187,7 @@ body {
 .btn.roxo:hover {
   transform: translateY(-3px);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(135deg, #8b1eef, #6500b5);
 }
 
 .btn.branco {
@@ -166,6 +199,7 @@ body {
 .btn.branco:hover {
   background: #6b00cc;
   color: white;
+  border-color: #6b00cc;
 }
 
 .infos {
@@ -179,6 +213,8 @@ body {
 
 .infos strong {
   font-size: 20px;
+  display: block;
+  margin-bottom: 4px;
 }
 
 /* DESTAQUES */
@@ -199,14 +235,17 @@ body {
   font-size: 32px;
   font-weight: 400;
   margin-top: 12px;
+  color: #fff;
 }
 
 .titulo-area h2 b {
   color: #ffc400;
+  font-weight: 900;
 }
 
 .titulo-area img {
   width: 160px;
+  height: auto;
 }
 
 .cards {
@@ -223,7 +262,9 @@ body {
   padding: 22px 26px;
   position: relative;
   min-height: 460px;
-  transition: 0.3s;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
 }
 
 .card:hover {
@@ -238,6 +279,8 @@ body {
   padding: 9px 17px;
   border-radius: 7px;
   font-size: 13px;
+  font-weight: 900;
+  width: fit-content;
 }
 
 .card img {
@@ -250,6 +293,8 @@ body {
 .card h3 {
   font-size: 20px;
   margin-top: 10px;
+  font-weight: 900;
+  color: #2b0647;
 }
 
 .card p {
@@ -257,22 +302,29 @@ body {
   font-size: 16px;
   line-height: 1.4;
   min-height: 48px;
+  flex-grow: 1;
+  margin-top: 8px;
 }
 
 .card small {
   display: block;
   margin-top: 16px;
   font-weight: 900;
+  color: #2b0647;
+  font-size: 12px;
 }
 
 .card h4 {
   color: #8014e8;
   font-size: 34px;
+  margin: 5px 0 0 0;
+  font-weight: 900;
 }
 
 .card h4 span {
   color: #2b0647;
   font-size: 18px;
+  font-weight: 600;
 }
 
 .card a {
@@ -288,6 +340,13 @@ body {
   border-radius: 5px;
   text-decoration: none;
   font-size: 30px;
+  transition: all 0.3s;
+  background: transparent;
+}
+
+.card a:hover {
+  background: #8014e8;
+  color: #fff;
 }
 
 /* CTA */
@@ -299,6 +358,17 @@ body {
   background: url("../img/carro-roxo.jpg") center right / cover no-repeat;
   padding: 45px;
   color: #3b0567;
+  display: flex;
+  align-items: center;
+}
+
+.cta > div {
+  max-width: 600px;
+}
+
+.cta span {
+  font-size: 13px;
+  text-transform: uppercase;
 }
 
 .cta h2 {
@@ -307,6 +377,12 @@ body {
   line-height: 0.95;
   max-width: 600px;
   margin: 10px 0 25px;
+  color: #3b0567;
+  font-weight: normal;
+}
+
+.cta h2 b {
+  font-weight: 900;
 }
 
 .beneficios {
@@ -315,9 +391,29 @@ body {
   margin-bottom: 28px;
   color: #5f2b88;
   font-size: 16px;
+  font-weight: 600;
+}
+
+.beneficios p {
+  margin: 0;
 }
 
 /* RESPONSIVO */
+
+@media (max-width: 1200px) {
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .botoes {
+    flex-wrap: wrap;
+  }
+
+  .beneficios {
+    flex-wrap: wrap;
+    gap: 30px;
+  }
+}
 
 @media (max-width: 900px) {
   .topo nav,
@@ -328,6 +424,7 @@ body {
 
   .topo {
     padding: 0 20px;
+    justify-content: space-between;
   }
 
   .hero {
@@ -344,6 +441,21 @@ body {
     grid-template-columns: 1fr;
   }
 
+  .titulo-area {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .titulo-area img {
+    margin-top: 20px;
+    width: 120px;
+  }
+
+  .cta {
+    padding: 30px 25px;
+    background-position: bottom right;
+  }
+
   .cta h2 {
     font-size: 34px;
   }
@@ -351,5 +463,94 @@ body {
   .beneficios {
     flex-direction: column;
     gap: 10px;
+    margin-bottom: 20px;
   }
+
+  .botoes {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .btn {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .infos {
+    gap: 40px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 600px) {
+  .destaques {
+    padding: 30px 15px 50px;
+  }
+
+  .titulo-area h2 {
+    font-size: 24px;
+  }
+
+  .cards {
+    gap: 20px;
+  }
+
+  .card {
+    min-height: auto;
+  }
+
+  .hero-texto h1 {
+    font-size: 32px;
+  }
+
+  .hero-texto p {
+    font-size: 16px;
+  }
+
+  .infos {
+    gap: 25px;
+    font-size: 12px;
+  }
+
+  .infos strong {
+    font-size: 18px;
+  }
+
+  .cta h2 {
+    font-size: 26px;
+  }
+
+  .btn {
+    font-size: 13px;
+    padding: 14px 30px;
+  }
+  .login-area {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.reservas {
+  font-size: 12px;
+  font-weight: 700;
+  color: #ddd;
+}
+
+.btn-login {
+  background: transparent;
+  border: 2px solid #fff;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-login:hover {
+  background: white;
+  color: #6b00cc;
+}
 }
