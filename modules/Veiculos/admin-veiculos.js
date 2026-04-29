@@ -3,7 +3,9 @@
 // Integração com API VeiculoController
 // ============================================
 
-const API_BASE_URL = 'http://localhost/DriverLux'; // 🔧 Ajuste com sua URL
+// 🔧 USA URL RELATIVA - funciona em qualquer servidor
+const API_BASE_URL = '/DriverLux/api';
+
 let selectedCategory = {
     id: 1,
     nome: 'ECONÔMICO'
@@ -16,6 +18,7 @@ let editingVehicleId = null;
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('📡 Carregando veículos da API...');
     loadVehicles();
 });
 
@@ -26,31 +29,36 @@ function loadVehicles() {
     const container = document.getElementById('vehiclesContainer');
     container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
+    console.log('🔄 GET ' + API_BASE_URL + '/veiculos');
+
     fetch(`${API_BASE_URL}/veiculos`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
         },
-        credentials: 'include' // Envia cookies de sessão
+        credentials: 'include'
     })
     .then(response => {
+        console.log('📨 Status:', response.status);
         if (!response.ok) {
             throw new Error(`Erro HTTP: ${response.status}`);
         }
         return response.json();
     })
     .then(data => {
+        console.log('✅ Dados recebidos:', data);
         if (data.status === 'success') {
             allVehicles = data.data || [];
+            console.log(`📊 ${allVehicles.length} veículos carregados`);
             renderVehicles();
         } else {
-            showError('Erro ao carregar veículos');
+            showError('Erro ao carregar veículos: ' + (data.erro || 'Resposta inválida'));
             container.innerHTML = '<div class="empty-state"><p>Erro ao carregar dados</p></div>';
         }
     })
     .catch(error => {
-        console.error('Erro ao carregar veículos:', error);
-        showError('Erro de conexão com a API');
+        console.error('❌ Erro ao carregar veículos:', error);
+        showError('Erro de conexão: ' + error.message);
         container.innerHTML = '<div class="empty-state"><p>Falha ao conectar à API</p></div>';
     });
 }
@@ -61,6 +69,8 @@ function loadVehicles() {
 function renderVehicles() {
     const container = document.getElementById('vehiclesContainer');
     
+    console.log(`🎯 Filtrando veículos da categoria: ${selectedCategory.nome}`);
+    
     // Filtra veículos pela categoria selecionada
     const vehiclesFiltered = allVehicles.filter(v => {
         const categoryMap = {
@@ -70,6 +80,8 @@ function renderVehicles() {
         };
         return categoryMap[selectedCategory.id] === selectedCategory.nome;
     });
+
+    console.log(`📋 ${vehiclesFiltered.length} veículos para exibir`);
 
     if (vehiclesFiltered.length === 0) {
         container.innerHTML = `
@@ -160,6 +172,8 @@ function createVehicleRow(vehicle) {
  * Seleciona uma categoria de veículos
  */
 function selectCategory(id, nome, button) {
+    console.log(`🚗 Selecionado: ${nome} (ID: ${id})`);
+    
     // Remove a classe 'active' de todos os botões
     document.querySelectorAll('.category-btn').forEach(btn => {
         btn.classList.remove('active');
@@ -195,16 +209,25 @@ function selectCategory(id, nome, button) {
  * Abre o modal para adicionar um novo veículo
  */
 function openModal() {
+    console.log('🔓 Abrindo modal para ADICIONAR veículo');
     editingVehicleId = null;
     document.getElementById('modalTitle').textContent = 'Adicionar Veículo';
     document.getElementById('vehicleForm').reset();
-    document.getElementById('vehicleModal').classList.add('active');
+    
+    const modal = document.getElementById('vehicleModal');
+    console.log('Modal element:', modal);
+    console.log('Modal classes antes:', modal.className);
+    
+    modal.classList.add('active');
+    
+    console.log('Modal classes depois:', modal.className);
 }
 
 /**
  * Fecha o modal
  */
 function closeModal() {
+    console.log('🔒 Fechando modal');
     document.getElementById('vehicleModal').classList.remove('active');
     document.getElementById('vehicleForm').reset();
     editingVehicleId = null;
@@ -214,6 +237,8 @@ function closeModal() {
  * Abre o modal para editar um veículo
  */
 function editVehicle(vehicleId) {
+    console.log(`✏️ Editando veículo ID: ${vehicleId}`);
+    
     const vehicle = allVehicles.find(v => v.id === vehicleId);
     
     if (!vehicle) {
@@ -242,6 +267,7 @@ function editVehicle(vehicleId) {
  */
 function saveVehicle(event) {
     event.preventDefault();
+    console.log('💾 Salvando veículo...');
 
     const formData = {
         categoria_id: selectedCategory.id,
@@ -254,6 +280,8 @@ function saveVehicle(event) {
         status_disponibilidade: document.getElementById('status_disponibilidade').value,
         imagem_url: document.getElementById('imagem_url').value.trim()
     };
+
+    console.log('📦 Dados do formulário:', formData);
 
     // Validação básica
     if (!formData.marca || !formData.modelo || !formData.placa || !formData.chassi) {
@@ -272,6 +300,8 @@ function saveVehicle(event) {
  * Cria um novo veículo via API
  */
 function createVehicle(data) {
+    console.log('➕ POST', API_BASE_URL + '/veiculos', data);
+    
     fetch(`${API_BASE_URL}/veiculos`, {
         method: 'POST',
         headers: {
@@ -280,8 +310,12 @@ function createVehicle(data) {
         credentials: 'include',
         body: JSON.stringify(data)
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('📨 Status:', response.status);
+        return response.json();
+    })
     .then(result => {
+        console.log('✅ Resposta:', result);
         if (result.status === 'success' || result.mensagem) {
             showSuccess('Veículo adicionado com sucesso!');
             closeModal();
@@ -291,8 +325,8 @@ function createVehicle(data) {
         }
     })
     .catch(error => {
-        console.error('Erro:', error);
-        showError('Erro ao conectar com a API');
+        console.error('❌ Erro:', error);
+        showError('Erro ao conectar com a API: ' + error.message);
     });
 }
 
@@ -300,6 +334,8 @@ function createVehicle(data) {
  * Atualiza um veículo via API
  */
 function updateVehicle(vehicleId, data) {
+    console.log('🔄 PUT', API_BASE_URL + '/veiculos/' + vehicleId, data);
+    
     fetch(`${API_BASE_URL}/veiculos/${vehicleId}`, {
         method: 'PUT',
         headers: {
@@ -308,8 +344,12 @@ function updateVehicle(vehicleId, data) {
         credentials: 'include',
         body: JSON.stringify(data)
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('📨 Status:', response.status);
+        return response.json();
+    })
     .then(result => {
+        console.log('✅ Resposta:', result);
         if (result.status === 'success') {
             showSuccess('Veículo atualizado com sucesso!');
             closeModal();
@@ -319,8 +359,8 @@ function updateVehicle(vehicleId, data) {
         }
     })
     .catch(error => {
-        console.error('Erro:', error);
-        showError('Erro ao conectar com a API');
+        console.error('❌ Erro:', error);
+        showError('Erro ao conectar com a API: ' + error.message);
     });
 }
 
@@ -332,6 +372,8 @@ function deleteVehicle(vehicleId) {
         return;
     }
 
+    console.log('🗑️ Deletando veículo ID:', vehicleId);
+
     fetch(`${API_BASE_URL}/veiculos/${vehicleId}`, {
         method: 'PUT',
         headers: {
@@ -340,8 +382,12 @@ function deleteVehicle(vehicleId) {
         credentials: 'include',
         body: JSON.stringify({ ativo: false })
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('📨 Status:', response.status);
+        return response.json();
+    })
     .then(result => {
+        console.log('✅ Resposta:', result);
         if (result.status === 'success') {
             showSuccess('Veículo deletado com sucesso!');
             loadVehicles();
@@ -350,8 +396,8 @@ function deleteVehicle(vehicleId) {
         }
     })
     .catch(error => {
-        console.error('Erro:', error);
-        showError('Erro ao conectar com a API');
+        console.error('❌ Erro:', error);
+        showError('Erro ao conectar com a API: ' + error.message);
     });
 }
 
@@ -364,17 +410,8 @@ function deleteVehicle(vehicleId) {
  */
 function logout() {
     if (confirm('Deseja realmente sair?')) {
-        // 🔧 Ajuste a URL de logout conforme sua aplicação
-        fetch(`${API_BASE_URL}/logout`, {
-            method: 'POST',
-            credentials: 'include'
-        })
-        .then(() => {
-            window.location.href = '/login'; // Redireciona para login
-        })
-        .catch(() => {
-            window.location.href = '/login'; // Redireciona mesmo se houver erro
-        });
+        console.log('🚪 Fazendo logout...');
+        window.location.href = '/DriverLux/login';
     }
 }
 
@@ -400,6 +437,8 @@ function showError(message) {
  * Exibe um toast (notificação)
  */
 function showToast(message, type = 'success') {
+    console.log(`🔔 [${type.toUpperCase()}]`, message);
+    
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     toast.textContent = message;
@@ -413,18 +452,8 @@ function showToast(message, type = 'success') {
 }
 
 // ============================================
-// 6️⃣ UTILITÁRIOS
+// 6️⃣ EVENT LISTENERS
 // ============================================
-
-/**
- * Formata moeda brasileira
- */
-function formatBRL(value) {
-    return new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
-        currency: 'BRL'
-    }).format(value);
-}
 
 /**
  * Fecha o modal ao clicar fora dele
@@ -435,3 +464,6 @@ document.addEventListener('click', function(event) {
         closeModal();
     }
 });
+
+console.log('✅ admin-veiculos.js carregado com sucesso!');
+console.log('📡 API Base URL:', API_BASE_URL);
