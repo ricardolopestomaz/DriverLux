@@ -41,6 +41,9 @@ if ($isApi) {
             } elseif ($action === null || is_numeric($subResource)) {
                 // Se não for uma ação de texto (como login), segue o fluxo normal de CRUD
                 $controller->handleRequest($method, $id);
+            } elseif ($action === 'me') {
+                // Isso garante que /usuarios/me chame a função correta
+                $controller->handleRequest($method, null); 
             } else {
                 // Se digitaram /usuarios/qualquercoisa que não existe
                 http_response_code(404);
