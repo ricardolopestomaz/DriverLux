@@ -1,32 +1,30 @@
 <!DOCTYPE html>
-<!--views/admin.html-->
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DriverLux - Aluguel de Carros de Luxo</title>
+
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css">
+  
+  <link rel="stylesheet" href="/DriverLux/public/assets/css/style.css">
 </head>
 <body>
 
 <header class="topo">
-  <img src="assets/img/logo.png" class="logo" alt="DriverLux">
+  <img src="/DriverLux/public/assets/img/logo.png" class="logo" alt="DriverLux">
 
   <nav>
     <a href="#">ALUGUEL DE CARROS</a>
     <a href="#">GESTÃO DE FROTAS</a>
     <a href="#">SEMINOVOS</a>
     <a href="#">LUX - CARRO POR ASSINATURA</a>
-    <a href="#">LOGIN | CADASTRAR</a>
+    <a href="javascript:void(0)" id="btn-login-trigger">LOGIN</a>
   </nav>
 
-  <div class="login-area">
-    <span class="reservas">MINHAS RESERVAS</span>
-
-    <button id="btn-login" class="btn-login">
-      LOGIN | CADASTRAR
-    </button>
+  <div class="login">
+    <strong id="boas-vindas-nome">MINHAS RESERVAS</strong>
+    <registro-login id="modal-auth" modo="popover"></registro-login>
   </div>
 </header>
 
@@ -65,14 +63,13 @@
       <span>ESCOLHA SUA MÁQUINA</span>
       <h2>Carros em <b>destaque.</b></h2>
     </div>
-
-    <img src="assets/img/logo.png" alt="DriverLux">
+    <img src="/DriverLux/public/assets/img/logo.png" alt="DriverLux">
   </div>
 
   <div class="cards">
     <article class="card">
       <span class="tag">DESTAQUE</span>
-      <img src="assets/img/bmw.jpg" alt="BMW M4">
+      <img src="/DriverLux/public/assets/img/bmw.jpg" alt="BMW M4">
       <h3>BMW M4 COMPETITION</h3>
       <p>Performance esportiva com elegância incomparável.</p>
       <small>A PARTIR DE</small>
@@ -82,7 +79,7 @@
 
     <article class="card">
       <span class="tag">DESTAQUE</span>
-      <img src="assets/img/audi.jpg" alt="Audi RS7">
+      <img src="/DriverLux/public/assets/img/audi.jpg" alt="Audi RS7">
       <h3>AUDI RS7</h3>
       <p>Potência, tecnologia e design em perfeita harmonia.</p>
       <small>A PARTIR DE</small>
@@ -92,7 +89,7 @@
 
     <article class="card">
       <span class="tag">DESTAQUE</span>
-      <img src="assets/img/mercedes.jpg" alt="Mercedes AMG GT">
+      <img src="/DriverLux/public/assets/img/mercedes.jpg" alt="Mercedes AMG GT">
       <h3>MERCEDES AMG GT</h3>
       <p>Luxo extremo com DNA de corrida.</p>
       <small>A PARTIR DE</small>
@@ -117,23 +114,45 @@
   </div>
 </section>
 
-<registro-login modo="popover"></registro-login>
+<script src="/DriverLux/public/assets/js/registro-login.js"></script>
 
-<script src="assets/js/registro-login.js"></script>
 <script>
-document.getElementById('btn-login').addEventListener('click', function(e) {
-  e.preventDefault();
+  // 1. Abrir o Modal de Login ao clicar
+  const btnLogin = document.getElementById('btn-login-trigger');
+  const modalAuth = document.getElementById('modal-auth');
 
-  const registroLogin = document.querySelector('registro-login');
-
-  if (registroLogin && registroLogin.shadowRoot) {
-    const authContainer = registroLogin.shadowRoot.getElementById('auth-container');
-    if (authContainer) {
-      authContainer.classList.remove('hidden');
-    }
+  if (btnLogin && modalAuth) {
+    btnLogin.addEventListener('click', () => {
+      // Acessa o elemento escondido dentro do shadowRoot e remove a classe hidden
+      const container = modalAuth.shadowRoot.getElementById('auth-container');
+      if (container) {
+        container.classList.remove('hidden');
+      }
+    });
   }
-});
-</script>S
+
+  // 2. Checar se o usuário já está logado ao carregar a página
+  window.addEventListener('load', async () => {
+    try {
+      const res = await fetch('/DriverLux/public/api/usuarios/me');
+      const data = await res.json();
+      
+      // Se logado, atualiza a interface
+      if (data.logado && data.usuario) {
+        // Pega apenas o primeiro nome (ex: "Ricardo")
+        const primeiroNome = data.usuario.nome.split(' ')[0];
+        document.getElementById('boas-vindas-nome').textContent = `Olá, ${primeiroNome}!`;
+        
+        // Esconde o botão "LOGIN" do menu superior para não ficar redundante
+        if (btnLogin) {
+          btnLogin.style.display = 'none';
+        }
+      }
+    } catch (e) {
+      console.error("Erro ao verificar sessão do usuário:", e);
+    }
+  });
+</script>
 
 </body>
 </html>

@@ -1,84 +1,125 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<?php
+// /public/index.php
 
-<title>DriverLux</title>
+// 1. Defina a raiz do projeto
+define('ROOT_PATH', dirname(__DIR__));
 
-<link rel="stylesheet" href="assets/css/style.css">
+// 2. Captura e limpa a URI
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$uri = explode('/', trim($uri, '/'));
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+// Remove 'DriverLux' e 'public' da jogada para não confundir o roteador
+if (isset($uri[0]) && strtolower($uri[0]) === 'driverlux') array_shift($uri);
+if (isset($uri[0]) && strtolower($uri[0]) === 'public') array_shift($uri);
 
-</head>
-<body>
+$isApi = isset($uri[0]) && $uri[0] === 'api';
 
-<header class="header">
-    <div class="logo">DRIVERLUX</div>
+if ($isApi) {
+    // ==========================================
+    // MODO API
+    // ==========================================
+    header("Access-Control-Allow-Origin: *");
+    header("Content-Type: application/json; charset=UTF-8");
+    header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+    
+    if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') { exit; }
 
-    <nav>
-        <a href="#">Aluguel de carros</a>
-        <a href="#">Gestão de frotas</a>
-        <a href="#">Seminovos</a>
-    </nav>
+    $method = $_SERVER['REQUEST_METHOD'];
+    $resource = isset($uri[1]) ? $uri[1] : null; 
+    $subResource = isset($uri[2]) ? $uri[2] : null;
+    
+    $id = is_numeric($subResource) ? (int)$subResource : null;
+    $action = !is_numeric($subResource) ? $subResource : null;
 
-    <div class="auth">
-        <registro-login modo="popover"></registro-login>
-    </div>
-</header>
+    switch ($resource) {
+        case 'usuarios':
+            require_once ROOT_PATH . '/modules/Usuarios/UsuarioController.php';
+            $controller = new UsuarioController();
 
-<section class="hero">
+            if ($action === 'login') {
+                $controller->login($method); 
+            } elseif ($action === null || is_numeric($subResource)) {
+                // Se não for uma ação de texto (como login), segue o fluxo normal de CRUD
+                $controller->handleRequest($method, $id);
+            } elseif ($action === 'me') {
+                // Isso garante que /usuarios/me chame a função correta
+                $controller->handleRequest($method, null); 
+            } else {
+                // Se digitaram /usuarios/qualquercoisa que não existe
+                http_response_code(404);
+                echo json_encode(["erro" => "Ação não encontrada."], JSON_UNESCAPED_UNICODE);
+            }
+            break;
+            
+        case 'veiculos':
+            require_once ROOT_PATH . '/modules/Veiculos/VeiculoController.php';
+            $controller = new VeiculoController();
+            $controller->handleRequest($method, $id);
+            break;
 
-    <div class="hero-text">
-        <span class="sub">DIRIJA O</span>
-        <h1>EXTRAORDINÁRIO</h1>
+        case 'categorias':
+            require_once ROOT_PATH . '/modules/Categorias/CategoriaController.php';
+            $controller = new CategoriaController();
+            $controller->handleRequest($method, $id);
+            break;
 
-        <p>Aluguel de carros de luxo para quem exige mais do que o comum.</p>
+        case 'protecoes':
+            require_once ROOT_PATH . '/modules/Protecoes/ProtecaoController.php';
+            $controller = new ProtecaoController();
+            $controller->handleRequest($method, $id);
+            break;
 
-        <div class="buttons">
-            <button class="primary">Reservar agora</button>
-            <button class="outline">Ver frota</button>
-        </div>
-    </div>
+        case 'km':
+            require_once ROOT_PATH . '/modules/Quilometragem/KMController.php';
+            $controller = new KMController();
+            $controller->handleRequest($method, $id);
+            break;
 
-    <div class="hero-img">
-        <img src="assets/img/fundo inicial.jpg">
-    </div>
+        case 'cupons':
+            require_once ROOT_PATH . '/modules/Cupons/CupomController.php';
+            $controller = new CupomController();
+            $controller->handleRequest($method, $id);
+            break;
 
-</section>
+        case 'reservas':
+            require_once ROOT_PATH . '/modules/Reservas/ReservaController.php';
+            $controller = new ReservaController();
+            $controller->handleRequest($method, $id);
+            break;
 
-<section class="destaques">
+        default:
+            http_response_code(404);
+            echo json_encode(["mensagem" => "Endpoint da API não encontrado."]);
+            break;
+    }
 
-    <h2>Carros em destaque</h2>
+} else {
+    // ==========================================
+    // MODO SITE (Retorna páginas HTML/PHP)
+    // ==========================================
+    header("Content-Type: text/html; charset=UTF-8");
+    
+    $page = !empty($uri[0]) ? $uri[0] : 'home';
+    
+    // Usando DIRECTORY_SEPARATOR para garantir que o Windows entenda o caminho
+    $basePath = ROOT_PATH . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR;
+    $filePhp = $basePath . $page . ".php";
+    $fileHtml = $basePath . $page . ".html";
 
-    <div class="cards">
-
-        <div class="card">
-            <img src="assets/img/bmw.jpg">
-            <h3>BMW M4 COMPETITION</h3>
-            <p>A partir de</p>
-            <span>R$ 1.200/dia</span>
-        </div>
-
-        <div class="card">
-            <img src="assets/img/AUDI RS7.jpg">
-            <h3>AUDI RS7</h3>
-            <p>A partir de</p>
-            <span>R$ 1.500/dia</span>
-        </div>
-
-        <div class="card">
-            <img src="assets/img/MERCEDES AMG GT.jpg">
-            <h3>MERCEDES AMG GT</h3>
-            <p>A partir de</p>
-            <span>R$ 1.800/dia</span>
-        </div>
-
-    </div>
-
-</section>
-
-<script src="assets/js/registro-login.js"></script>
-
-</body>
-</html>
+    if (file_exists($filePhp)) {
+        require_once $filePhp;
+    } elseif (file_exists($fileHtml)) {
+        readfile($fileHtml);
+    } else {
+        http_response_code(404);
+        $file404 = $basePath . "404.php";
+        
+        if (file_exists($file404)) {
+            require_once $file404;
+        } else {
+            echo "<h1>404 ;-;</h1>";
+            echo "<p>Página <strong>" . htmlspecialchars($page) . "</strong> não encontrada.</p>";
+            echo "<a href='/DriverLux/home'>Voltar para o início</a>";
+        }
+    }
+}
