@@ -1,10 +1,9 @@
-<p align="center">
-  <span style="font-size: 30px; font-weight: bold; vertical-align: middle;">
-    Universidade Federal do Tocantins (UFT)
-  </span>
-  <img src="public/assets/img/marcaUFT_vertical.png" width="70"
-       style="vertical-align: middle; margin-left: 20px;"/>
-</p>
+<div align="center">
+
+| <h2>Universidade Federal do Tocantins (UFT)</h2> | <img src="public/assets/img/marcaUFT_vertical.png" width="120"/> |
+| --- | --- |
+
+</div>
 
 **Curso:** Bacharelado em Ciência da Computação  
 **Professor:** Edeilson Milhomem da Silva  
