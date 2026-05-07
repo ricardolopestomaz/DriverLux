@@ -1,5 +1,12 @@
-# Universidade Federal do Tocantins (UFT)
+<p align="center">
+  <span style="font-size: 30px; font-weight: bold; vertical-align: middle;">
+    Universidade Federal do Tocantins (UFT)
+  </span>
+  <img src="public/assets/img/marcaUFT_vertical.png" width="70"
+       style="vertical-align: middle; margin-left: 20px;"/>
+</p>
 
+**Curso:** Bacharelado em Ciência da Computação  
 **Professor:** Edeilson Milhomem da Silva  
 **Disciplina:** Engenharia de Software  
 **Semestre:** 2026.1
@@ -23,7 +30,15 @@
 </small>
 
 ---
-
+## 🏷️ Releases
+| Planejamento de Sprints| Releases |
+|--------------|----------|
+|Sprint 1| [v0.1.0](https://github.com/ricardolopestomaz/DriverLux/releases/tag/v0.1.0)
+|Sprint 2| [v0.2.0](https://github.com/ricardolopestomaz/DriverLux/releases/tag/v0.2.0)|
+|Sprint 3| [v0.3.0]()|
+|Sprint 4| [v0.4.0]()|
+|Sprint 5| [v0.5.0]()|
+---
 ## 🚗 Drive Lux
 O Drive Lux é um sistema de locação de veículos de alto padrão, focado em marcas de luxo como Porsche, Ferrari e Rolls-Royce.
 
@@ -41,7 +56,6 @@ Entre as principais funcionalidades do sistema estão:
 Desenvolver um sistema web para locação de veículos de luxo, permitindo o gerenciamento eficiente de clientes, veículos e reservas.
 
 ---
-
 ## 🛠️ Tecnologias Utilizadas
 - **Linguagem:** PHP 8.x
 - **Banco de Dados:** MySQL
