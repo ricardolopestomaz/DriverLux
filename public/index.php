@@ -37,16 +37,27 @@ if ($isApi) {
             $controller = new UsuarioController();
 
             if ($action === 'login') {
-                $controller->login($method); 
-            } elseif ($action === null || is_numeric($subResource)) {
-                // Se não for uma ação de texto (como login), segue o fluxo normal de CRUD
-                $controller->handleRequest($method, $id);
+                $controller->login($method);
+ 
+            } elseif ($action === 'logout') {
+            session_start();
+            session_unset();
+            session_destroy();
+
+            http_response_code(200);
+             echo json_encode([
+                "status" => "success",
+                "mensagem" => "Logout realizado com sucesso."
+            ], JSON_UNESCAPED_UNICODE);
+
             } elseif ($action === 'me') {
-                // Isso garante que /usuarios/me chame a função correta
-                $controller->handleRequest($method, null); 
+                $controller->handleRequest($method, null);
+
+            } elseif ($action === null || is_numeric($subResource)) {
+                $controller->handleRequest($method, $id);
+
             } else {
-                // Se digitaram /usuarios/qualquercoisa que não existe
-                http_response_code(404);
+                 http_response_code(404);
                 echo json_encode(["erro" => "Ação não encontrada."], JSON_UNESCAPED_UNICODE);
             }
             break;
