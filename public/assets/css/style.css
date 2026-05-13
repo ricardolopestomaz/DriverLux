@@ -15,11 +15,11 @@ body {
 .topo {
   height: 88px;
   background: #3b0567;
+  color: #000; /* CORREÇÃO 1: Garante que "Minhas Reservas" fique branco */
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 42px;
-  color: #fff;
 }
 
 .logo {
@@ -37,6 +37,7 @@ body {
   text-decoration: none;
   font-size: 14px;
   font-weight: 800;
+  transition: color 0.3s;
 }
 
 .topo nav a:hover {
@@ -90,6 +91,11 @@ body {
   color: #4b0082;
   font-weight: 900;
   cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.busca button:hover {
+    transform: scale(1.02);
 }
 
 /* HERO */
@@ -109,11 +115,17 @@ body {
   max-width: 620px;
 }
 
+/* CORREÇÃO 2: Separei as cores dos spans de acordo com o fundo */
 .hero-texto span,
-.destaques span,
 .cta span {
   font-weight: 900;
-  color: #5b009f;
+  color: #5b009f; /* Texto roxo porque o fundo destas sessões é claro */
+  letter-spacing: 1px;
+}
+
+.destaques span {
+  font-weight: 900;
+  color: #ffc400; /* Texto amarelo porque o fundo da sessão destaques é roxo escuro */
   letter-spacing: 1px;
 }
 
@@ -288,6 +300,12 @@ body {
   border-radius: 5px;
   text-decoration: none;
   font-size: 30px;
+  transition: 0.3s;
+}
+
+.card a:hover {
+    background: #8014e8;
+    color: #fff;
 }
 
 /* CTA */
@@ -315,6 +333,10 @@ body {
   margin-bottom: 28px;
   color: #5f2b88;
   font-size: 16px;
+}
+
+#boas-vindas-nome{
+  color: #fff;
 }
 
 /* RESPONSIVO */
@@ -352,4 +374,83 @@ body {
     flex-direction: column;
     gap: 10px;
   }
+}
+
+/* =========================
+   MENU DO USUÁRIO LOGADO
+========================= */
+
+.area-usuario {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 170px;
+}
+
+.btn-usuario {
+  background: #ffffff;
+  color: #440c77;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-family: "Poppins", Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-usuario:hover {
+  background: #ffc400;
+  color: #440c77;
+}
+
+.seta-menu {
+  font-size: 11px;
+}
+
+.menu-usuario {
+  position: absolute;
+  top: 48px;
+  right: 0;
+  width: 230px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  z-index: 999999;
+}
+
+.menu-usuario a {
+  display: block;
+  width: 100%;
+  padding: 14px 18px;
+  background: #ffffff;
+  color: #2b0647;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: "Poppins", Arial, sans-serif;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.menu-usuario a:hover {
+  background: #f3e8ff;
+  color: #6b00cc;
+}
+
+#btn-sair {
+  color: #b00020;
+}
+
+#btn-sair:hover {
+  background: #ffe8e8;
+  color: #b00020;
+}
+
+.esconder {
+  display: none !important;
 }

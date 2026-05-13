@@ -6,9 +6,9 @@
   <title>DriverLux - Aluguel de Carros de Luxo</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800;900&display=swap" rel="stylesheet">
-  
-  <link rel="stylesheet" href="/DriverLux/public/assets/css/style.css">
+  <link rel="stylesheet" href="/DriverLux/public/assets/css/style.css?v=3">
 </head>
+
 <body>
 
 <header class="topo">
@@ -22,8 +22,18 @@
     <a href="javascript:void(0)" id="btn-login-trigger">LOGIN</a>
   </nav>
 
-  <div class="login">
-    <strong id="boas-vindas-nome">MINHAS RESERVAS</strong>
+  <div class="area-usuario">
+    <button id="btn-menu-usuario" class="btn-usuario esconder">
+      <span id="nome-usuario">Usuário</span>
+      <span class="seta-menu">▼</span>
+    </button>
+
+    <div id="menu-usuario" class="menu-usuario esconder">
+      <a href="#">Minha conta</a>
+      <a href="#">Minhas reservas</a>
+      <a href="#" id="btn-sair">Sair</a>
+    </div>
+
     <registro-login id="modal-auth" modo="popover"></registro-login>
   </div>
 </header>
@@ -115,44 +125,7 @@
 </section>
 
 <script src="/DriverLux/public/assets/js/registro-login.js"></script>
-
-<script>
-  // 1. Abrir o Modal de Login ao clicar
-  const btnLogin = document.getElementById('btn-login-trigger');
-  const modalAuth = document.getElementById('modal-auth');
-
-  if (btnLogin && modalAuth) {
-    btnLogin.addEventListener('click', () => {
-      // Acessa o elemento escondido dentro do shadowRoot e remove a classe hidden
-      const container = modalAuth.shadowRoot.getElementById('auth-container');
-      if (container) {
-        container.classList.remove('hidden');
-      }
-    });
-  }
-
-  // 2. Checar se o usuário já está logado ao carregar a página
-  window.addEventListener('load', async () => {
-    try {
-      const res = await fetch('/DriverLux/public/api/usuarios/me');
-      const data = await res.json();
-      
-      // Se logado, atualiza a interface
-      if (data.logado && data.usuario) {
-        // Pega apenas o primeiro nome (ex: "Ricardo")
-        const primeiroNome = data.usuario.nome.split(' ')[0];
-        document.getElementById('boas-vindas-nome').textContent = `Olá, ${primeiroNome}!`;
-        
-        // Esconde o botão "LOGIN" do menu superior para não ficar redundante
-        if (btnLogin) {
-          btnLogin.style.display = 'none';
-        }
-      }
-    } catch (e) {
-      console.error("Erro ao verificar sessão do usuário:", e);
-    }
-  });
-</script>
+<script src="/DriverLux/public/assets/js/menu-usuario.js?v=3"></script>
 
 </body>
 </html>
