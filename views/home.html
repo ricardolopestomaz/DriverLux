@@ -19,8 +19,7 @@
     <a href="#">GESTÃO DE FROTAS</a>
     <a href="#">SEMINOVOS</a>
     <a href="#">LUX - CARRO POR ASSINATURA</a>
-    <a href="javascript:void(0)" id="btn-login-trigger" style="color: blue">LOGIN</a>
-
+    <a href="javascript:void(0)" id="btn-login-trigger">LOGIN</a>
   </nav>
 
   <div class="area-usuario">
@@ -127,6 +126,50 @@
 
 <script src="/DriverLux/public/assets/js/registro-login.js"></script>
 <script src="/DriverLux/public/assets/js/menu-usuario.js?v=3"></script>
+
+<script>
+  window.addEventListener('load', async () => {
+    // 1. Lógica para abrir o modal de login quando clicar em "LOGIN"
+    const btnLogin = document.getElementById('btn-login-trigger');
+    const modalAuth = document.getElementById('modal-auth');
+
+    if (btnLogin && modalAuth) {
+      btnLogin.addEventListener('click', () => {
+        const container = modalAuth.shadowRoot.getElementById('auth-container');
+        if (container) container.classList.remove('hidden');
+      });
+    }
+
+    // 2. Proteção de Rota e Atualização do Menu
+    try {
+      const res = await fetch('/DriverLux/public/api/usuarios/me');
+      const data = await res.json();
+      
+      if (data.logado && data.usuario) {
+        
+        // 🚨 REDIRECIONAMENTO DE ADMIN: Se for administrador, tira ele da Home!
+        // (Verificando 'administrador' ou 'admin' para evitar erros de nomenclatura)
+        if (data.usuario.perfil === 'administrador' || data.usuario.perfil === 'admin') {
+            window.location.href = '/DriverLux/views/admin.html';
+            return; // Para a execução aqui
+        }
+
+        // 🟢 Se for cliente comum: Atualiza o botão com o nome dele
+        const primeiroNome = data.usuario.nome.split(' ')[0];
+        document.getElementById('nome-usuario').textContent = primeiroNome;
+        
+        // Esconde o botão "LOGIN" e mostra o botão do usuário
+        if (btnLogin) btnLogin.classList.add('esconder');
+        const btnMenuUsuario = document.getElementById('btn-menu-usuario');
+        if (btnMenuUsuario) btnMenuUsuario.classList.remove('esconder');
+      }
+    } catch (e) {
+      console.error("Erro ao verificar sessão do usuário:", e);
+    }
+  });
+</script>
+</body>
+</html>
 
 </body>
 </html>

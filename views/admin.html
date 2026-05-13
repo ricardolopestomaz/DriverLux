@@ -1,6 +1,32 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    
+<script>
+        window.addEventListener('load', async () => {
+            try {
+                const res = await fetch('/DriverLux/public/api/usuarios/me');
+                const data = await res.json();
+
+                // 1. Se NÃO estiver logado, joga para a home
+                if (!data || !data.logado || !data.usuario) {
+                    window.location.href = '/DriverLux/views/home.html';
+                    return;
+                }
+
+                // 2. Se ESTIVER logado, mas NÃO for admin nem administrador, joga pra home
+                const perfil = data.usuario.perfil;
+                if (perfil !== 'administrador' && perfil !== 'admin') {
+                    window.location.href = '/DriverLux/views/home.html'; 
+                }
+                
+                // Se chegou aqui, ele é admin e a página pode carregar em paz!
+            } catch (err) {
+                window.location.href = '/DriverLux/views/home.html';
+            }
+        });
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestão de Frotas - DriverLux Admin</title>
@@ -786,5 +812,31 @@
     </div>
 
     <script src="../modules/Veiculos/admin-veiculos.js"></script>
+
+    <script>
+        async function logout() {
+            try {
+                // Desativa o botão e muda o texto para dar um feedback visual
+                const btn = document.querySelector('.logout-btn');
+                btn.textContent = "Saindo...";
+                btn.disabled = true;
+
+                // Faz a requisição para o seu PHP encerrar a sessão
+                // (Assumindo que sua rota de logout seja /logout)
+                await fetch('/DriverLux/public/api/usuarios/logout', { 
+                    method: 'POST', // Pode ser GET dependendo de como você fez no PHP
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                // Limpa tudo e joga para a Home
+                window.location.href = '/DriverLux/views/home.html';
+                
+            } catch (error) {
+                console.error("Erro ao sair:", error);
+                // Mesmo se der erro na rede, joga para a Home por segurança
+                window.location.href = '/DriverLux/views/home.html';
+            }
+        }
+    </script>
 </body>
 </html>
