@@ -1,0 +1,344 @@
+/* ==========================================================
+   DRIVERLUX ADMIN - ESTILO PREMIUM UNIFICADO
+   Baseado em: perfil_cliente.css e home.html
+   ========================================================== */
+
+:root {
+    /* Cores extraídas do perfil_cliente.css */
+    --preto: #080808;
+    --grafite: #111111;
+    --grafite2: #181818;
+    --borda: #222222;
+    --borda2: #2d2d2d;
+    --roxo: #6c2fff;
+    --roxo2: #8a52ff;
+    --roxo-glow: rgba(108, 47, 255, 0.22);
+    --ouro: #c9a84c;
+    --ouro2: #e8c96a;
+    --branco: #f0f0f0;
+    --cinza: #888;
+    --cinza2: #555;
+    --sucesso: #2ecc71;
+    --perigo: #e74c3c;
+    --bg-topo: #3b0567; /* Cor da barra da home */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--branco);
+    color: var(--preto);
+    min-height: 100vh;
+}
+
+/* ESTRUTURA PRINCIPAL */
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* SIDEBAR (MENU LATERAL) */
+#sidebar {
+    width: 260px;
+    background: var(--grafite);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    border-right: 1px solid var(--borda2);
+}
+
+.sidebar-logo {
+    background: var(--bg-topo); /* Fundo igual ao topo da Home para a logo */
+    padding: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 2px solid var(--roxo);
+}
+
+.sidebar-logo img {
+    width: 100%;
+    max-width: 150px;
+}
+
+#sidebar nav {
+    flex: 1;
+    padding: 30px 15px;
+}
+
+#sidebar nav a {
+    color: #bbb;
+    text-decoration: none;
+    padding: 12px 20px;
+    display: block;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+#sidebar nav a:hover {
+    background: var(--roxo-glow);
+    color: var(--roxo2);
+}
+
+#sidebar nav a.ativo {
+    background: var(--roxo);
+    color: white;
+    box-shadow: 0 4px 15px rgba(108, 47, 255, 0.3);
+}
+
+.logout-btn {
+    margin: 20px;
+    padding: 12px;
+    background: rgba(231, 76, 60, 0.1);
+    color: var(--perigo);
+    border: 1px solid var(--perigo);
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: 0.3s;
+}
+
+.logout-btn:hover {
+    background: var(--perigo);
+    color: white;
+}
+
+/* CONTEÚDO PRINCIPAL */
+.main-content {
+    flex: 1;
+    background: #fff;
+}
+
+/* HEADER PREMIUM (Estilo Painel Cliente) */
+.admin-header-premium {
+    background: white;
+    padding: 30px 45px;
+    border-bottom: 1px solid #eee;
+}
+
+.perfil-admin-top {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.avatar-wrapper {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    border: 3px solid var(--roxo);
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    background: #eee;
+}
+
+.avatar-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.admin-txt .tag-admin {
+    background: var(--roxo-glow);
+    color: var(--roxo);
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 50px;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+.admin-txt h1 {
+    font-size: 24px;
+    color: var(--preto);
+    font-weight: 800;
+}
+
+/* ÁREA DE CONTEÚDO */
+.content-wrapper {
+    padding: 40px;
+}
+
+/* FILTROS */
+.filtros {
+    background: #fdfdfd;
+    padding: 25px;
+    border-radius: 15px;
+    border: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 35px;
+}
+
+.category-btn {
+    padding: 10px 22px;
+    border-radius: 50px;
+    border: 1.5px solid #ddd;
+    background: white;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--cinza2);
+    transition: 0.3s;
+}
+
+.category-btn:hover {
+    border-color: var(--roxo);
+    color: var(--roxo);
+}
+
+.category-btn.active {
+    background: var(--roxo);
+    color: white;
+    border-color: var(--roxo);
+}
+
+.btn-adicionar {
+    margin-left: auto;
+    background: linear-gradient(135deg, var(--ouro), var(--roxo2));
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 50px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 5px 15px rgba(108, 47, 255, 0.2);
+}
+
+.btn-adicionar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(108, 47, 255, 0.4);
+}
+
+/* GRID DE VEÍCULOS */
+.grid-veiculos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+/* Estilo do Card similar ao Perfil */
+.card-veiculo {
+    background: white;
+    border-radius: 20px;
+    border: 1px solid #eee;
+    padding: 20px;
+    transition: 0.3s;
+}
+
+.card-veiculo:hover {
+    border-color: var(--roxo2);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+/* MODAL - ESTILO PREMIUM */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active { display: flex; }
+
+.modal-content {
+    background: white;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 25px;
+    padding: 40px;
+    position: relative;
+}
+
+.modal-header {
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    border-left: 5px solid var(--roxo);
+    padding-left: 15px;
+    font-size: 22px;
+}
+
+.form-group { margin-bottom: 15px; }
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: var(--cinza2);
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: 1.5px solid #eee;
+    background: #f9f9f9;
+    font-family: inherit;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.modal-footer {
+    margin-top: 25px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+}
+
+.btn-save {
+    background: var(--roxo);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 50px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* AUXILIARES */
+.loading {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 50px;
+    color: var(--roxo);
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid var(--roxo);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 15px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
