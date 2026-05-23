@@ -110,10 +110,9 @@ if ($isApi) {
     // ==========================================
     header("Content-Type: text/html; charset=UTF-8");
     
-    $page = !empty($uri[0]) ? $uri[0] : 'home';
+    $page = !empty($uri[0]) ? $uri[0] : 'index.html';
     
     // Usando DIRECTORY_SEPARATOR para garantir que o Windows entenda o caminho
-    $basePath = ROOT_PATH . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR;
     $filePhp = $basePath . $page . ".php";
     $fileHtml = $basePath . $page . ".html";
 
@@ -130,7 +129,7 @@ if ($isApi) {
         } else {
             echo "<h1>404 ;-;</h1>";
             echo "<p>Página <strong>" . htmlspecialchars($page) . "</strong> não encontrada.</p>";
-            echo "<a href='/DriverLux/home'>Voltar para o início</a>";
+            echo "<a href='/DriverLux/index.html'>Voltar para o início</a>";
         }
     }
 }

@@ -198,7 +198,7 @@ class VeiculoController {
             exit; // O 'exit' mata o processo imediatamente
         }
 
-        // Verifica seé ADMIN
+        // Verifica se é ADMIN
         if ($_SESSION['usuario_perfil'] !== 'admin') {
             http_response_code(403);
             echo json_encode([

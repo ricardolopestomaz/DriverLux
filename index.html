@@ -7,6 +7,8 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/DriverLux/public/assets/css/style.css?v=3">
+  <link rel="icon" type="image/x-icon" href="/DriverLux/public/assets/img/corrida.png">
+
 </head>
 
 <body>
@@ -150,7 +152,7 @@
         // 🚨 REDIRECIONAMENTO DE ADMIN: Se for administrador, tira ele da Home!
         // (Verificando 'administrador' ou 'admin' para evitar erros de nomenclatura)
         if (data.usuario.perfil === 'administrador' || data.usuario.perfil === 'admin') {
-            window.location.href = '/DriverLux/views/admin.php';
+            window.location.href = '/DriverLux/views/admin.html';
             return; // Para a execução aqui
         }
 
