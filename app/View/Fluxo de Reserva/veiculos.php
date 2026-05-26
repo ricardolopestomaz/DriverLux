@@ -1,11 +1,10 @@
 <?php
-// views/veiculos.php
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-require_once __DIR__ . '/../modules/Veiculos/VeiculoController.php';
+require_once __DIR__ . '/../../Controller/VeiculoController.php';
 
 ob_start();
 $controller = new VeiculoController();
@@ -48,16 +47,17 @@ if (!empty($veiculos)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nossa Frota - DriverLux</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../public/assets/css/veiculos.css">
+    <link rel="stylesheet" href="../../../public/assets/css/veiculos.css">
 </head>
 <body>
 
     <header class="topo">
         <img src="/DriverLux/public/assets/img/logo.png" class="logo" alt="DriverLux">
         <nav>
-            <a href="#">ALUGUEL DE CARROS</a>
+           <a href="#">ALUGUEL DE CARROS</a>
             <a href="#">GESTÃO DE FROTAS</a>
-            <a href="#">ASSINATURA</a>
+            <a href="#">SEMINOVOS</a>
+            <a href="#">LUX - CARRO POR ASSINATURA</a>
             <a href="javascript:void(0)" id="btn-login-trigger">LOGIN</a>
         </nav>
         <div class="area-usuario">

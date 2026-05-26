@@ -92,40 +92,41 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
   // LOGOUT
-  if (btnSair) {
+ if (btnSair) {
 
-    btnSair.addEventListener('click', async (evento) => {
+  btnSair.addEventListener('click', async (evento) => {
 
-      evento.preventDefault();
+    evento.preventDefault();
 
-      try {
+    try {
 
-        const resposta = await fetch(
-          '/DriverLux/public/api/usuarios/logout',
-          {
-            method: 'POST'
-          }
-        );
-
-        const dados = await resposta.json();
-
-        if (dados.status === 'success') {
-
-          window.location.href = '/DriverLux/';
-
+      const resposta = await fetch(
+        '/DriverLux/public/api/usuarios/logout',
+        {
+          method: 'POST',
+          credentials: 'include'
         }
+      );
 
-      } catch (erro) {
+      const dados = await resposta.json();
 
-        console.error(
-          'Erro ao sair:',
-          erro
-        );
+      if (dados.status === 'success') {
+
+        window.location.href =
+          '/DriverLux/public/';
 
       }
 
-    });
+    } catch (erro) {
 
-  }
+      console.error(
+        'Erro ao sair:',
+        erro
+      );
+
+    }
+
+  });
+}
 
 });

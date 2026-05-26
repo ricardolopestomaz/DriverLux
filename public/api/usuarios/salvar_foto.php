@@ -8,7 +8,7 @@ if (!isset($_SESSION['usuario_id'])) {
     exit;
 }
 
-require_once __DIR__ . '/../config/db_connect.php';
+require_once __DIR__ . '/../../../config/db_connect.php';
 $database = new Database();
 $pdo = $database->getConnection();
 
@@ -25,15 +25,26 @@ if (!in_array($tipo, $tiposPermitidos)) {
     exit;
 }
 
-$pasta = __DIR__ . '/assets/fotoperfil/';
-if (!is_dir($pasta)) mkdir($pasta, 0755, true);
+// CORREÇÃO: Voltando duas pastas para sair de api/usuarios e achar a assets correta
+$pasta = __DIR__ . '/../../assets/fotoperfil/';
+if (!is_dir($pasta)) {
+    mkdir($pasta, 0755, true);
+}
 
 $extensao = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'][$tipo];
 $nomeArquivo = 'usuario_' . (int)$_SESSION['usuario_id'] . '.' . $extensao;
 $destino = $pasta . $nomeArquivo;
 
+// Limpa extensões antigas para evitar arquivos duplicados se o usuário mudar o formato
+foreach (['jpg', 'png', 'webp'] as $ext) {
+    $arquivoAntigo = $pasta . 'usuario_' . (int)$_SESSION['usuario_id'] . '.' . $ext;
+    if (file_exists($arquivoAntigo) && $ext !== $extensao) {
+        @unlink($arquivoAntigo);
+    }
+}
+
 if (!move_uploaded_file($arquivo['tmp_name'], $destino)) {
-    echo json_encode(['erro' => 'Falha ao salvar o arquivo.']);
+    echo json_encode(['erro' => 'Falha ao salvar o arquivo no servidor.']);
     exit;
 }
 

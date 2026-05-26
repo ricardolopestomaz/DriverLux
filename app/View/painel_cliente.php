@@ -23,7 +23,7 @@
     <a href="#">LUX - CARRO POR ASSINATURA</a>
   </nav>
   <div class="breadcrumb">
-    <a href="/DriverLux/views/home.html" style="color: white">Início</a>
+    <a href="/DriverLux/app/View/home.html" style="color: white">Início</a>
     <span class="sep"> › </span>
     <span class="atual">Meu Perfil</span>
   </div>
