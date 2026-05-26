@@ -3,7 +3,7 @@ class RegistroLogin extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
         // Caminho absoluto para a sua API
-        this.apiUrl = '/DriverLux/public/api/usuarios';
+        this.apiUrl = '/DriverLux/api/usuarios';
     }
 
     connectedCallback() {
