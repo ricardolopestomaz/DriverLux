@@ -40,10 +40,40 @@
 </header>
 
 <section class="busca">
-  <input type="text" placeholder="Onde você quer retirar o seu carro?">
-  <input type="text" placeholder="Data">
-  <input type="text" placeholder="Hora">
-  <button>Economize com o aluguel mensal</button>
+  <div class="campo-localizacao">
+    <input 
+      id="local-retirada"
+      type="text"
+      placeholder="Onde você quer retirar o carro?"
+      autocomplete="off"
+    >
+
+    <div id="lista-locais" class="lista-locais esconder">
+      <div class="titulo-lista">BRASIL</div>
+
+      <div class="opcao-local" data-local="Agência Aeroporto Palmas">
+        <span>✈️</span>
+        <div>
+          <p>Palmas</p>
+          <strong>Agência Aeroporto Palmas</strong>
+        </div>
+      </div>
+
+      <div class="opcao-local" data-local="Agência Centro Palmas">
+      </div>
+          <p>Palmas</p>
+          <strong>Agência Centro Palmas</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <input id="data-retirada" type="date">
+  <input id="hora-retirada" type="time">
+
+  <button id="btn-buscar-disponibilidade">
+    Buscar disponibilidade
+  </button>
 </section>
 
 <section class="hero">

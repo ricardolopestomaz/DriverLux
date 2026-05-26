@@ -129,3 +129,126 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
 });
+
+// ======================================
+// BUSCAR DISPONIBILIDADE
+// ======================================
+
+const btnBuscarDisponibilidade =
+  document.getElementById(
+    'btn-buscar-disponibilidade'
+  );
+
+if (btnBuscarDisponibilidade) {
+
+  btnBuscarDisponibilidade
+    .addEventListener('click', async () => {
+
+      const local =
+        document.getElementById(
+          'local-retirada'
+        ).value.trim();
+
+      const data =
+        document.getElementById(
+          'data-retirada'
+        ).value;
+
+      const hora =
+        document.getElementById(
+          'hora-retirada'
+        ).value;
+
+      // VALIDAÇÃO
+      if (!local || !data || !hora) {
+
+        alert(
+          'Preencha localização, data e hora.'
+        );
+
+        return;
+
+      }
+
+      try {
+
+        // EXEMPLO DE BUSCA
+        const resposta = await fetch(
+          `/DriverLux/public/api/veiculos`
+        );
+
+        const veiculos =
+          await resposta.json();
+
+        console.log(
+          'Veículos encontrados:',
+          veiculos
+        );
+
+        // REDIRECIONAR
+        const params = new URLSearchParams({
+
+          retirada: local,
+          data: data,
+          hora: hora
+
+        });
+
+        window.location.href =
+          `/DriverLux/public/veiculos?${params.toString()}`;
+
+      } catch (erro) {
+
+        console.error(
+          'Erro ao buscar veículos:',
+          erro
+        );
+
+        alert(
+          'Erro ao buscar disponibilidade.'
+        );
+
+      }
+
+    });
+
+}
+
+const inputLocal = document.getElementById('local-retirada');
+const listaLocais = document.getElementById('lista-locais');
+const opcoesLocais = document.querySelectorAll('.opcao-local');
+
+if (inputLocal && listaLocais) {
+  inputLocal.addEventListener('focus', () => {
+    listaLocais.classList.remove('esconder');
+  });
+
+  inputLocal.addEventListener('input', () => {
+    const texto = inputLocal.value.toLowerCase();
+
+    opcoesLocais.forEach((opcao) => {
+      const local = opcao.innerText.toLowerCase();
+
+      if (local.includes(texto)) {
+        opcao.style.display = 'flex';
+      } else {
+        opcao.style.display = 'none';
+      }
+    });
+
+    listaLocais.classList.remove('esconder');
+  });
+
+  opcoesLocais.forEach((opcao) => {
+    opcao.addEventListener('click', () => {
+      inputLocal.value = opcao.dataset.local;
+      listaLocais.classList.add('esconder');
+    });
+  });
+
+  document.addEventListener('click', (evento) => {
+    if (!evento.target.closest('.campo-localizacao')) {
+      listaLocais.classList.add('esconder');
+    }
+  });
+}
