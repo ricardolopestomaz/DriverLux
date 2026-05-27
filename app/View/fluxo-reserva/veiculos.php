@@ -47,7 +47,7 @@ if (!empty($veiculos)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nossa Frota - DriverLux</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../../public/assets/css/veiculos.css">
+    <link rel="stylesheet" href="/DriverLux/public/assets/css/veiculos.css">
 </head>
 <body>
 
@@ -69,7 +69,7 @@ if (!empty($veiculos)) {
         </button>
 
         <div id="menu-usuario" class="menu-usuario esconder">
-            <a href="/DriverLux/public/painel_cliente">Minha conta</a>
+            <a href="/DriverLux/app/View/painel_cliente.php">Minha conta</a>
             <a href="#">Minhas reservas</a>
             <a href="#" id="btn-sair">Sair</a>
         </div>
@@ -239,7 +239,7 @@ if (!empty($veiculos)) {
 
                             <?php if ($estaDisponivel): ?>
                                 <a
-                                    href="opcionais.php?carro_id=<?= $carro['id'] ?>"
+                                    href="javascript:void(0)"
                                     class="btn-acao btn-reservar"
                                     data-carro-id="<?= $carro['id'] ?>"
                                     data-modelo="<?= htmlspecialchars(($carro['marca'] ?? '') . ' ' . ($carro['modelo'] ?? '')) ?>"
@@ -270,9 +270,6 @@ if (!empty($veiculos)) {
         </div>
     </div>
 </div>
-
-<script src="/DriverLux/public/assets/js/registro-login.js"></script>
-<script src="/DriverLux/public/assets/js/menu-usuario.js?v=3"></script>
 
 <script src="/DriverLux/public/assets/js/registro-login.js"></script>
 <script src="/DriverLux/public/assets/js/menu-usuario.js?v=3"></script>
@@ -397,9 +394,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // C. Salvar Carro Escolhido e Ir Para Pagamento
+    // C. Salvar Carro Escolhido e Ir Para Próxima Etapa (Opcionais)
     document.querySelectorAll('.btn-reservar').forEach((botao) => {
-        botao.addEventListener('click', () => {
+        botao.addEventListener('click', (e) => {
+            e.preventDefault(); // Bloqueia a navegação nativa para dar tempo de salvar
+
             // Abre o JSON já existente (com Palmas, Dia e Hora lá da Home)
             const dadosAtualizados = JSON.parse(sessionStorage.getItem('dados_reserva') || '{}');
 
@@ -412,8 +411,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Salva de volta no Session Storage
             sessionStorage.setItem('dados_reserva', JSON.stringify(dadosAtualizados));
             
-            // O botão do HTML já deve ter um href para pagamento.php, ou você pode forçar o redirecionamento aqui adicionando:
-            // window.location.href = '/DriverLux/app/View/fluxo-reserva/pagamento.php';
+            // Redireciona via URL amigável gerenciada pelo roteador
+            window.location.href = '/DriverLux/app/View/fluxo-reserva/opcionais.php';
         });
     });
 });

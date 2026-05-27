@@ -354,6 +354,12 @@ body {
   box-shadow: 0 4px 14px rgba(106, 13, 173, 0.35);
 }
 
+.step.done .step-bolinha {
+  background: var(--sucesso);
+  border-color: var(--sucesso);
+  color: #fff;
+}
+
 .step-info {
   display: flex;
   flex-direction: column;
