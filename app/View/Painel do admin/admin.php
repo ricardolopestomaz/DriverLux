@@ -17,6 +17,28 @@ try {
 }
 
 // ==========================================
+// PROTEÇÃO: VERIFICAÇÃO DE ADMIN (ANTES DE QUALQUER OUTPUT)
+// ==========================================
+$isAdmin = false;
+$adminNome = "";
+
+if (isset($_SESSION['usuario_id']) && isset($_SESSION['usuario_perfil'])) {
+    // Usar dados da sessão PHP
+    $isAdmin = ($_SESSION['usuario_perfil'] === 'administrador' || $_SESSION['usuario_perfil'] === 'admin');
+    $adminNome = $_SESSION['usuario_nome'] ?? 'Admin';
+} else {
+    // Sessão não encontrada - Redirecionar para home
+    header('Location: /DriverLux/app/View/home.html');
+    exit;
+}
+
+// Se não for admin, redirecionar imediatamente
+if (!$isAdmin) {
+    header('Location: /DriverLux/app/View/home.html');
+    exit;
+}
+
+// ==========================================
 // PROTEÇÃO: GARANTE QUE AS COLUNAS EXISTAM
 // ==========================================
 try {
@@ -226,15 +248,14 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
             window.location.href = '/DriverLux/app/View/home.html';
         }
 
-        window.addEventListener('load', async () => {
-            try {
-                const res  = await fetch('/DriverLux/api/usuarios/me');
-                const data = await res.json();
-                if (!data || !data.logado || !data.usuario) { window.location.href = '/DriverLux/app/View/home.html'; return; }
-                const perfil = data.usuario.perfil;
-                if (perfil !== 'administrador' && perfil !== 'admin') { window.location.href = '/DriverLux/app/View/home.html'; }
-            } catch (err) { window.location.href = '/DriverLux/app/View/home.html'; }
-        });
+        /* Verificação de admin - Usar dados do PHP */
+        const usuarioAdminNome = "<?= htmlspecialchars($adminNome, ENT_QUOTES, 'UTF-8') ?>";
+        const isAdminUser = <?= $isAdmin ? 'true' : 'false' ?>;
+
+        // Se não for admin (redundante, mas por segurança)
+        if (!isAdminUser) {
+            window.location.href = '/DriverLux/app/View/home.html';
+        }
     </script>
 </head>
 <body>
@@ -250,7 +271,7 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
             <img id="sidebar-avatar" class="sidebar-avatar" src="/DriverLux/public/assets/img/default-avatar.png" alt="Admin">
             <div class="sidebar-perfil-info">
                 <div class="sidebar-perfil-tag">Administrador</div>
-                <div class="sidebar-perfil-nome" id="exibe-nome-admin">Carregando…</div>
+                <div class="sidebar-perfil-nome" id="exibe-nome-admin"><?= htmlspecialchars($adminNome) ?></div>
             </div>
         </div>
 
@@ -519,20 +540,6 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
         
         document.getElementById('modalVeiculo').classList.add('active');
     }
-
-    /* Carrega dados do admin na sidebar */
-    window.addEventListener('DOMContentLoaded', async () => {
-        try {
-            const res  = await fetch('/DriverLux/api/usuarios/me');
-            const data = await res.json();
-            if (data.logado && data.usuario) {
-                document.getElementById('exibe-nome-admin').textContent = data.usuario.nome;
-                if (data.usuario.foto_perfil) {
-                    document.getElementById('sidebar-avatar').src = data.usuario.foto_perfil;
-                }
-            }
-        } catch (e) { console.error("Erro ao carregar dados do admin", e); }
-    });
 
     /* Logout */
     async function logout() {

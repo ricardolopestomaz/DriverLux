@@ -129,6 +129,11 @@
 
 <script>
   window.addEventListener('load', async () => {
+    // Limpar a flag de volta do admin
+    if (sessionStorage.getItem('voltandoDoAdmin') === 'true') {
+      sessionStorage.removeItem('voltandoDoAdmin');
+    }
+
     // 1. Lógica para abrir o modal de login quando clicar em "LOGIN"
     const btnLogin = document.getElementById('btn-login-trigger');
     const modalAuth = document.getElementById('modal-auth');
@@ -142,11 +147,19 @@
 
     // 2. Proteção de Rota e Atualização do Menu
     try {
-      const res = await fetch('/DriverLux/api/usuarios/me');
+      const res = await fetch('/DriverLux/api/usuarios/me', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (!res.ok) {
+        console.warn('Erro na requisição de sessão:', res.status);
+        return;
+      }
+
       const data = await res.json();
       
       if (data.logado && data.usuario) {
-        
         // 🟢 Se for cliente comum: Atualiza o botão com o nome dele
         const primeiroNome = data.usuario.nome.split(' ')[0];
         document.getElementById('nome-usuario').textContent = primeiroNome;
@@ -158,11 +171,7 @@
       }
     } catch (e) {
       console.error("Erro ao verificar sessão do usuário:", e);
-    }
-
-    // 3. Limpar a flag de volta do admin para evitar loops
-    if (sessionStorage.getItem('voltandoDoAdmin') === 'true') {
-      sessionStorage.removeItem('voltandoDoAdmin');
+      // Não fazer nada, apenas permitir que a home carregue normalmente
     }
   });
 </script>
