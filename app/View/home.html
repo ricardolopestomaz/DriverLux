@@ -39,10 +39,41 @@
 </header>
 
 <section class="busca">
-  <input type="text" placeholder="Onde você quer retirar o seu carro?">
-  <input type="text" placeholder="Data">
-  <input type="text" placeholder="Hora">
-  <button>Economize com o aluguel mensal</button>
+  <div class="campo-localizacao">
+    <input 
+      id="local-retirada"
+      type="text"
+      placeholder="Onde você quer retirar o carro?"
+      autocomplete="off"
+    >
+
+    <div id="lista-locais" class="lista-locais esconder">
+      <div class="titulo-lista">BRASIL</div>
+
+      <div class="opcao-local" data-local="Agência Aeroporto Palmas">
+        <span>✈️</span>
+        <div>
+          <p>Palmas</p>
+          <strong>Agência Aeroporto Palmas</strong>
+        </div>
+      </div>
+
+      <div class="opcao-local" data-local="Agência Centro Palmas">
+        <span>📍</span>
+        <div>
+          <p>Palmas</p>
+          <strong>Agência Centro Palmas</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <input id="data-retirada" type="date">
+  <input id="hora-retirada" type="time">
+
+  <button id="btn-buscar-disponibilidade">
+    Buscar disponibilidade
+  </button>
 </section>
 
 <section class="hero">
@@ -128,6 +159,9 @@
 <script src="/DriverLux/public/assets/js/menu-usuario.js?v=3"></script>
 
 <script>
+  // ==========================================================================
+  // 1. LÓGICA DE AUTENTICAÇÃO E SESSÃO (Carrega depois de toda a página)
+  // ==========================================================================
   window.addEventListener('load', async () => {
     // Limpar a flag de volta do admin
     if (sessionStorage.getItem('voltandoDoAdmin') === 'true') {
@@ -145,7 +179,7 @@
       });
     }
 
-    // 2. Proteção de Rota e Atualização do Menu
+    // -- B. Proteção de Rota, Atualização do Menu e Redirecionamento
     try {
       const res = await fetch('/DriverLux/api/usuarios/me', {
         method: 'GET',
@@ -171,7 +205,107 @@
       }
     } catch (e) {
       console.error("Erro ao verificar sessão do usuário:", e);
-      // Não fazer nada, apenas permitir que a home carregue normalmente
+    }
+
+    // -- C. Lógica para abrir/fechar o menu suspenso do usuário logado
+    const btnMenuUsuario = document.getElementById('btn-menu-usuario');
+    const menuUsuario = document.getElementById('menu-usuario');
+
+    if (btnMenuUsuario && menuUsuario) {
+      btnMenuUsuario.addEventListener('click', (e) => {
+        e.stopPropagation(); // Evita que o clique feche imediatamente
+        menuUsuario.classList.toggle('esconder');
+      });
+
+      // Fecha o menu do usuário se clicar fora dele
+      document.addEventListener('click', (e) => {
+        if (!btnMenuUsuario.contains(e.target) && !menuUsuario.contains(e.target)) {
+          menuUsuario.classList.add('esconder');
+        }
+      });
+    }
+
+    // -- D. Lógica do botão SAIR (LOGOUT)
+    const btnSair = document.getElementById('btn-sair');
+    
+    if (btnSair) {
+      btnSair.addEventListener('click', async (e) => {
+        e.preventDefault(); // Evita que o link '#' jogue a tela para o topo
+        
+        try {
+          // Faz a requisição POST para a API de logout
+          const resLogout = await fetch('/DriverLux/public/api/usuarios/logout', {
+            method: 'POST'
+          });
+          
+          if (resLogout.ok) {
+            // Recarrega a página para limpar a sessão da tela e voltar ao estado "deslogado"
+            window.location.reload();
+          } else {
+            console.error("Erro na API ao tentar sair.");
+          }
+        } catch (error) {
+          console.error("Erro de conexão ao tentar fazer logout:", error);
+        }
+      });
+    }
+  });
+
+
+  // ==========================================================================
+  // 2. LÓGICA DA BARRA DE BUSCA E TRANSIÇÃO DE DADOS (Carrega com o DOM)
+  // ==========================================================================
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputLocal = document.getElementById('local-retirada');
+    const listaLocais = document.getElementById('lista-locais');
+    const inputData = document.getElementById('data-retirada');
+    const inputHora = document.getElementById('hora-retirada');
+    const btnBuscar = document.getElementById('btn-buscar-disponibilidade');
+
+    if (inputLocal && listaLocais) {
+      // -- A. Abre a lista de locais ao focar/clicar no input
+      inputLocal.addEventListener('focus', () => {
+        listaLocais.classList.remove('esconder');
+      });
+
+      // -- B. Fecha a lista se o usuário clicar fora dela
+      document.addEventListener('click', (e) => {
+        if (!inputLocal.contains(e.target) && !listaLocais.contains(e.target)) {
+          listaLocais.classList.add('esconder');
+        }
+      });
+
+      // -- C. Coloca o local selecionado no input e fecha a lista
+      const opcoes = document.querySelectorAll('.opcao-local');
+      opcoes.forEach(opcao => {
+        opcao.addEventListener('click', () => {
+          inputLocal.value = opcao.getAttribute('data-local');
+          listaLocais.classList.add('esconder');
+        });
+      });
+    }
+
+    // -- D. Salva os dados no sessionStorage ao clicar em Buscar
+    if (btnBuscar) {
+      btnBuscar.addEventListener('click', () => {
+        if (!inputLocal.value || !inputData.value || !inputHora.value) {
+          alert('Por favor, preencha todos os campos (Local, Data e Hora) para prosseguir!');
+          return;
+        }
+
+        // Monta o objeto com os dados digitados
+        const dadosReserva = {
+          local_retirada: inputLocal.value,
+          data_retirada: inputData.value,
+          hora_retirada: inputHora.value
+        };
+
+        // Grava na memória temporária do navegador
+        sessionStorage.setItem('dados_reserva', JSON.stringify(dadosReserva));
+
+        // Redireciona o usuário para o próximo passo (tela de veículos)
+        window.location.href = '/DriverLux/app/View/fluxo-reserva/veiculos.php';
+      });
     }
   });
 </script>
