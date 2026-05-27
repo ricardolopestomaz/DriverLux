@@ -239,7 +239,7 @@ if (!empty($veiculos)) {
                 const data = await res.json();
                 if (data.logado && data.usuario) {
                     if (data.usuario.perfil === 'administrador' || data.usuario.perfil === 'admin') {
-                        window.location.href = '/DriverLux/views/admin.php';
+                        window.location.href = '/DriverLux/app/View/painel-admin/admin.php';
                         return;
                     }
                     const primeiroNome = data.usuario.nome.split(' ')[0];
