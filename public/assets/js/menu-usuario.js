@@ -132,89 +132,10 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // ======================================
-// BUSCAR DISPONIBILIDADE
+// BUSCAR DISPONIBILIDADE - HOME
 // ======================================
 
-const btnBuscarDisponibilidade =
-  document.getElementById(
-    'btn-buscar-disponibilidade'
-  );
-
-if (btnBuscarDisponibilidade) {
-
-  btnBuscarDisponibilidade
-    .addEventListener('click', async () => {
-
-      const local =
-        document.getElementById(
-          'local-retirada'
-        ).value.trim();
-
-      const data =
-        document.getElementById(
-          'data-retirada'
-        ).value;
-
-      const hora =
-        document.getElementById(
-          'hora-retirada'
-        ).value;
-
-      // VALIDAÇÃO
-      if (!local || !data || !hora) {
-
-        alert(
-          'Preencha localização, data e hora.'
-        );
-
-        return;
-
-      }
-
-      try {
-
-        // EXEMPLO DE BUSCA
-        const resposta = await fetch(
-          `/DriverLux/public/api/veiculos`
-        );
-
-        const veiculos =
-          await resposta.json();
-
-        console.log(
-          'Veículos encontrados:',
-          veiculos
-        );
-
-        // REDIRECIONAR
-        const params = new URLSearchParams({
-
-          retirada: local,
-          data: data,
-          hora: hora
-
-        });
-
-        window.location.href =
-          `/DriverLux/public/veiculos?${params.toString()}`;
-
-      } catch (erro) {
-
-        console.error(
-          'Erro ao buscar veículos:',
-          erro
-        );
-
-        alert(
-          'Erro ao buscar disponibilidade.'
-        );
-
-      }
-
-    });
-
-}
-
+const btnBuscarDisponibilidade = document.getElementById('btn-buscar-disponibilidade');
 const inputLocal = document.getElementById('local-retirada');
 const listaLocais = document.getElementById('lista-locais');
 const opcoesLocais = document.querySelectorAll('.opcao-local');
@@ -228,13 +149,8 @@ if (inputLocal && listaLocais) {
     const texto = inputLocal.value.toLowerCase();
 
     opcoesLocais.forEach((opcao) => {
-      const local = opcao.innerText.toLowerCase();
-
-      if (local.includes(texto)) {
-        opcao.style.display = 'flex';
-      } else {
-        opcao.style.display = 'none';
-      }
+      const conteudo = opcao.innerText.toLowerCase();
+      opcao.style.display = conteudo.includes(texto) ? 'flex' : 'none';
     });
 
     listaLocais.classList.remove('esconder');
@@ -251,5 +167,28 @@ if (inputLocal && listaLocais) {
     if (!evento.target.closest('.campo-localizacao')) {
       listaLocais.classList.add('esconder');
     }
+  });
+}
+
+if (btnBuscarDisponibilidade) {
+  btnBuscarDisponibilidade.addEventListener('click', () => {
+    const localRetirada = document.getElementById('local-retirada').value.trim();
+    const dataRetirada = document.getElementById('data-retirada').value;
+    const horaRetirada = document.getElementById('hora-retirada').value;
+
+    if (!localRetirada || !dataRetirada || !horaRetirada) {
+      alert('Preencha o local, a data e o horário de retirada.');
+      return;
+    }
+
+    const dadosBusca = {
+      local_retirada: localRetirada,
+      data_retirada: dataRetirada,
+      hora_retirada: horaRetirada
+    };
+
+    sessionStorage.setItem('dados_reserva', JSON.stringify(dadosBusca));
+
+    window.location.href = '/DriverLux/app/View/Fluxo%20de%20Reserva/veiculos.php';
   });
 }
