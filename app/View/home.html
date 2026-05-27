@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DriverLux - Aluguel de Carros de Luxo</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/DriverLux/public/assets/css/style.css?v=3">
+</head>
+
+<body>
+
+<header class="topo">
+  <img src="/DriverLux/public/assets/img/logo.png" class="logo" alt="DriverLux">
+
+  <nav>
+    <a href="#">ALUGUEL DE CARROS</a>
+    <a href="http://localhost/DriverLux/views/admin.php">GESTÃO DE FROTAS</a>
+    <a href="#">SEMINOVOS</a>
+    <a href="#">LUX - CARRO POR ASSINATURA</a>
+    <a href="javascript:void(0)" id="btn-login-trigger">LOGIN</a>
+  </nav>
+
+  <div class="area-usuario">
+    <button id="btn-menu-usuario" class="btn-usuario esconder">
+      <span id="nome-usuario">Usuário</span>
+      <span class="seta-menu">▼</span>
+    </button>
+
+    <div id="menu-usuario" class="menu-usuario esconder">
+      <a href="/DriverLux/app/View/painel_cliente.php">Minha conta</a>
+      <a href="#">Minhas reservas</a>
+      <a href="#" id="btn-sair">Sair</a>
+    </div>
+
+    <registro-login id="modal-auth" modo="popover"></registro-login>
+  </div>
+</header>
+
+<section class="busca">
+  <input type="text" placeholder="Onde você quer retirar o seu carro?">
+  <input type="text" placeholder="Data">
+  <input type="text" placeholder="Hora">
+  <button>Economize com o aluguel mensal</button>
+</section>
+
+<section class="hero">
+  <div class="hero-texto">
+    <span>DIRIJA O</span>
+    <h1>EXTRAORDINÁRIO.</h1>
+    <p>
+      Aluguel de carros de luxo para quem exige mais do que o comum.
+      <b>Viva a experiência DRIVERLUX</b>
+    </p>
+
+    <div class="botoes">
+      <a href="#" class="btn roxo">RESERVAR AGORA</a>
+      <a href="#" class="btn branco">VER FROTA</a>
+    </div>
+
+    <div class="infos">
+      <div><strong>+500</strong><br>CLIENTES<br>SATISFEITOS</div>
+      <div><strong>24/7</strong><br>ATENDIMENTO<br>EXCLUSIVO</div>
+      <div><strong>100%</strong><br>SEGURANÇA E<br>CONFIANÇA</div>
+    </div>
+  </div>
+</section>
+
+<section class="destaques">
+  <div class="titulo-area">
+    <div>
+      <span>ESCOLHA SUA MÁQUINA</span>
+      <h2>Carros em <b>destaque.</b></h2>
+    </div>
+    <img src="/DriverLux/public/assets/img/logo.png" alt="DriverLux">
+  </div>
+
+  <div class="cards">
+    <article class="card">
+      <span class="tag">DESTAQUE</span>
+      <img src="/DriverLux/public/assets/img/bmw.jpg" alt="BMW M4">
+      <h3>BMW M4 COMPETITION</h3>
+      <p>Performance esportiva com elegância incomparável.</p>
+      <small>A PARTIR DE</small>
+      <h4>R$ 1.200<span>/dia</span></h4>
+      <a href="#">→</a>
+    </article>
+
+    <article class="card">
+      <span class="tag">DESTAQUE</span>
+      <img src="/DriverLux/public/assets/img/audi.jpg" alt="Audi RS7">
+      <h3>AUDI RS7</h3>
+      <p>Potência, tecnologia e design em perfeita harmonia.</p>
+      <small>A PARTIR DE</small>
+      <h4>R$ 1.500<span>/dia</span></h4>
+      <a href="#">→</a>
+    </article>
+
+    <article class="card">
+      <span class="tag">DESTAQUE</span>
+      <img src="/DriverLux/public/assets/img/mercedes.jpg" alt="Mercedes AMG GT">
+      <h3>MERCEDES AMG GT</h3>
+      <p>Luxo extremo com DNA de corrida.</p>
+      <small>A PARTIR DE</small>
+      <h4>R$ 1.800<span>/dia</span></h4>
+      <a href="#">→</a>
+    </article>
+  </div>
+
+  <div class="cta">
+    <div>
+      <span>PRONTO PARA DIRIGIR O SEU?</span>
+      <h2>Reserve agora e viva essa experiência.</h2>
+
+      <div class="beneficios">
+        <p>Processo 100% online</p>
+        <p>Atendimento exclusivo</p>
+        <p>Sem burocracia</p>
+      </div>
+
+      <a href="#" class="btn roxo">ALUGAR AGORA</a>
+    </div>
+  </div>
+</section>
+
+<script src="/DriverLux/public/assets/js/registro-login.js"></script>
+<script src="/DriverLux/public/assets/js/menu-usuario.js?v=3"></script>
+
+<script>
+  window.addEventListener('load', async () => {
+    // 1. Lógica para abrir o modal de login quando clicar em "LOGIN"
+    const btnLogin = document.getElementById('btn-login-trigger');
+    const modalAuth = document.getElementById('modal-auth');
+
+    if (btnLogin && modalAuth) {
+      btnLogin.addEventListener('click', () => {
+        const container = modalAuth.shadowRoot.getElementById('auth-container');
+        if (container) container.classList.remove('hidden');
+      });
+    }
+
+    // 2. Proteção de Rota e Atualização do Menu
+    try {
+      const res = await fetch('/DriverLux/public/api/usuarios/me');
+      const data = await res.json();
+      
+      if (data.logado && data.usuario) {
+        
+        // 🟢 Se for cliente comum: Atualiza o botão com o nome dele
+        const primeiroNome = data.usuario.nome.split(' ')[0];
+        document.getElementById('nome-usuario').textContent = primeiroNome;
+        
+        // Esconde o botão "LOGIN" e mostra o botão do usuário
+        if (btnLogin) btnLogin.classList.add('esconder');
+        const btnMenuUsuario = document.getElementById('btn-menu-usuario');
+        if (btnMenuUsuario) btnMenuUsuario.classList.remove('esconder');
+      }
+    } catch (e) {
+      console.error("Erro ao verificar sessão do usuário:", e);
+    }
+
+    // 3. Limpar a flag de volta do admin para evitar loops
+    if (sessionStorage.getItem('voltandoDoAdmin') === 'true') {
+      sessionStorage.removeItem('voltandoDoAdmin');
+    }
+  });
+</script>
+</body>
+</html>
