@@ -265,6 +265,12 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
             <a href="#">
                 <span class="nav-icon">👥</span> Usuários
             </a>
+            <a href="#">
+                <span class="nav-icon">🏷️</span> Cumpons
+            </a>
+            <a href="#">
+                <span class="nav-icon">🛡️</span> Proteções
+            </a>
             <div class="nav-sep"></div>
             <a href="/DriverLux/app/View/home.html" onclick="voltarParaHome(event)">
                 <span class="nav-icon">🏠</span> Voltar para Home
@@ -539,6 +545,7 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
         try {
             await fetch('/DriverLux/public/api/usuarios/logout', { method: 'POST' });
         } catch (_) {}
+        window.location.href = '/DriverLux/app/View/home.html';
         window.location.href = '/DriverLux/app/View/home.html';
     }
 
