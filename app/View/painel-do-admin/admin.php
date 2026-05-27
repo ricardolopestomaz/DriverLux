@@ -1,3 +1,4 @@
+// C:\xampp\htdocs\DriverLux\app\View\painel-do-admin\admin.php
 <?php
 session_start();
 
@@ -245,7 +246,8 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
         function voltarParaHome(event) {
             event.preventDefault();
             sessionStorage.setItem('voltandoDoAdmin', 'true');
-            window.location.href = '/DriverLux/';
+            // Use relative navigation so it resolves regardless of server base
+            window.location.href = './';
         }
 
         /* Verificação de admin - Usar dados do PHP ✅ REDUNDÂNCIA SEGURA */
@@ -254,7 +256,7 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
 
         // Se não for admin (redundante, mas por segurança)
         if (!isAdminUser) {
-            window.location.href = '/DriverLux/';
+            window.location.href = './';
         }
     </script>
 </head>
@@ -287,7 +289,7 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
                 <span class="nav-icon">👥</span> Usuários
             </a>
             <div class="nav-sep"></div>
-            <a href="/DriverLux/" onclick="voltarParaHome(event)">
+            <a href="./" onclick="voltarParaHome(event)">
                 <span class="nav-icon">🏠</span> Voltar para Home
             </a>
         </nav>
@@ -544,9 +546,9 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
     /* Logout */
     async function logout() {
         try {
-            await fetch('/DriverLux/api/usuarios/logout', { method: 'POST' });
+            await fetch('./api/usuarios/logout', { method: 'POST' });
         } catch (_) {}
-        window.location.href = '/DriverLux/';
+        window.location.href = './';
     }
 
     /* Fechar modal clicando no overlay */
