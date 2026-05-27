@@ -142,7 +142,7 @@
 
     // 2. Proteção de Rota e Atualização do Menu
     try {
-      const res = await fetch('/DriverLux/public/api/usuarios/me');
+      const res = await fetch('/DriverLux/api/usuarios/me');
       const data = await res.json();
       
       if (data.logado && data.usuario) {
