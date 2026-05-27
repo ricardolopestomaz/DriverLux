@@ -173,32 +173,32 @@ if (isset($uri[0]) && $uri[0] === 'api') {
 // ==========================================
 // SITE
 // ==========================================
-$page = $uri[0] ?? 'index';
+$page = $uri[0] ?? '';
 
+// 1. Redirecionamento automático para a Home
+if ($page === '' || $page === 'index') {
+    header('Location: /DriverLux/app/View/home.html');
+    exit;
+}
+
+// 2. Lógica normal para outras páginas
 $publicPath = ROOT_PATH . '/public/';
-
 $htmlFile = $publicPath . $page . '.html';
-
 $phpFile = $publicPath . $page . '.php';
 
 // Página PHP
 if (file_exists($phpFile)) {
-
     require_once $phpFile;
-
     exit;
 }
 
 // Página HTML
 if (file_exists($htmlFile)) {
-
     readfile($htmlFile);
-
     exit;
 }
 
 // 404
 http_response_code(404);
-
 echo "<h1>404</h1>";
 echo "<p>Página não encontrada.</p>";
