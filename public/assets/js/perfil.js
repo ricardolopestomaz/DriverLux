@@ -71,19 +71,17 @@ async function onSelecionarFoto(event) {
     formData.append('foto', file);
 
     try {
-        const res = await fetch('/DriverLux/public/api/usuarios/salvar_foto.php', {
+        const res = await fetch('/DriverLux/public/usuarios/salvar_foto.php', {
             method: 'POST',
             body: formData
         });
 
         const data = await res.json();
-        if (data.status === 'ok') {
+        if (data.status === 'success') {
             usuario.foto_perfil = data.url;
 
-            // Oculta a barra já que o salvamento foi concluído com sucesso no servidor
             if (strip) strip.classList.remove('visivel');
 
-            // Atualiza a imagem oficial forçando a quebra de cache do navegador
             mostrarFotoImg(`${data.url}?t=${new Date().getTime()}`);
             toast('Foto de perfil atualizada com sucesso!');
         } else {
