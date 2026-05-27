@@ -1,9 +1,11 @@
 RewriteEngine On
-RewriteBase /DriverLux/public/
 
-# Se não for um arquivo ou pasta real dentro da public...
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
+# LIBERA ARQUIVOS REAIS (css, js, imagens)
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
 
-# ...entrega para o index.php tratar a rota
-RewriteRule ^ index.php [L]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# RESTO VAI PARA O INDEX
+RewriteRule ^ index.php [QSA,L]

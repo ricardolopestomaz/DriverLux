@@ -1,0 +1,183 @@
+.opcionais-layout {
+  max-width: 1400px;
+  margin: 40px auto 70px;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 30px;
+  align-items: start;
+}
+
+.opcionais-layout main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.bloco-opcional {
+  background: #fff;
+  border: 1.5px solid var(--borda-card);
+  border-radius: 18px;
+  padding: 26px;
+  box-shadow: 0 8px 24px rgba(59, 5, 103, 0.05);
+}
+
+.bloco-opcional h2,
+.resumo-reserva h2 {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--roxo-escuro);
+  margin-bottom: 20px;
+}
+
+.form-reserva {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.form-reserva > div {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.form-reserva label {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--roxo-medio);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-reserva input,
+.form-reserva select {
+  width: 100%;
+  height: 48px;
+  border: 1.5px solid var(--borda-card);
+  border-radius: 10px;
+  padding: 0 14px;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  outline: none;
+  background: #fff;
+  color: var(--texto-escuro);
+}
+
+.form-reserva input:focus,
+.form-reserva select:focus {
+  border-color: var(--roxo-claro);
+  box-shadow: 0 0 0 3px rgba(128, 20, 232, 0.08);
+}
+
+.opcao-card {
+  border: 1.5px solid var(--borda-card);
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 14px;
+  background: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.opcao-card:hover,
+.opcao-card.ativa {
+  border-color: var(--roxo-claro);
+  background: #faf7ff;
+  box-shadow: 0 8px 24px rgba(106, 13, 173, 0.12);
+  transform: translateY(-2px);
+}
+
+.opcao-card h3 {
+  font-size: 17px;
+  font-weight: 900;
+  color: var(--roxo-escuro);
+  margin-bottom: 6px;
+}
+
+.opcao-card p {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.opcao-preco {
+  font-weight: 900;
+  color: var(--roxo-medio);
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.resumo-reserva {
+  background: #fff;
+  border: 1.5px solid var(--borda-card);
+  border-radius: 18px;
+  padding: 24px;
+  position: sticky;
+  top: 110px;
+  box-shadow: 0 8px 24px rgba(59, 5, 103, 0.05);
+}
+
+.linha-resumo {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 14px;
+  font-size: 14px;
+  color: #555;
+}
+
+.linha-resumo strong {
+  text-align: right;
+  color: var(--texto-escuro);
+}
+
+.total-reserva {
+  border-top: 1.5px solid var(--borda-card);
+  padding-top: 18px;
+  margin-top: 18px;
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--roxo-escuro);
+}
+
+.btn-continuar {
+  width: 100%;
+  margin-top: 22px;
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--roxo-medio), var(--roxo-claro));
+  color: #fff;
+  font-weight: 900;
+  font-family: "Poppins", sans-serif;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: 0.2s;
+}
+
+.btn-continuar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(106, 13, 173, 0.35);
+}
+
+@media (max-width: 900px) {
+  .opcionais-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .form-reserva {
+    grid-template-columns: 1fr;
+  }
+
+  .resumo-reserva {
+    position: static;
+  }
+}
