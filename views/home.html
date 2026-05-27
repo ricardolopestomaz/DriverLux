@@ -16,7 +16,7 @@
 
   <nav>
     <a href="#">ALUGUEL DE CARROS</a>
-    <a href="#">GESTÃO DE FROTAS</a>
+    <a href="http://localhost/DriverLux/views/admin.php">GESTÃO DE FROTAS</a>
     <a href="#">SEMINOVOS</a>
     <a href="#">LUX - CARRO POR ASSINATURA</a>
     <a href="javascript:void(0)" id="btn-login-trigger">LOGIN</a>
@@ -147,13 +147,6 @@
       
       if (data.logado && data.usuario) {
         
-        // 🚨 REDIRECIONAMENTO DE ADMIN: Se for administrador, tira ele da Home!
-        // (Verificando 'administrador' ou 'admin' para evitar erros de nomenclatura)
-        if (data.usuario.perfil === 'administrador' || data.usuario.perfil === 'admin') {
-            window.location.href = '/DriverLux/views/admin.php';
-            return; // Para a execução aqui
-        }
-
         // 🟢 Se for cliente comum: Atualiza o botão com o nome dele
         const primeiroNome = data.usuario.nome.split(' ')[0];
         document.getElementById('nome-usuario').textContent = primeiroNome;
@@ -166,10 +159,12 @@
     } catch (e) {
       console.error("Erro ao verificar sessão do usuário:", e);
     }
+
+    // 3. Limpar a flag de volta do admin para evitar loops
+    if (sessionStorage.getItem('voltandoDoAdmin') === 'true') {
+      sessionStorage.removeItem('voltandoDoAdmin');
+    }
   });
 </script>
-</body>
-</html>
-
 </body>
 </html>

@@ -17,7 +17,7 @@ try {
 }
 
 // ==========================================
-// PROTEÇÃO: GARANTE QUE A COLUNA 'ativo' EXISTA
+// PROTEÇÃO: GARANTE QUE AS COLUNAS EXISTAM
 // ==========================================
 try {
     $pdo->exec("ALTER TABLE veiculos ADD COLUMN ativo TINYINT(1) DEFAULT 1");
@@ -25,13 +25,19 @@ try {
     // Se der erro, é porque a coluna já existe, então ignoramos.
 }
 
+try {
+    $pdo->exec("ALTER TABLE veiculos ADD COLUMN preco_diaria DECIMAL(10,2) DEFAULT 1500.00");
+} catch (PDOException $e) { 
+    // Se der erro, é porque a coluna já existe, então ignoramos.
+}
+
 // ==========================================
-// AÇÃO: OCULTAR/EXIBIR VEÍCULO
+// AÇÃO: OCULTAR/EXIBIR VEÍCULO (COM PREPARED STATEMENT)
 // ==========================================
 if (isset($_GET['toggle_ativo']) && isset($_GET['id'])) {
     $idToggle = (int)$_GET['id'];
-    // Se for 1 vira 0, se for 0 vira 1
-    $pdo->exec("UPDATE veiculos SET ativo = IF(ativo = 1, 0, 1) WHERE id = $idToggle");
+    $stmtToggle = $pdo->prepare("UPDATE veiculos SET ativo = IF(ativo = 1, 0, 1) WHERE id = :id");
+    $stmtToggle->execute([':id' => $idToggle]);
     
     // Recarrega a página para atualizar a tabela
     header("Location: admin.php");
@@ -39,78 +45,168 @@ if (isset($_GET['toggle_ativo']) && isset($_GET['id'])) {
 }
 
 // ==========================================
-// 1.5. SEED DE CATEGORIAS
+// 1.5. SEED DE CATEGORIA ÚNICA (LUXO)
 // ==========================================
 $checkCategorias = $pdo->query("SELECT COUNT(*) FROM categorias_veiculos")->fetchColumn();
 if ($checkCategorias == 0) {
     $pdo->exec("INSERT IGNORE INTO categorias_veiculos (id, nome, descricao, valor_base_diaria) VALUES
-        (1, 'Econômico', 'Carros populares e eficientes', 150.00),
-        (2, 'Plus',      'Carros executivos e confortáveis', 350.00),
-        (3, 'Max',       'Supercarros e veículos exclusivos', 1200.00)");
+        (1, 'Luxo', 'Carros de luxo e exclusivos', 1500.00)");
 }
+
+// Categoria fixa para luxo
+$categoria_id = 1;
+$nome_categoria_atual = 'Luxo';
 
 // ==========================================
 // 2. CADASTRAR OU EDITAR VEÍCULO (POST)
 // ==========================================
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $modelo                  = $_POST['modelo'];
-    $marca                   = $_POST['marca'];
-    $ano                     = $_POST['ano'];
-    $placa                   = $_POST['placa'];
-    $chassi                  = $_POST['chassi'];
-    $categoria_id            = $_POST['categoria_id'];
-    $status_disponibilidade  = $_POST['status_disponibilidade'];
+$erro_mensagem = null;
+$sucesso_mensagem = null;
 
-    $imagem_url = null;
-    if (isset($_FILES['foto_carro']) && $_FILES['foto_carro']['error'] === UPLOAD_ERR_OK) {
-        $pastaDestino = __DIR__ . '/../public/assets/img/veiculos/';
-        if (!is_dir($pastaDestino)) mkdir($pastaDestino, 0755, true);
-        $extensao      = pathinfo($_FILES['foto_carro']['name'], PATHINFO_EXTENSION);
-        $nomeArquivo   = 'carro_' . uniqid() . '.' . strtolower($extensao);
-        $caminhoCompleto = $pastaDestino . $nomeArquivo;
-        if (move_uploaded_file($_FILES['foto_carro']['tmp_name'], $caminhoCompleto)) {
-            $imagem_url = '/DriverLux/public/assets/img/veiculos/' . $nomeArquivo;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $modelo                  = trim($_POST['modelo']);
+    $marca                   = trim($_POST['marca']);
+    $ano                     = (int)$_POST['ano'];
+    $placa                   = trim(strtoupper($_POST['placa']));
+    $chassi                  = trim(strtoupper($_POST['chassi']));
+    $preco_diaria            = isset($_POST['preco_diaria']) ? (float)str_replace(',', '.', $_POST['preco_diaria']) : 1500.00;
+    $status_disponibilidade  = $_POST['status_disponibilidade'];
+    $veiculo_id              = isset($_POST['veiculo_id']) ? (int)$_POST['veiculo_id'] : null;
+
+    // Validações básicas
+    if (empty($modelo) || empty($marca) || $ano < 2000 || $ano > 2100 || empty($placa) || empty($chassi)) {
+        $erro_mensagem = "❌ Dados inválidos. Por favor, preencha todos os campos corretamente.";
+    } else {
+        // Verificar se placa já existe (exceto para o veículo sendo editado)
+        $stmtPlaca = $pdo->prepare("SELECT COUNT(*) FROM veiculos WHERE placa = :placa AND id != :id");
+        $stmtPlaca->execute([':placa' => $placa, ':id' => $veiculo_id ?? 0]);
+        $placaExiste = $stmtPlaca->fetchColumn() > 0;
+
+        if ($placaExiste) {
+            $erro_mensagem = "❌ Erro: A placa '{$placa}' já está cadastrada no sistema!";
+        } else {
+            // Verificar se chassi já existe (exceto para o veículo sendo editado)
+            $stmtChassi = $pdo->prepare("SELECT COUNT(*) FROM veiculos WHERE chassi = :chassi AND id != :id");
+            $stmtChassi->execute([':chassi' => $chassi, ':id' => $veiculo_id ?? 0]);
+            $chassiExiste = $stmtChassi->fetchColumn() > 0;
+
+            if ($chassiExiste) {
+                $erro_mensagem = "❌ Erro: O chassi '{$chassi}' já está cadastrado no sistema!";
+            }
         }
     }
 
-    if (isset($_POST['cadastrar_veiculo'])) {
-        if (empty($imagem_url)) $imagem_url = '/DriverLux/public/assets/img/default-car.png';
-        $stmt = $pdo->prepare("INSERT INTO veiculos (categoria_id, marca, modelo, ano, placa, chassi, imagem_url, status_disponibilidade)
-                               VALUES (:categoria_id, :marca, :modelo, :ano, :placa, :chassi, :imagem_url, :status_disponibilidade)");
-        $stmt->execute([':categoria_id'=>$categoria_id,':marca'=>$marca,':modelo'=>$modelo,':ano'=>$ano,
-                        ':placa'=>$placa,':chassi'=>$chassi,':imagem_url'=>$imagem_url,':status_disponibilidade'=>$status_disponibilidade]);
-        header("Location: admin.php?categoria_id=$categoria_id&sucesso=cadastrado");
-        exit;
-
-    } elseif (isset($_POST['editar_veiculo'])) {
-        $veiculo_id = $_POST['veiculo_id'];
-        if ($imagem_url) {
-            $stmt = $pdo->prepare("UPDATE veiculos SET categoria_id=:categoria_id, marca=:marca, modelo=:modelo, ano=:ano,
-                                   placa=:placa, chassi=:chassi, imagem_url=:imagem_url, status_disponibilidade=:status_disponibilidade WHERE id=:id");
-            $stmt->execute([':categoria_id'=>$categoria_id,':marca'=>$marca,':modelo'=>$modelo,':ano'=>$ano,
-                            ':placa'=>$placa,':chassi'=>$chassi,':imagem_url'=>$imagem_url,':status_disponibilidade'=>$status_disponibilidade,':id'=>$veiculo_id]);
+    // Se passou nas validações, processar imagem
+    $imagem_url = null;
+    if (!$erro_mensagem && isset($_FILES['foto_carro']) && $_FILES['foto_carro']['error'] === UPLOAD_ERR_OK) {
+        $pastaDestino = __DIR__ . '/../public/assets/img/veiculos/';
+        if (!is_dir($pastaDestino)) mkdir($pastaDestino, 0755, true);
+        
+        $extensao      = strtolower(pathinfo($_FILES['foto_carro']['name'], PATHINFO_EXTENSION));
+        $extensoesValidas = ['jpg', 'jpeg', 'png', 'webp'];
+        
+        if (!in_array($extensao, $extensoesValidas)) {
+            $erro_mensagem = "❌ Formato de imagem inválido. Use PNG, JPG, JPEG ou WebP.";
         } else {
-            $stmt = $pdo->prepare("UPDATE veiculos SET categoria_id=:categoria_id, marca=:marca, modelo=:modelo, ano=:ano,
-                                   placa=:placa, chassi=:chassi, status_disponibilidade=:status_disponibilidade WHERE id=:id");
-            $stmt->execute([':categoria_id'=>$categoria_id,':marca'=>$marca,':modelo'=>$modelo,':ano'=>$ano,
-                            ':placa'=>$placa,':chassi'=>$chassi,':status_disponibilidade'=>$status_disponibilidade,':id'=>$veiculo_id]);
+            $nomeArquivo   = 'carro_' . uniqid() . '.' . $extensao;
+            $caminhoCompleto = $pastaDestino . $nomeArquivo;
+            
+            if (move_uploaded_file($_FILES['foto_carro']['tmp_name'], $caminhoCompleto)) {
+                $imagem_url = '/DriverLux/public/assets/img/veiculos/' . $nomeArquivo;
+            } else {
+                $erro_mensagem = "❌ Erro ao fazer upload da imagem. Tente novamente.";
+            }
         }
-        header("Location: admin.php?categoria_id=$categoria_id&sucesso=editado");
-        exit;
+    }
+
+    // ═══ CADASTRAR NOVO VEÍCULO ═══
+    if (!$erro_mensagem && isset($_POST['cadastrar_veiculo'])) {
+        if (empty($imagem_url)) {
+            $imagem_url = '/DriverLux/public/assets/img/default-car.png';
+        }
+        
+        try {
+            $stmt = $pdo->prepare("INSERT INTO veiculos 
+                                   (categoria_id, marca, modelo, ano, placa, chassi, imagem_url, status_disponibilidade, preco_diaria) 
+                                   VALUES (:categoria_id, :marca, :modelo, :ano, :placa, :chassi, :imagem_url, :status_disponibilidade, :preco_diaria)");
+            
+            $stmt->execute([
+                ':categoria_id' => 1,
+                ':marca' => $marca,
+                ':modelo' => $modelo,
+                ':ano' => $ano,
+                ':placa' => $placa,
+                ':chassi' => $chassi,
+                ':imagem_url' => $imagem_url,
+                ':status_disponibilidade' => $status_disponibilidade,
+                ':preco_diaria' => $preco_diaria
+            ]);
+            
+            header("Location: admin.php?sucesso=cadastrado");
+            exit;
+        } catch (PDOException $e) {
+            $erro_mensagem = "❌ Erro ao cadastrar: A placa pode estar duplicada ou dados inválidos.";
+        }
+
+    // ═══ EDITAR VEÍCULO ═══
+    } elseif (!$erro_mensagem && isset($_POST['editar_veiculo'])) {
+        $veiculo_id = (int)$_POST['veiculo_id'];
+        
+        try {
+            if ($imagem_url) {
+                // Com imagem nova
+                $stmt = $pdo->prepare("UPDATE veiculos 
+                                       SET categoria_id = :categoria_id, marca = :marca, modelo = :modelo, 
+                                           ano = :ano, placa = :placa, chassi = :chassi, 
+                                           imagem_url = :imagem_url, status_disponibilidade = :status_disponibilidade,
+                                           preco_diaria = :preco_diaria
+                                       WHERE id = :id");
+                $stmt->execute([
+                    ':categoria_id' => 1,
+                    ':marca' => $marca,
+                    ':modelo' => $modelo,
+                    ':ano' => $ano,
+                    ':placa' => $placa,
+                    ':chassi' => $chassi,
+                    ':imagem_url' => $imagem_url,
+                    ':status_disponibilidade' => $status_disponibilidade,
+                    ':preco_diaria' => $preco_diaria,
+                    ':id' => $veiculo_id
+                ]);
+            } else {
+                // Sem imagem nova (manter a atual)
+                $stmt = $pdo->prepare("UPDATE veiculos 
+                                       SET categoria_id = :categoria_id, marca = :marca, modelo = :modelo, 
+                                           ano = :ano, placa = :placa, chassi = :chassi, 
+                                           status_disponibilidade = :status_disponibilidade,
+                                           preco_diaria = :preco_diaria
+                                       WHERE id = :id");
+                $stmt->execute([
+                    ':categoria_id' => 1,
+                    ':marca' => $marca,
+                    ':modelo' => $modelo,
+                    ':ano' => $ano,
+                    ':placa' => $placa,
+                    ':chassi' => $chassi,
+                    ':status_disponibilidade' => $status_disponibilidade,
+                    ':preco_diaria' => $preco_diaria,
+                    ':id' => $veiculo_id
+                ]);
+            }
+            
+            header("Location: admin.php?sucesso=editado");
+            exit;
+        } catch (PDOException $e) {
+            $erro_mensagem = "❌ Erro ao atualizar: A placa pode estar duplicada ou dados inválidos.";
+        }
     }
 }
 
 // ==========================================
-// 3. BUSCAR VEÍCULOS
+// 3. BUSCAR VEÍCULOS (APENAS LUXO)
 // ==========================================
-$categoria_id = isset($_GET['categoria_id']) ? (int)$_GET['categoria_id'] : 1;
-$nomes_categorias = [1 => 'Econômico', 2 => 'Plus', 3 => 'Max'];
-$nome_categoria_atual = $nomes_categorias[$categoria_id] ?? 'Econômico';
-
-$stmtBusca = $pdo->prepare("SELECT v.*, c.valor_base_diaria
-                             FROM veiculos v INNER JOIN categorias_veiculos c ON v.categoria_id = c.id
-                             WHERE v.categoria_id = :categoria_id ORDER BY v.id DESC");
-$stmtBusca->execute([':categoria_id' => $categoria_id]);
+$stmtBusca = $pdo->prepare("SELECT v.* FROM veiculos v WHERE v.categoria_id = :categoria_id ORDER BY v.id DESC");
+$stmtBusca->execute([':categoria_id' => 1]);
 $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
@@ -123,14 +219,21 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="../public/assets/css/admin.css">
 
     <script>
+        /* Função para voltar à home com controle */
+        function voltarParaHome(event) {
+            event.preventDefault();
+            sessionStorage.setItem('voltandoDoAdmin', 'true');
+            window.location.href = 'http://localhost/DriverLux/views/home.html';
+        }
+
         window.addEventListener('load', async () => {
             try {
                 const res  = await fetch('/DriverLux/public/api/usuarios/me');
                 const data = await res.json();
-                if (!data || !data.logado || !data.usuario) { window.location.href = '/DriverLux/views/home.html'; return; }
+                if (!data || !data.logado || !data.usuario) { window.location.href = 'http://localhost/DriverLux/views/home.html'; return; }
                 const perfil = data.usuario.perfil;
-                if (perfil !== 'administrador' && perfil !== 'admin') { window.location.href = '/DriverLux/views/home.html'; }
-            } catch (err) { window.location.href = '/DriverLux/views/home.html'; }
+                if (perfil !== 'administrador' && perfil !== 'admin') { window.location.href = 'http://localhost/DriverLux/views/home.html'; }
+            } catch (err) { window.location.href = 'http://localhost/DriverLux/views/home.html'; }
         });
     </script>
 </head>
@@ -163,7 +266,7 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
                 <span class="nav-icon">👥</span> Usuários
             </a>
             <div class="nav-sep"></div>
-            <a href="/DriverLux/views/home.html">
+            <a href="http://localhost/DriverLux/views/home.html" onclick="voltarParaHome(event)">
                 <span class="nav-icon">🏠</span> Voltar para Home
             </a>
         </nav>
@@ -180,7 +283,7 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
         <header class="admin-topbar">
             <div class="topbar-titulo">
                 <h1>Gestão de Frotas</h1>
-                <p>Gerencie todos os veículos da frota DriverLux</p>
+                <p>Gerencie todos os veículos de luxo DriverLux</p>
             </div>
             <div class="topbar-acoes">
                 <button class="btn-adicionar" onclick="abrirModalNovo()">
@@ -190,6 +293,15 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
         </header>
 
         <div class="content-wrapper">
+
+            <!-- Alertas de erro -->
+            <?php if ($erro_mensagem): ?>
+                <div class="alerta-erro" style="background-color: #fee; border: 1px solid #fcc; color: #c33; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                    <span style="font-weight: bold;">
+                        <?= htmlspecialchars($erro_mensagem) ?>
+                    </span>
+                </div>
+            <?php endif; ?>
 
             <!-- Alertas de sucesso -->
             <?php if (isset($_GET['sucesso']) && $_GET['sucesso'] === 'cadastrado'): ?>
@@ -203,17 +315,6 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
                     Veículo atualizado com sucesso!
                 </div>
             <?php endif; ?>
-
-            <!-- Filtros de categoria -->
-            <div class="filtros">
-                <span class="filtros-label">Categoria:</span>
-                <a href="admin.php?categoria_id=1" class="category-btn <?= $categoria_id == 1 ? 'active' : '' ?>">Econômico</a>
-                <a href="admin.php?categoria_id=2" class="category-btn <?= $categoria_id == 2 ? 'active' : '' ?>">Plus</a>
-                <a href="admin.php?categoria_id=3" class="category-btn <?= $categoria_id == 3 ? 'active' : '' ?>">Max</a>
-                <button class="btn-adicionar" onclick="abrirModalNovo()" style="margin-left:auto">
-                    <span>＋</span> Novo Veículo
-                </button>
-            </div>
 
             <!-- Grid de veículos -->
             <div class="fleet-section">
@@ -231,6 +332,7 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
                                 'manutencao' => ['classe' => 'status-manutencao', 'label' => 'Manutenção'],
                             ];
                             $st = $statusMap[$carro['status_disponibilidade']] ?? ['classe'=>'status-livre','label'=>'Livre'];
+                            $isAtivo = (isset($carro['ativo']) && $carro['ativo'] == 1) || !isset($carro['ativo']);
                         ?>
                             <div class="card-veiculo">
                                 <div class="card-img-wrapper">
@@ -249,22 +351,16 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
                                     <div class="card-footer">
                                         <div class="card-preco">
                                             <span class="preco-rs">R$</span>
-                                            <span class="preco-val"><?= number_format($carro['valor_base_diaria'], 0, ',', '.') ?></span>
+                                            <span class="preco-val"><?= number_format($carro['preco_diaria'] ?? 1500, 0, ',', '.') ?></span>
                                             <span class="preco-per">/dia</span>
                                         </div>
                                         <button type="button" class="btn-editar"
-                                                onclick='abrirModalEditar(<?= json_encode($carro, JSON_HEX_APOS | JSON_HEX_QUOT) ?>)'>
+                                                onclick='abrirModalEditar(<?= htmlspecialchars(json_encode($carro, JSON_HEX_APOS | JSON_HEX_QUOT), ENT_QUOTES, "UTF-8") ?>)'>
                                             ✏ Editar
                                         </button>
-                                        <?php 
-                                        // Verifica se o carro está ativo (se for null, assume 1 por padrão)
-                                        $isAtivo = !isset($carro['ativo']) || $carro['ativo'] == 1; 
-                                        $corBtn = $isAtivo ? 'background-color: #e74c3c;' : 'background-color: #2ecc71;'; // Vermelho para Ocultar, Verde para Exibir
-                                        $textoBtn = $isAtivo ? 'Ocultar do Site' : 'Devolver ao Site';
-                                        ?>
                                         <a href="admin.php?toggle_ativo=1&id=<?= $carro['id'] ?>" 
-                                            style="padding: 6px 12px; color: #fff; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: bold; margin-right: 5px; <?= $corBtn ?>">
-                                        <?= $textoBtn ?>
+                                            style="padding: 6px 12px; color: #fff; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: bold; margin-right: 5px; background-color: <?= $isAtivo ? '#e74c3c' : '#2ecc71' ?>;">
+                                        <?= $isAtivo ? 'Ocultar do Site' : 'Devolver ao Site' ?>
                                         </a>
                                     </div>
                                 </div>
@@ -273,7 +369,7 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
                     <?php else: ?>
                         <div class="grid-vazio">
                             <div class="grid-vazio-icon">🚗</div>
-                            <h4>Nenhum veículo nesta categoria</h4>
+                            <h4>Nenhum veículo de luxo cadastrado</h4>
                             <p>Clique em "Novo Veículo" para adicionar o primeiro.</p>
                         </div>
                     <?php endif; ?>
@@ -288,7 +384,7 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
 <div id="modalVeiculo" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2 id="modal-titulo">Novo Veículo</h2>
+            <h2 id="modal-titulo">Novo Veículo de Luxo</h2>
             <button type="button" class="close-modal"
                     onclick="document.getElementById('modalVeiculo').classList.remove('active')">×</button>
         </div>
@@ -301,18 +397,18 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
                 <div class="form-row">
                     <div class="form-group">
                         <label>Marca</label>
-                        <input type="text" name="marca" id="v_marca" required placeholder="Ex: Toyota">
+                        <input type="text" name="marca" id="v_marca" required placeholder="Ex: Mercedes-Benz">
                     </div>
                     <div class="form-group">
                         <label>Modelo</label>
-                        <input type="text" name="modelo" id="v_modelo" required placeholder="Ex: Corolla">
+                        <input type="text" name="modelo" id="v_modelo" required placeholder="Ex: S-Class">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label>Ano</label>
-                        <input type="number" name="ano" id="v_ano" required placeholder="Ex: 2024">
+                        <input type="number" name="ano" id="v_ano" required placeholder="Ex: 2024" min="2000" max="2100">
                     </div>
                     <div class="form-group">
                         <label>Placa</label>
@@ -321,43 +417,42 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
                 </div>
 
                 <div class="form-row">
-                    <div class="form-group">
+                    <div class="form-group" style="flex: 1;">
                         <label>Chassi</label>
                         <input type="text" name="chassi" id="v_chassi" required placeholder="17 caracteres">
                     </div>
+                </div>
+
+                <div class="form-row">
                     <div class="form-group">
-                        <label>Categoria</label>
-                        <select name="categoria_id" id="v_categoria" required>
-                            <option value="1">Econômico</option>
-                            <option value="2">Plus</option>
-                            <option value="3">Max</option>
+                        <label>Preço Diário (R$)</label>
+                        <input type="number" name="preco_diaria" id="v_preco" step="0.01" min="0" value="1500.00" required placeholder="Ex: 1500.00">
+                    </div>
+                    <div class="form-group">
+                        <label>Status de Disponibilidade</label>
+                        <select name="status_disponibilidade" id="v_status" required>
+                            <option value="livre">Livre</option>
+                            <option value="alugado">Alugado</option>
+                            <option value="manutencao">Em Manutenção</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Status de Disponibilidade</label>
-                        <select name="status_disponibilidade" id="v_status">
-                            <option value="livre">Livre</option>
-                            <option value="alugado">Alugado</option>
-                            <option value="manutencao">Em Manutenção</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
                         <label>Foto do Veículo</label>
                         <input type="file" name="foto_carro" id="v_foto"
                                accept="image/png, image/jpeg, image/webp"
-                               required onchange="previewImagem(event)">
-                        <small id="dica-foto" class="dica-foto" style="display:none">
+                               onchange="previewImagem(event)">
+                        <small id="dica-foto" class="dica-foto" style="display:none; color:#999; font-size:11px; margin-top:5px;">
                             Deixe em branco para manter a foto atual.
                         </small>
                     </div>
                 </div>
 
                 <!-- Preview da imagem -->
-                <div class="preview-wrap" id="preview-wrap" style="display:none">
-                    <img id="preview-img" src="" alt="Preview">
+                <div class="preview-wrap" id="preview-wrap" style="display:none; margin-top:15px;">
+                    <img id="preview-img" src="" alt="Preview" style="max-width:100%; border-radius:6px;">
                 </div>
             </div>
 
@@ -379,41 +474,49 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
         const wrap     = document.getElementById('preview-wrap');
         if (event.target.files && event.target.files[0]) {
             const reader = new FileReader();
-            reader.onload = e => { preview.src = e.target.result; wrap.style.display = 'flex'; };
+            reader.onload = e => { 
+                preview.src = e.target.result; 
+                wrap.style.display = 'block'; 
+            };
             reader.readAsDataURL(event.target.files[0]);
         }
     }
 
     /* Abre modal para novo veículo */
     function abrirModalNovo() {
-        document.getElementById('modal-titulo').innerText = "Novo Veículo";
+        document.getElementById('modal-titulo').innerText = "Novo Veículo de Luxo";
         document.getElementById('acao-form').name = "cadastrar_veiculo";
+        document.getElementById('acao-form').value = "1";
         document.getElementById('v_id').value = "";
         document.getElementById('form-veiculo').reset();
         document.getElementById('v_foto').required = true;
         document.getElementById('dica-foto').style.display = 'none';
         document.getElementById('preview-wrap').style.display = 'none';
-        document.getElementById('v_categoria').value = "<?= $categoria_id ?>";
+        document.getElementById('v_status').value = "livre";
         document.getElementById('modalVeiculo').classList.add('active');
     }
 
     /* Abre modal para editar */
     function abrirModalEditar(carro) {
-        document.getElementById('modal-titulo').innerText = "Editar Veículo";
+        document.getElementById('modal-titulo').innerText = "Editar Veículo de Luxo";
         document.getElementById('acao-form').name = "editar_veiculo";
-        document.getElementById('v_id').value        = carro.id;
-        document.getElementById('v_modelo').value    = carro.modelo;
-        document.getElementById('v_marca').value     = carro.marca;
-        document.getElementById('v_ano').value       = carro.ano;
-        document.getElementById('v_placa').value     = carro.placa;
-        document.getElementById('v_chassi').value    = carro.chassi;
-        document.getElementById('v_categoria').value = carro.categoria_id;
-        document.getElementById('v_status').value    = carro.status_disponibilidade;
-        document.getElementById('v_foto').required   = false;
+        document.getElementById('acao-form').value = "1";
+        document.getElementById('v_id').value = carro.id;
+        document.getElementById('v_modelo').value = carro.modelo;
+        document.getElementById('v_marca').value = carro.marca;
+        document.getElementById('v_ano').value = carro.ano;
+        document.getElementById('v_placa').value = carro.placa;
+        document.getElementById('v_chassi').value = carro.chassi;
+        document.getElementById('v_preco').value = carro.preco_diaria || 1500.00;
+        document.getElementById('v_status').value = carro.status_disponibilidade;
+        document.getElementById('v_foto').required = false;
         document.getElementById('dica-foto').style.display = 'block';
+        
         const wrap = document.getElementById('preview-wrap');
         const img  = document.getElementById('preview-img');
-        img.src = carro.imagem_url; wrap.style.display = 'flex';
+        img.src = carro.imagem_url; 
+        wrap.style.display = 'block';
+        
         document.getElementById('modalVeiculo').classList.add('active');
     }
 
@@ -428,7 +531,7 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
                     document.getElementById('sidebar-avatar').src = data.usuario.foto_perfil;
                 }
             }
-        } catch (e) { console.error("Erro", e); }
+        } catch (e) { console.error("Erro ao carregar dados do admin", e); }
     });
 
     /* Logout */
