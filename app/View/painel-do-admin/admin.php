@@ -1,4 +1,3 @@
-// C:\xampp\htdocs\DriverLux\app\View\painel-do-admin\admin.php
 <?php
 session_start();
 
@@ -247,7 +246,7 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
             event.preventDefault();
             sessionStorage.setItem('voltandoDoAdmin', 'true');
             // Use relative navigation so it resolves regardless of server base
-            window.location.href = './';
+            window.location.href = '../home.html';
         }
 
         /* Verificação de admin - Usar dados do PHP ✅ REDUNDÂNCIA SEGURA */
@@ -289,7 +288,7 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
                 <span class="nav-icon">👥</span> Usuários
             </a>
             <div class="nav-sep"></div>
-            <a href="./" onclick="voltarParaHome(event)">
+            <a href="../home.html" onclick="voltarParaHome(event)">
                 <span class="nav-icon">🏠</span> Voltar para Home
             </a>
         </nav>
@@ -546,9 +545,9 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
     /* Logout */
     async function logout() {
         try {
-            await fetch('./api/usuarios/logout', { method: 'POST' });
-        } catch (_) {}
-        window.location.href = './';
+            await fetch('/DriverLux/api/usuarios/logout', { method: 'POST' });
+    } catch (_) {}
+    window.location.href = '../home.html';
     }
 
     /* Fechar modal clicando no overlay */
