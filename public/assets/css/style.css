@@ -1,3 +1,6 @@
+/* ==========================================================================
+   CONFIGURAÇÕES GERAIS E RESETS
+   ========================================================================== */
 * {
   margin: 0;
   padding: 0;
@@ -10,12 +13,17 @@ body {
   color: #2b0647;
 }
 
-/* TOPO */
+.esconder {
+  display: none !important;
+}
 
+/* ==========================================================================
+   TOPO / HEADER
+   ========================================================================== */
 .topo {
   height: 88px;
   background: #3b0567;
-  color: #000; /* CORREÇÃO 1: Garante que "Minhas Reservas" fique branco */
+  color: #000;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -52,10 +60,96 @@ body {
   font-size: 14px;
 }
 
-/* BUSCA */
+#btn-login-trigger {
+  color: #ffc400 !important;
+  font-weight: 900;
+  transition: 0.3s;
+}
 
+#btn-login-trigger:hover {
+  color: #ffffff !important;
+}
+
+/* ==========================================================================
+   ÁREA DO USUÁRIO LOGADO
+   ========================================================================== */
+.area-usuario {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 170px;
+}
+
+.btn-usuario {
+  background: #ffffff;
+  color: #440c77;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-family: "Poppins", Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-usuario:hover {
+  background: #ffc400;
+  color: #440c77;
+}
+
+.seta-menu {
+  font-size: 11px;
+}
+
+.menu-usuario {
+  position: absolute;
+  top: 48px;
+  right: 0;
+  width: 230px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  z-index: 999999;
+}
+
+.menu-usuario a {
+  display: block;
+  width: 100%;
+  padding: 14px 18px;
+  background: #ffffff;
+  color: #2b0647;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: "Poppins", Arial, sans-serif;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.menu-usuario a:hover {
+  background: #f3e8ff;
+  color: #6b00cc;
+}
+
+#btn-sair {
+  color: #b00020;
+}
+
+#btn-sair:hover {
+  background: #ffe8e8;
+  color: #b00020;
+}
+
+/* ==========================================================================
+   BARRA DE BUSCA (LANDING PAGE)
+   ========================================================================== */
 .busca {
   width: 78%;
+  max-width: 1120px;
   height: 85px;
   margin: -1px auto 0;
   background: #7d12de;
@@ -66,13 +160,14 @@ body {
   padding: 18px 30px;
   box-shadow: 0 12px 25px rgba(54, 0, 95, 0.25);
   position: relative;
-  z-index: 2;
+  z-index: 100;
 }
 
 .campo-localizacao {
   position: relative;
   width: 420px;
   height: 48px;
+  flex: 0 0 420px; /* Impede que o flexbox esmague a div do input */
 }
 
 .campo-localizacao input,
@@ -96,21 +191,25 @@ body {
 
 .busca input[type="date"] {
   width: 160px;
+  flex: 0 0 160px;
 }
 
 .busca input[type="time"] {
   width: 110px;
+  flex: 0 0 110px;
 }
 
 .busca button {
+  width: 205px;
   height: 48px;
+  flex: 0 0 205px;
   border: none;
   border-radius: 6px;
-  padding: 0 24px;
+  padding: 0 16px;
   background: #ffc400;
   color: #4b0082;
   font-weight: 900;
-  font-size: 15px;
+  font-size: 14px;
   cursor: pointer;
   white-space: nowrap;
   transition: transform 0.2s, background 0.2s;
@@ -121,23 +220,25 @@ body {
   background: #ffb700;
 }
 
+/* Dropdown da Lista de Locais */
 .lista-locais {
   position: absolute;
-  top: 58px;
+  top: calc(100% + 5px); /* Posiciona exatamente abaixo do input */
   left: 0;
   width: 100%;
   background: #ffffff;
-  border-radius: 0 0 10px 10px;
+  border-radius: 8px;
   box-shadow: 0 12px 30px rgba(0,0,0,0.25);
   overflow: hidden;
-  z-index: 9999;
+  z-index: 99999;
 }
 
 .titulo-lista {
   padding: 14px 18px;
   color: #007a3d;
   font-weight: 700;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #eeeeee;
+  background: #ffffff;
 }
 
 .opcao-local {
@@ -145,8 +246,10 @@ body {
   gap: 14px;
   padding: 16px 18px;
   cursor: pointer;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #eeeeee;
   color: #2b0647;
+  background: #ffffff;
+  transition: background 0.2s;
 }
 
 .opcao-local:hover {
@@ -162,8 +265,16 @@ body {
   font-size: 14px;
 }
 
-/* HERO */
+.icone-local {
+  position: absolute;
+  right: 16px;
+  top: 13px;
+  font-size: 20px;
+}
 
+/* ==========================================================================
+   HERO SECTION
+   ========================================================================== */
 .hero {
   min-height: 585px;
   margin-top: -84px;
@@ -179,17 +290,16 @@ body {
   max-width: 620px;
 }
 
-/* CORREÇÃO 2: Separei as cores dos spans de acordo com o fundo */
 .hero-texto span,
 .cta span {
   font-weight: 900;
-  color: #5b009f; /* Texto roxo porque o fundo destas sessões é claro */
+  color: #5b009f;
   letter-spacing: 1px;
 }
 
 .destaques span {
   font-weight: 900;
-  color: #ffc400; /* Texto amarelo porque o fundo da sessão destaques é roxo escuro */
+  color: #ffc400;
   letter-spacing: 1px;
 }
 
@@ -257,8 +367,9 @@ body {
   font-size: 20px;
 }
 
-/* DESTAQUES */
-
+/* ==========================================================================
+   DESTAQUES (CARDS DE CARROS)
+   ========================================================================== */
 .destaques {
   background: #440c77;
   padding: 42px 55px 70px;
@@ -372,8 +483,9 @@ body {
     color: #fff;
 }
 
-/* CTA */
-
+/* ==========================================================================
+   CTA SECTION
+   ========================================================================== */
 .cta {
   margin-top: 75px;
   min-height: 360px;
@@ -399,12 +511,13 @@ body {
   font-size: 16px;
 }
 
-#boas-vindas-nome{
+#boas-vindas-nome {
   color: #fff;
 }
 
-/* RESPONSIVO */
-
+/* ==========================================================================
+   RESPONSIVO / MEDIA QUERIES
+   ========================================================================== */
 @media (max-width: 900px) {
   .topo nav,
   .busca,
@@ -438,189 +551,4 @@ body {
     flex-direction: column;
     gap: 10px;
   }
-}
-
-/* =========================
-   MENU DO USUÁRIO LOGADO
-========================= */
-
-.area-usuario {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-width: 170px;
-}
-
-.btn-usuario {
-  background: #ffffff;
-  color: #440c77;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-family: "Poppins", Arial, sans-serif;
-  font-size: 14px;
-  font-weight: 800;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.btn-usuario:hover {
-  background: #ffc400;
-  color: #440c77;
-}
-
-.seta-menu {
-  font-size: 11px;
-}
-
-.menu-usuario {
-  position: absolute;
-  top: 48px;
-  right: 0;
-  width: 230px;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
-  overflow: hidden;
-  z-index: 999999;
-}
-
-.menu-usuario a {
-  display: block;
-  width: 100%;
-  padding: 14px 18px;
-  background: #ffffff;
-  color: #2b0647;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 700;
-  font-family: "Poppins", Arial, sans-serif;
-  border-bottom: 1px solid #eeeeee;
-}
-
-.menu-usuario a:hover {
-  background: #f3e8ff;
-  color: #6b00cc;
-}
-
-#btn-sair {
-  color: #b00020;
-}
-
-#btn-sair:hover {
-  background: #ffe8e8;
-  color: #b00020;
-}
-
-.esconder {
-  display: none !important;
-}
-
-#btn-login-trigger {
-  color: #ffc400 !important;
-  font-weight: 900;
-  transition: 0.3s;
-}
-
-#btn-login-trigger:hover {
-  color: #ffffff !important;
-}
-
-
-.icone-local {
-  position: absolute;
-  right: 16px;
-  top: 13px;
-  font-size: 20px;
-}
-
-.lista-locais {
-  position: absolute;
-  top: 58px;
-  left: 0;
-  width: 100%;
-  background: #ffffff;
-  border-radius: 0 0 10px 10px;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
-  overflow: hidden;
-  z-index: 9999;
-}
-
-.titulo-lista {
-  padding: 14px 18px;
-  color: #007a3d;
-  font-weight: 700;
-  border-bottom: 1px solid #eee;
-}
-
-.opcao-local {
-  display: flex;
-  gap: 14px;
-  padding: 16px 18px;
-  cursor: pointer;
-  border-bottom: 1px solid #eee;
-  color: #2b0647;
-}
-
-.opcao-local:hover {
-  background: #f3e8ff;
-}
-
-.opcao-local p {
-  margin: 0;
-  font-size: 14px;
-}
-
-.opcao-local strong {
-  font-size: 14px;
-}
-
-
-/* AJUSTE FINAL DA BUSCA - LANDING PAGE */
-
-.busca {
-  width: 78% !important;
-  max-width: 1120px !important;
-  height: 85px !important;
-  margin: -1px auto 0 !important;
-  padding: 18px 30px !important;
-  gap: 22px !important;
-  border-radius: 0 0 8px 8px !important;
-  display: flex !important;
-  align-items: center !important;
-}
-
-.campo-localizacao {
-  width: 420px !important;
-  height: 48px !important;
-  flex: 0 0 420px !important;
-}
-
-.campo-localizacao input {
-  width: 100% !important;
-  height: 48px !important;
-}
-
-.busca input[type="date"] {
-  width: 160px !important;
-  height: 48px !important;
-  flex: 0 0 160px !important;
-}
-
-.busca input[type="time"] {
-  width: 110px !important;
-  height: 48px !important;
-  flex: 0 0 110px !important;
-}
-
-.busca button {
-  width: 205px !important;
-  height: 48px !important;
-  flex: 0 0 205px !important;
-  padding: 0 16px !important;
-  border-radius: 6px !important;
-  font-size: 14px !important;
 }

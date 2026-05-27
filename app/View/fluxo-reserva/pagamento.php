@@ -189,6 +189,181 @@
     <script src="/DriverLux/public/assets/js/registro-login.js"></script>
     <script src="/DriverLux/public/assets/js/menu-usuario.js"></script>
     <script src="/DriverLux/public/assets/js/pagamento.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+    // ==========================================================================
+    // 1. RECUPERAÇÃO DE DADOS DA SESSÃO
+    // ==========================================================================
+    const dadosReserva = JSON.parse(sessionStorage.getItem('dados_reserva') || '{}');
+
+    // Se o usuário cair aqui sem ter escolhido um carro, manda ele de volta
+    if (!dadosReserva.veiculo_modelo) {
+        alert("Nenhum veículo selecionado. Você será redirecionado para a busca.");
+        window.location.href = '/DriverLux/app/View/fluxo-reserva/veiculos.php';
+        return;
+    }
+
+    // ==========================================================================
+    // 2. CÁLCULO DOS VALORES (Diárias, Proteção e Taxas)
+    // ==========================================================================
+    // Assume 1 diária se o cálculo de dias ainda não foi feito no Passo 2
+    const numDiarias = dadosReserva.num_diarias ? parseInt(dadosReserva.num_diarias) : 1; 
+    const valorDiaria = dadosReserva.valor_diaria || 0;
     
+    // Se você tiver proteção escolhida no passo 2, pegue da sessão. Senão, 0.
+    const valorProtecao = dadosReserva.valor_protecao ? parseFloat(dadosReserva.valor_protecao) : 0; 
+    
+    const subtotalDiarias = valorDiaria * numDiarias;
+    const taxaAluguel = (subtotalDiarias + valorProtecao) * 0.15; // 15% de taxa
+    const totalGeral = subtotalDiarias + valorProtecao + taxaAluguel;
+
+    // Função auxiliar para formatar moeda (ex: 1500.5 -> "1.500,50")
+    const formatarMoeda = (valor) => valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    // ==========================================================================
+    // 3. ATUALIZAÇÃO DOS RESUMOS NO HTML
+    // ==========================================================================
+    
+    // Atualiza a faixa de cabeçalho
+    const resumoValores = document.querySelectorAll('.resumo-valor');
+    if (resumoValores.length >= 2) {
+        if (dadosReserva.local_retirada) resumoValores[0].innerHTML = `📍 ${dadosReserva.local_retirada}`;
+        resumoValores[1].innerHTML = `📅 ${numDiarias} Diária(s)`;
+    }
+
+    // Atualiza o Card Lateral
+    document.getElementById('resumo-modelo').textContent = dadosReserva.veiculo_modelo;
+    document.getElementById('resumo-categoria').textContent = dadosReserva.categoria_nome;
+    
+    document.getElementById('label-diarias').textContent = `Diárias (${numDiarias}x)`;
+    document.getElementById('val-diarias').textContent = `R$ ${formatarMoeda(subtotalDiarias)}`;
+    document.getElementById('val-protecao').textContent = `R$ ${formatarMoeda(valorProtecao)}`;
+    document.getElementById('val-taxa').textContent = `R$ ${formatarMoeda(taxaAluguel)}`;
+    document.getElementById('total-exibido').textContent = formatarMoeda(totalGeral);
+
+    // ==========================================================================
+    // 4. LÓGICA DE FORMA DE PAGAMENTO E PARCELAMENTO
+    // ==========================================================================
+    const btnCredito = document.getElementById('btn-credito');
+    const btnDebito = document.getElementById('btn-debito');
+    const blocoParcelas = document.getElementById('bloco-parcelas');
+    const listaParcelas = document.getElementById('lista-parcelas');
+    const parcelaInfo = document.getElementById('parcela-info');
+
+    // Monta os botões de parcelamento dinamicamente (até 6x, por exemplo)
+    function renderizarParcelas() {
+        listaParcelas.innerHTML = '';
+        
+        for (let i = 1; i <= 6; i++) {
+            const valorParcela = totalGeral / i;
+            const div = document.createElement('div');
+            
+            // Adiciona um estilo básico pelo JS (pode melhorar no seu CSS)
+            div.style.padding = '10px';
+            div.style.border = '1px solid #ccc';
+            div.style.borderRadius = '6px';
+            div.style.cursor = 'pointer';
+            div.style.marginBottom = '8px';
+            div.style.display = 'flex';
+            div.style.justifyContent = 'space-between';
+            
+            if (i === 1) {
+                div.style.borderColor = '#3b0567';
+                div.style.background = '#f3e8ff';
+                parcelaInfo.textContent = `à vista`;
+            }
+
+            div.innerHTML = `<strong>${i}x</strong> <span>R$ ${formatarMoeda(valorParcela)}</span>`;
+            
+            // Clique para selecionar a parcela
+            div.addEventListener('click', () => {
+                // Reseta visual de todos
+                Array.from(listaParcelas.children).forEach(filho => {
+                    filho.style.borderColor = '#ccc';
+                    filho.style.background = 'transparent';
+                });
+                // Aplica visual de selecionado no atual
+                div.style.borderColor = '#3b0567';
+                div.style.background = '#f3e8ff';
+                
+                parcelaInfo.textContent = i === 1 ? 'à vista' : `${i}x de R$ ${formatarMoeda(valorParcela)}`;
+                
+                // Salva a escolha na sessão para a tela final
+                dadosReserva.parcelamento = i;
+                sessionStorage.setItem('dados_reserva', JSON.stringify(dadosReserva));
+            });
+
+            listaParcelas.appendChild(div);
+        }
+    }
+
+    renderizarParcelas();
+
+    // Eventos de clique nas Abas de Pagamento
+    btnCredito.addEventListener('click', () => {
+        btnCredito.classList.add('ativo');
+        btnDebito.classList.remove('ativo');
+        blocoParcelas.style.display = 'block';
+        renderizarParcelas();
+        dadosReserva.metodo_pagamento = 'Credito';
+    });
+
+    btnDebito.addEventListener('click', () => {
+        btnDebito.classList.add('ativo');
+        btnCredito.classList.remove('ativo');
+        blocoParcelas.style.display = 'none';
+        parcelaInfo.textContent = 'à vista no Débito';
+        dadosReserva.metodo_pagamento = 'Debito';
+        dadosReserva.parcelamento = 1;
+    });
+
+    // ==========================================================================
+    // 5. MÁSCARAS DE INPUT PARA O CARTÃO E VALIDAÇÃO FINAL
+    // ==========================================================================
+    const inputCartao = document.getElementById('numero-cartao');
+    const inputCvv = document.getElementById('cvv');
+
+    // Máscara: Espaços a cada 4 números
+    inputCartao.addEventListener('input', (e) => {
+        let value = e.target.value.replace(/\D/g, ''); // Remove o que não é número
+        value = value.replace(/(.{4})/g, '$1 ').trim(); // Adiciona espaço
+        e.target.value = value;
+    });
+
+    // Máscara: Apenas números no CVV
+    inputCvv.addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/\D/g, '');
+    });
+
+    // Lógica do botão de confirmar
+    const btnPagar = document.getElementById('btn-pagar');
+    btnPagar.addEventListener('click', () => {
+        const nomeTitular = document.getElementById('nome-titular').value.trim();
+        const numeroCartao = inputCartao.value.replace(/\s/g, '');
+        const mesValidade = document.getElementById('mes-vencimento').value;
+        const anoValidade = document.getElementById('ano-vencimento').value;
+        const cvv = inputCvv.value;
+
+        // Validação simples de campos
+        if (!nomeTitular || numeroCartao.length < 13 || !mesValidade || !anoValidade || cvv.length < 3) {
+            alert('Por favor, preencha corretamente todos os dados do cartão.');
+            return;
+        }
+
+        // Salva os totais e encerra
+        dadosReserva.total_pago = totalGeral;
+        sessionStorage.setItem('dados_reserva', JSON.stringify(dadosReserva));
+
+        // Aqui você pode redirecionar para a "Etapa 4" (Página de Conclusão/Sucesso)
+        // Substitua pelo link real da sua página de resumo/conclusão
+        btnPagar.textContent = "Processando...";
+        btnPagar.disabled = true;
+
+        setTimeout(() => {
+            window.location.href = '/DriverLux/app/View/fluxo-reserva/conclusao.php'; // Ajuste este caminho
+        }, 1500); // Simulando tempo de API
+    });
+});
+    </script>
 </body>
 </html>

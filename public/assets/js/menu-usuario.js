@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       sessionStorage.setItem('dados_reserva', JSON.stringify(dadosReserva));
 
-      window.location.href = '/DriverLux/app/View/Fluxo%20de%20Reserva/veiculos.php';
+      window.location.href = '/DriverLux/app/View/fluxo-reserva/veiculos.php%id=30';
     });
   }
 

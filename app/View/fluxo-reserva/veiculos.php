@@ -271,62 +271,41 @@ if (!empty($veiculos)) {
     </div>
 </div>
 
-<<<<<<< HEAD:app/View/Fluxo de Reserva/veiculos.php
+<script src="/DriverLux/public/assets/js/registro-login.js"></script>
+<script src="/DriverLux/public/assets/js/menu-usuario.js?v=3"></script>
+
 <script src="/DriverLux/public/assets/js/registro-login.js"></script>
 <script src="/DriverLux/public/assets/js/menu-usuario.js?v=3"></script>
 
 <script>
+// ==========================================================================
+// 1. LÓGICA DE AUTENTICAÇÃO E SESSÃO
+// ==========================================================================
 window.addEventListener('load', async () => {
     const btnLogin = document.getElementById('btn-login-trigger');
     const modalAuth = document.getElementById('modal-auth');
 
+    // Abre o modal de login
     if (btnLogin && modalAuth) {
         btnLogin.addEventListener('click', () => {
-            const container = modalAuth.shadowRoot?.getElementById('auth-container');
+            const container = modalAuth.shadowRoot ? modalAuth.shadowRoot.getElementById('auth-container') : null;
             if (container) container.classList.remove('hidden');
-=======
-    <script src="/DriverLux/public/assets/js/registro-login.js"></script>
-    <script src="/DriverLux/public/assets/js/menu-usuario.js?v=3"></script>
-    
-    <script>
-        window.addEventListener('load', async () => {
-            const btnLogin  = document.getElementById('btn-login-trigger');
-            const modalAuth = document.getElementById('modal-auth');
-            if (btnLogin && modalAuth) {
-                btnLogin.addEventListener('click', () => {
-                    const container = modalAuth.shadowRoot.getElementById('auth-container');
-                    if (container) container.classList.remove('hidden');
-                });
-            }
-            try {
-                const res  = await fetch('/DriverLux/public/api/usuarios/me');
-                const data = await res.json();
-                if (data.logado && data.usuario) {
-                    if (data.usuario.perfil === 'administrador' || data.usuario.perfil === 'admin') {
-                        window.location.href = '/DriverLux/app/View/painel-admin/admin.php';
-                        return;
-                    }
-                    const primeiroNome = data.usuario.nome.split(' ')[0];
-                    document.getElementById('nome-usuario').textContent = primeiroNome;
-                    if (btnLogin) btnLogin.classList.add('esconder');
-                    const btnMenuUsuario = document.getElementById('btn-menu-usuario');
-                    if (btnMenuUsuario) btnMenuUsuario.classList.remove('esconder');
-                }
-            } catch (e) { console.error("Erro ao verificar sessao do usuario:", e); }
->>>>>>> 2baba8b039630758e032b67e817f664f5c119cff:app/View/fluxo-reserva/veiculos.php
         });
     }
 
+    // Checa a sessão e atualiza a interface
     try {
         const res = await fetch('/DriverLux/public/api/usuarios/me');
         const data = await res.json();
 
         if (data.logado && data.usuario) {
+            // Se for admin, expulsa da tela de reserva e manda pro painel
             if (data.usuario.perfil === 'administrador' || data.usuario.perfil === 'admin') {
-                window.location.href = '/DriverLux/public/admin';
+                window.location.href = '/DriverLux/app/View/painel-admin/admin.php';
                 return;
             }
 
+            // Se for cliente, atualiza o botão de usuário
             const primeiroNome = data.usuario.nome.split(' ')[0];
             const nomeUsuario = document.getElementById('nome-usuario');
             const btnMenuUsuario = document.getElementById('btn-menu-usuario');
@@ -340,7 +319,12 @@ window.addEventListener('load', async () => {
     }
 });
 
+
+// ==========================================================================
+// 2. LÓGICA DE VEÍCULOS (RECUPERAR DADOS, FILTROS E SALVAR RESERVA)
+// ==========================================================================
 document.addEventListener('DOMContentLoaded', () => {
+    // A. Recupera os dados de busca que vieram da Home
     const dadosReserva = JSON.parse(sessionStorage.getItem('dados_reserva') || '{}');
 
     const resumoRetirada = document.getElementById('resumo-retirada');
@@ -355,6 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resumoPeriodo.textContent = '📅 ' + dataBR + ' às ' + dadosReserva.hora_retirada;
     }
 
+    // B. Lógica dos Filtros (Categoria, Marca e Preço)
     const checkboxesCat = document.querySelectorAll('.filtro-cat');
     const checkboxesMarca = document.querySelectorAll('.filtro-marca');
     const sliderPreco = document.getElementById('filtro-preco');
@@ -390,6 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Inicia os "escutadores" de mudança nos filtros
     checkboxesCat.forEach(cb => cb.addEventListener('change', aplicarFiltros));
     checkboxesMarca.forEach(cb => cb.addEventListener('change', aplicarFiltros));
 
@@ -397,6 +383,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sliderPreco.addEventListener('input', aplicarFiltros);
     }
 
+    // Lógica do botão Limpar Filtros
     if (btnLimpar) {
         btnLimpar.addEventListener('click', () => {
             checkboxesCat.forEach(cb => cb.checked = false);
@@ -410,16 +397,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // C. Salvar Carro Escolhido e Ir Para Pagamento
     document.querySelectorAll('.btn-reservar').forEach((botao) => {
         botao.addEventListener('click', () => {
+            // Abre o JSON já existente (com Palmas, Dia e Hora lá da Home)
             const dadosAtualizados = JSON.parse(sessionStorage.getItem('dados_reserva') || '{}');
 
+            // Adiciona as informações do carro selecionado na mesma "sacola"
             dadosAtualizados.veiculo_id = botao.dataset.carroId;
             dadosAtualizados.veiculo_modelo = botao.dataset.modelo;
             dadosAtualizados.categoria_nome = botao.dataset.categoria;
             dadosAtualizados.valor_diaria = parseFloat(botao.dataset.valorDiaria);
 
+            // Salva de volta no Session Storage
             sessionStorage.setItem('dados_reserva', JSON.stringify(dadosAtualizados));
+            
+            // O botão do HTML já deve ter um href para pagamento.php, ou você pode forçar o redirecionamento aqui adicionando:
+            // window.location.href = '/DriverLux/app/View/fluxo-reserva/pagamento.php';
         });
     });
 });
