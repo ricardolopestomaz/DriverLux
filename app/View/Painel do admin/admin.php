@@ -17,7 +17,7 @@ try {
 }
 
 // ==========================================
-// PROTEÇÃO: VERIFICAÇÃO DE ADMIN (ANTES DE QUALQUER OUTPUT)
+// PROTEÇÃO: VERIFICAÇÃO DE ADMIN (ANTES DE QUALQUER OUTPUT) ✅ CRÍTICO
 // ==========================================
 $isAdmin = false;
 $adminNome = "";
@@ -248,7 +248,7 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
             window.location.href = '/DriverLux/app/View/home.html';
         }
 
-        /* Verificação de admin - Usar dados do PHP */
+        /* Verificação de admin - Usar dados do PHP ✅ REDUNDÂNCIA SEGURA */
         const usuarioAdminNome = "<?= htmlspecialchars($adminNome, ENT_QUOTES, 'UTF-8') ?>";
         const isAdminUser = <?= $isAdmin ? 'true' : 'false' ?>;
 
