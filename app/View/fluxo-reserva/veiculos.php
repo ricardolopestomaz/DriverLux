@@ -271,6 +271,7 @@ if (!empty($veiculos)) {
     </div>
 </div>
 
+<<<<<<< HEAD:app/View/Fluxo de Reserva/veiculos.php
 <script src="/DriverLux/public/assets/js/registro-login.js"></script>
 <script src="/DriverLux/public/assets/js/menu-usuario.js?v=3"></script>
 
@@ -283,6 +284,36 @@ window.addEventListener('load', async () => {
         btnLogin.addEventListener('click', () => {
             const container = modalAuth.shadowRoot?.getElementById('auth-container');
             if (container) container.classList.remove('hidden');
+=======
+    <script src="/DriverLux/public/assets/js/registro-login.js"></script>
+    <script src="/DriverLux/public/assets/js/menu-usuario.js?v=3"></script>
+    
+    <script>
+        window.addEventListener('load', async () => {
+            const btnLogin  = document.getElementById('btn-login-trigger');
+            const modalAuth = document.getElementById('modal-auth');
+            if (btnLogin && modalAuth) {
+                btnLogin.addEventListener('click', () => {
+                    const container = modalAuth.shadowRoot.getElementById('auth-container');
+                    if (container) container.classList.remove('hidden');
+                });
+            }
+            try {
+                const res  = await fetch('/DriverLux/public/api/usuarios/me');
+                const data = await res.json();
+                if (data.logado && data.usuario) {
+                    if (data.usuario.perfil === 'administrador' || data.usuario.perfil === 'admin') {
+                        window.location.href = '/DriverLux/app/View/painel-admin/admin.php';
+                        return;
+                    }
+                    const primeiroNome = data.usuario.nome.split(' ')[0];
+                    document.getElementById('nome-usuario').textContent = primeiroNome;
+                    if (btnLogin) btnLogin.classList.add('esconder');
+                    const btnMenuUsuario = document.getElementById('btn-menu-usuario');
+                    if (btnMenuUsuario) btnMenuUsuario.classList.remove('esconder');
+                }
+            } catch (e) { console.error("Erro ao verificar sessao do usuario:", e); }
+>>>>>>> 2baba8b039630758e032b67e817f664f5c119cff:app/View/fluxo-reserva/veiculos.php
         });
     }
 

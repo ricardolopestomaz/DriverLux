@@ -179,9 +179,8 @@
       if (data.logado && data.usuario) {
         
         // 🚨 REDIRECIONAMENTO DE ADMIN: Se for administrador, tira ele da Home!
-        // (Verificando 'administrador' ou 'admin' para evitar erros de nomenclatura)
         if (data.usuario.perfil === 'administrador' || data.usuario.perfil === 'admin') {
-            window.location.href = '/DriverLux/views/admin.php';
+            window.location.href = 'http://localhost/DriverLux/app/View/painel-admin/admin.php';
             return; // Para a execução aqui
         }
 
@@ -196,6 +195,33 @@
       }
     } catch (e) {
       console.error("Erro ao verificar sessão do usuário:", e);
+    }
+
+    // ==========================================
+    // 3. NOVA LÓGICA DO BOTÃO SAIR (LOGOUT)
+    // ==========================================
+    const btnSair = document.getElementById('btn-sair');
+    
+    if (btnSair) {
+      btnSair.addEventListener('click', async (e) => {
+        e.preventDefault(); // Evita que o link '#' jogue a tela para o topo
+        
+        try {
+          // Faz a requisição POST para a sua API de logout
+          const resLogout = await fetch('/DriverLux/public/api/usuarios/logout', {
+            method: 'POST'
+          });
+          
+          if (resLogout.ok) {
+            // Se der certo, recarrega a página para limpar a sessão da tela e voltar ao estado de "deslogado"
+            window.location.reload();
+          } else {
+            console.error("Erro na API ao tentar sair.");
+          }
+        } catch (error) {
+          console.error("Erro de conexão ao tentar fazer logout:", error);
+        }
+      });
     }
   });
 </script>

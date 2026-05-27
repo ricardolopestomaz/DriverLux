@@ -120,7 +120,7 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestão de Frotas — DriverLux Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../public/assets/css/admin.css">
+    <link rel="stylesheet" href="../../../public/assets/css/admin.css">
 
     <script>
         window.addEventListener('load', async () => {
@@ -162,10 +162,13 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
             <a href="#">
                 <span class="nav-icon">👥</span> Usuários
             </a>
-            <div class="nav-sep"></div>
-            <a href="/DriverLux/views/home.html">
-                <span class="nav-icon">🏠</span> Voltar para Home
+            <a href="#">
+                <span class="nav-icon">🏷️</span> Cumpons
             </a>
+            <a href="#">
+                <span class="nav-icon">🛡️</span> Proteções
+            </a>
+            <div class="nav-sep"></div>
         </nav>
 
         <button class="logout-btn" onclick="logout()">
@@ -436,7 +439,7 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
         try {
             await fetch('/DriverLux/public/api/usuarios/logout', { method: 'POST' });
         } catch (_) {}
-        window.location.href = '/DriverLux/views/home.html';
+        window.location.href = '/DriverLux/app/View/home.html';
     }
 
     /* Fechar modal clicando no overlay */

@@ -116,21 +116,24 @@ if ($isApi) {
     $basePath = ROOT_PATH . DIRECTORY_SEPARATOR . "app" . DIRECTORY_SEPARATOR . "View" . DIRECTORY_SEPARATOR;
     $filePhp = $basePath . $page . ".php";
     $fileHtml = $basePath . $page . ".html";
-
     if (file_exists($filePhp)) {
-        require_once $filePhp;
-    } elseif (file_exists($fileHtml)) {
-        readfile($fileHtml);
+    require_once $filePhp;
+
+} elseif (file_exists($fileHtml)) {
+    readfile($fileHtml);
+
+} else {
+    http_response_code(404);
+
+    $file404 = $basePath . "404.php";
+
+    if (file_exists($file404)) {
+        require_once $file404;
     } else {
-        http_response_code(404);
-        $file404 = $basePath . "404.php";
-        
-        if (file_exists($file404)) {
-            require_once $file404;
-        } else {
-            echo "<h1>404 ;-;</h1>";
-            echo "<p>Página <strong>" . htmlspecialchars($page) . "</strong> não encontrada.</p>";
-            echo "<a href='/DriverLux/home'>Voltar para o início</a>";
-        }
+        echo "<h1>404 ;-;</h1>";
+        echo "<p>Página <strong>" . htmlspecialchars($page) . "</strong> não encontrada.</p>";
+        echo "<a href='/DriverLux/public/'>Voltar para o início</a>";
     }
 }
+}
+
