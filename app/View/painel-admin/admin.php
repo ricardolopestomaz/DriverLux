@@ -542,12 +542,12 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
         document.getElementById('modalVeiculo').classList.add('active');
     }
 
-    /* Logout */
+/* Logout */
     async function logout() {
         try {
-            await fetch('/DriverLux/api/usuarios/logout', { method: 'POST' });
-    } catch (_) {}
-    window.location.href = '../home.html';
+            await fetch('/DriverLux/public/api/usuarios/logout', { method: 'POST' });
+        } catch (_) {}
+        window.location.href = '/DriverLux/app/View/home.html';
     }
 
     /* Fechar modal clicando no overlay */

@@ -15,11 +15,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const data = await res.json();
     
     if (data.logado && data.usuario) {
-      // Bloqueio de Administrador no front
-      if (data.usuario.perfil === 'administrador' || data.usuario.perfil === 'admin') {
-          window.location.href = '/DriverLux/app/View/painel-admin/admin.php'; // Ajuste a rota se necessário
-          return;
-      }
 
       // Atualiza o menu superior com o nome do usuário
       if (nomeUsuario) {
