@@ -28,13 +28,13 @@ if (isset($_SESSION['usuario_id']) && isset($_SESSION['usuario_perfil'])) {
     $adminNome = $_SESSION['usuario_nome'] ?? 'Admin';
 } else {
     // Sessão não encontrada - Redirecionar para home
-    header('Location: /DriverLux/app/View/home.html');
+    header('Location: /DriverLux/');
     exit;
 }
 
 // Se não for admin, redirecionar imediatamente
 if (!$isAdmin) {
-    header('Location: /DriverLux/app/View/home.html');
+    header('Location: /DriverLux/');
     exit;
 }
 
@@ -245,7 +245,7 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
         function voltarParaHome(event) {
             event.preventDefault();
             sessionStorage.setItem('voltandoDoAdmin', 'true');
-            window.location.href = '/DriverLux/app/View/home.html';
+            window.location.href = '/DriverLux/';
         }
 
         /* Verificação de admin - Usar dados do PHP ✅ REDUNDÂNCIA SEGURA */
@@ -254,7 +254,7 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
 
         // Se não for admin (redundante, mas por segurança)
         if (!isAdminUser) {
-            window.location.href = '/DriverLux/app/View/home.html';
+            window.location.href = '/DriverLux/';
         }
     </script>
 </head>
@@ -287,7 +287,7 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
                 <span class="nav-icon">👥</span> Usuários
             </a>
             <div class="nav-sep"></div>
-            <a href="/DriverLux/app/View/home.html" onclick="voltarParaHome(event)">
+            <a href="/DriverLux/" onclick="voltarParaHome(event)">
                 <span class="nav-icon">🏠</span> Voltar para Home
             </a>
         </nav>
@@ -546,7 +546,7 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
         try {
             await fetch('/DriverLux/api/usuarios/logout', { method: 'POST' });
         } catch (_) {}
-        window.location.href = '/DriverLux/app/View/home.html';
+        window.location.href = '/DriverLux/';
     }
 
     /* Fechar modal clicando no overlay */
