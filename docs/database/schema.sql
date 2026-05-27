@@ -111,3 +111,36 @@ CREATE TABLE reservas (
     FOREIGN KEY (opcao_quilometragem_id) REFERENCES opcoes_quilometragem(id),
     FOREIGN KEY (cupom_id) REFERENCES cupons(id)
 );
+
+-- 8. Tabela de Pagamento
+CREATE TABLE pagamentos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    reserva_id INT NOT NULL,
+    usuario_id INT NOT NULL,
+
+    tipo_cartao ENUM('credito', 'debito') NOT NULL,
+    valor_total DECIMAL(10, 2) NOT NULL,
+    parcelas TINYINT UNSIGNED DEFAULT 1,
+
+    nome_titular VARCHAR(100) NOT NULL,
+    numero_cartao CHAR(16) NOT NULL,
+    cvv CHAR(3) NOT NULL, 
+    mes_vencimento TINYINT UNSIGNED NOT NULL CHECK (mes_vencimento BETWEEN 1 AND 12),
+    ano_vencimento SMALLINT UNSIGNED NOT NULL,
+
+    status ENUM('pendente', 'aprovado', 'recusado', 'estornado') DEFAULT 'pendente',
+
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (reserva_id) REFERENCES reservas(id),
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
+
+    CONSTRAINT chk_parcelas_debito CHECK (
+        tipo_cartao = 'credito' OR parcelas = 1
+    ),
+
+    CONSTRAINT chk_parcelas_limite CHECK (
+        parcelas BETWEEN 1 AND 12
+    )
+);

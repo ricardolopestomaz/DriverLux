@@ -1,131 +1,112 @@
-window.addEventListener('DOMContentLoaded', () => {
+// public/assets/js/menu-usuario.js
 
+document.addEventListener('DOMContentLoaded', async () => {
+  // ==========================================================================
+  // 1. VERIFICAÇÃO DE SESSÃO GLOBAL
+  // ==========================================================================
   const btnLogin = document.getElementById('btn-login-trigger');
-  const modalAuth = document.getElementById('modal-auth');
-
   const btnMenuUsuario = document.getElementById('btn-menu-usuario');
-  const menuUsuario = document.getElementById('menu-usuario');
   const nomeUsuario = document.getElementById('nome-usuario');
+  const menuUsuario = document.getElementById('menu-usuario');
   const btnSair = document.getElementById('btn-sair');
 
-  // LOGIN
-  if (btnLogin && modalAuth) {
-
-    btnLogin.addEventListener('click', () => {
-
-      const container =
-        modalAuth.shadowRoot?.getElementById('auth-container');
-
-      if (container) {
-        container.classList.remove('hidden');
+  try {
+    const res = await fetch('/DriverLux/public/api/usuarios/me');
+    const data = await res.json();
+    
+    if (data.logado && data.usuario) {
+      // Bloqueio de Administrador no front
+      if (data.usuario.perfil === 'administrador' || data.usuario.perfil === 'admin') {
+          window.location.href = '/DriverLux/app/View/painel-admin/admin.php'; // Ajuste a rota se necessário
+          return;
       }
 
-    });
-
+      // Atualiza o menu superior com o nome do usuário
+      if (nomeUsuario) {
+        const primeiroNome = data.usuario.nome.split(' ')[0];
+        nomeUsuario.textContent = primeiroNome;
+      }
+      
+      // Alterna a visibilidade dos botões
+      if (btnLogin) btnLogin.classList.add('esconder');
+      if (btnMenuUsuario) btnMenuUsuario.classList.remove('esconder');
+    }
+  } catch (e) {
+    console.error("Erro ao verificar sessão do usuário:", e);
   }
 
-  // VERIFICAR USUÁRIO
-  window.addEventListener('load', async () => {
-
-    try {
-
-      const resposta = await fetch(
-        '/DriverLux/public/api/usuarios/me'
-      );
-
-      const dados = await resposta.json();
-
-      if (dados.logado && dados.usuario) {
-
-        const primeiroNome =
-          dados.usuario.nome.split(' ')[0];
-
-        nomeUsuario.textContent =
-          `Olá, ${primeiroNome}`;
-
-        btnMenuUsuario.classList.remove('esconder');
-
-        if (btnLogin) {
-          btnLogin.style.display = 'none';
-        }
-
-      }
-
-    } catch (erro) {
-
-      console.error(
-        'Erro ao verificar usuário logado:',
-        erro
-      );
-
-    }
-
-  });
-
-  // ABRIR MENU
+  // ==========================================================================
+  // 2. COMPORTAMENTO DO MENU SUSPENSO
+  // ==========================================================================
   if (btnMenuUsuario && menuUsuario) {
-
-    btnMenuUsuario.addEventListener('click', (evento) => {
-
-      evento.stopPropagation();
-
+    btnMenuUsuario.addEventListener('click', (e) => {
+      e.stopPropagation();
       menuUsuario.classList.toggle('esconder');
-
     });
 
+    document.addEventListener('click', (e) => {
+      if (!btnMenuUsuario.contains(e.target) && !menuUsuario.contains(e.target)) {
+        menuUsuario.classList.add('esconder');
+      }
+    });
   }
 
-  // FECHAR MENU
-  document.addEventListener('click', (evento) => {
-
-    if (
-      btnMenuUsuario &&
-      menuUsuario &&
-      !btnMenuUsuario.contains(evento.target) &&
-      !menuUsuario.contains(evento.target)
-    ) {
-
-      menuUsuario.classList.add('esconder');
-
-    }
-
-  });
-
-  // LOGOUT
+  // ==========================================================================
+  // 3. LOGOUT (SAIR)
+  // ==========================================================================
   if (btnSair) {
-
-    btnSair.addEventListener('click', async (evento) => {
-
-      evento.preventDefault();
-
+    btnSair.addEventListener('click', async (e) => {
+      e.preventDefault();
       try {
-
-        const resposta = await fetch(
-          '/DriverLux/public/api/usuarios/logout',
-          {
-            method: 'POST'
-          }
-        );
-
-        const dados = await resposta.json();
-
-        if (dados.status === 'success') {
-
-          window.location.href = '/DriverLux/';
-
+        const resLogout = await fetch('/DriverLux/public/api/usuarios/logout', { method: 'POST' });
+        if (resLogout.ok) {
+          window.location.href = '/DriverLux/public/'; // Redireciona para a home ao deslogar
         }
+      } catch (error) {
+        console.error("Erro ao tentar sair:", error);
+      }
+    });
+  }
 
-      } catch (erro) {
+  // ==========================================================================
+  // 4. LÓGICA DA BUSCA (HOME) - Mantida do seu arquivo original
+  // ==========================================================================
+  const btnBuscar = document.getElementById('btn-buscar-disponibilidade');
+  if (btnBuscar) {
+    btnBuscar.addEventListener('click', () => {
+      const local = document.getElementById('local-retirada')?.value.trim();
+      const data = document.getElementById('data-retirada')?.value;
+      const hora = document.getElementById('hora-retirada')?.value;
 
-        console.error(
-          'Erro ao sair:',
-          erro
-        );
-
+      if (!local || !data || !hora) {
+        alert('Preencha local, data e hora.');
+        return;
       }
 
-    });
+      const dadosReserva = {
+        local_retirada: local,
+        data_retirada: data,
+        hora_retirada: hora
+      };
 
+      sessionStorage.setItem('dados_reserva', JSON.stringify(dadosReserva));
+      window.location.href = '/DriverLux/app/View/fluxo-reserva/veiculos.php'; // MERDA PURA
+    });
   }
 
+  const inputLocal = document.getElementById('local-retirada');
+  const listaLocais = document.getElementById('lista-locais');
+  const opcoesLocais = document.querySelectorAll('.opcao-local');
+
+  if (inputLocal && listaLocais) {
+    inputLocal.addEventListener('focus', () => listaLocais.classList.remove('esconder'));
+    inputLocal.addEventListener('input', () => listaLocais.classList.remove('esconder'));
+
+    opcoesLocais.forEach((opcao) => {
+      opcao.addEventListener('click', () => {
+        inputLocal.value = opcao.dataset.local;
+        listaLocais.classList.add('esconder');
+      });
+    });
+  }
 });
