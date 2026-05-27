@@ -216,24 +216,24 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestão de Frotas — DriverLux Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../public/assets/css/admin.css">
+    <link rel="stylesheet" href="/DriverLux/public/assets/css/admin.css">
 
     <script>
         /* Função para voltar à home com controle */
         function voltarParaHome(event) {
             event.preventDefault();
             sessionStorage.setItem('voltandoDoAdmin', 'true');
-            window.location.href = 'http://localhost/DriverLux/views/home.html';
+            window.location.href = '/DriverLux/app/View/home.html';
         }
 
         window.addEventListener('load', async () => {
             try {
                 const res  = await fetch('/DriverLux/public/api/usuarios/me');
                 const data = await res.json();
-                if (!data || !data.logado || !data.usuario) { window.location.href = 'http://localhost/DriverLux/views/home.html'; return; }
+                if (!data || !data.logado || !data.usuario) { window.location.href = '/DriverLux/app/View/home.html'; return; }
                 const perfil = data.usuario.perfil;
-                if (perfil !== 'administrador' && perfil !== 'admin') { window.location.href = 'http://localhost/DriverLux/views/home.html'; }
-            } catch (err) { window.location.href = 'http://localhost/DriverLux/views/home.html'; }
+                if (perfil !== 'administrador' && perfil !== 'admin') { window.location.href = '/DriverLux/app/View/home.html'; }
+            } catch (err) { window.location.href = '/DriverLux/app/View/home.html'; }
         });
     </script>
 </head>
@@ -266,7 +266,7 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
                 <span class="nav-icon">👥</span> Usuários
             </a>
             <div class="nav-sep"></div>
-            <a href="http://localhost/DriverLux/views/home.html" onclick="voltarParaHome(event)">
+            <a href="/DriverLux/app/View/home.html" onclick="voltarParaHome(event)">
                 <span class="nav-icon">🏠</span> Voltar para Home
             </a>
         </nav>
@@ -539,7 +539,7 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
         try {
             await fetch('/DriverLux/public/api/usuarios/logout', { method: 'POST' });
         } catch (_) {}
-        window.location.href = '/DriverLux/views/home.html';
+        window.location.href = '/DriverLux/app/View/home.html';
     }
 
     /* Fechar modal clicando no overlay */
