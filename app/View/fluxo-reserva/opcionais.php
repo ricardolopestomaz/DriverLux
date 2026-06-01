@@ -3,6 +3,32 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Auto-seeding automático caso as tabelas estejam vazias
+require_once __DIR__ . '/../../../config/db_connect.php';
+try {
+    $db = (new Database())->getConnection();
+    
+    $cProt = $db->query('SELECT COUNT(*) FROM pacotes_protecao')->fetchColumn();
+    if ($cProt == 0) {
+        $db->exec("INSERT INTO pacotes_protecao (nome, descricao, valor_diario, ativo) VALUES 
+            ('Proteção Padrão', 'Cobre apenas colisões e roubo com franquia alta.', 25.00, 1),
+            ('Proteção Completa', 'Cobre danos a terceiros e vidros, franquia reduzida.', 45.00, 1),
+            ('Proteção Premium', 'Isenção total de franquia e assistência 24h VIP.', 75.00, 1)
+        ");
+    }
+    
+    $cKm = $db->query('SELECT COUNT(*) FROM opcoes_quilometragem')->fetchColumn();
+    if ($cKm == 0) {
+        $db->exec("INSERT INTO opcoes_quilometragem (nome, limite_km, valor_diario, taxa_km_excedente, ativo) VALUES 
+            ('Econômica (100km/dia)', 100, 0.00, 0.55, 1),
+            ('Intermediária (250km/dia)', 250, 20.00, 0.45, 1),
+            ('Quilometragem Ilimitada', NULL, 55.00, 0.00, 1)
+        ");
+    }
+} catch (Exception $e) {
+    // Ignora silenciosamente em caso de erro na conexão aqui
+}
+
 require_once __DIR__ . '/../../Controller/ProtecaoController.php';
 require_once __DIR__ . '/../../Controller/KMController.php';
 
@@ -210,6 +236,10 @@ $opcoesKm = $kmResponse['data'] ?? [];
   <aside class="resumo-reserva">
     <h2>Resumo</h2>
 
+    <div class="linha-resumo" id="resumo-veiculo-imagem-wrap" style="text-align: center; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 10px; display: none;">
+      <img id="resumo-veiculo-img" src="" alt="Foto do Veículo" style="max-width: 100%; max-height: 100px; object-fit: contain;">
+    </div>
+
     <div class="linha-resumo">
       <span>Veículo</span>
       <strong id="resumo-veiculo">—</strong>
@@ -252,6 +282,10 @@ $opcoesKm = $kmResponse['data'] ?? [];
 
     <button class="btn-continuar" id="btn-continuar-pagamento">
       Continuar para pagamento
+    </button>
+
+    <button class="btn-voltar" id="btn-voltar-veiculos" style="width: 100%; margin-top: 10px; background: transparent; border: 1px solid #555; color: #bbb; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: all 0.3s ease;">
+      Voltar para Veículos
     </button>
   </aside>
 
@@ -304,6 +338,13 @@ $opcoesKm = $kmResponse['data'] ?? [];
     if (pillRetirada) pillRetirada.textContent = `📍 ${dadosReserva.local_retirada || 'Não informado'}`;
     if (resumoVeiculo) resumoVeiculo.textContent = dadosReserva.veiculo_modelo;
     if (resumoRetirada) resumoRetirada.textContent = dadosReserva.local_retirada || 'Não informado';
+
+    const resumoVeiculoImgWrap = document.getElementById('resumo-veiculo-imagem-wrap');
+    const resumoVeiculoImg = document.getElementById('resumo-veiculo-img');
+    if (resumoVeiculoImgWrap && resumoVeiculoImg && dadosReserva.veiculo_imagem) {
+        resumoVeiculoImg.src = dadosReserva.veiculo_imagem;
+        resumoVeiculoImgWrap.style.display = 'block';
+    }
 
     // Pré-preenche a data de devolução (1 dia a mais que a retirada, por padrão)
     if (dadosReserva.data_retirada) {
@@ -454,6 +495,13 @@ $opcoesKm = $kmResponse['data'] ?? [];
 
             // Redireciona para a tela de pagamento usando a rota do seu index.php
             window.location.href = '/DriverLux/app/View/fluxo-reserva/pagamento.php';
+        });
+    }
+
+    const btnVoltarVeiculos = document.getElementById('btn-voltar-veiculos');
+    if (btnVoltarVeiculos) {
+        btnVoltarVeiculos.addEventListener('click', () => {
+            window.location.href = '/DriverLux/app/View/fluxo-reserva/veiculos.php';
         });
     }
 });

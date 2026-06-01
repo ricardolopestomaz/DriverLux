@@ -177,7 +177,7 @@ $page = $uri[0] ?? '';
 
 // 1. Redirecionamento automático para a Home
 if ($page === '' || $page === 'index') {
-    header('Location: /DriverLux/app/View/home.html');
+    header('Location: /DriverLux/index.html');
     exit;
 }
 

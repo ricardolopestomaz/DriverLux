@@ -141,7 +141,10 @@
             <div class="section-title" style="margin-bottom: 16px;">Resumo do Pagamento</div>
 
             <div class="resumo-veiculo">
-                <div class="resumo-veiculo-img">&#128663;</div>
+                <div class="resumo-veiculo-img" style="background: transparent; width: 65px; height: 50px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                    <img id="resumo-veiculo-foto" src="" alt="Foto" style="width: 100%; height: 100%; object-fit: contain; display: none;">
+                    <span id="resumo-veiculo-emoji" style="font-size: 26px;">&#128663;</span>
+                </div>
                 <div>
                     <div class="resumo-veiculo-nome" id="resumo-modelo">—</div>
                     <div class="resumo-veiculo-cat" id="resumo-categoria">—</div>
@@ -183,6 +186,10 @@
 
             <button class="btn-pagar" id="btn-pagar">Confirmar Pagamento</button>
 
+            <button class="btn-voltar" id="btn-voltar-opcionais" style="width: 100%; margin-top: 10px; background: transparent; border: 1px solid #555; color: #bbb; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: all 0.3s ease;">
+              Voltar para Opcionais
+            </button>
+
         </div>
     </div>
 
@@ -191,6 +198,86 @@
     <script src="/DriverLux/public/assets/js/pagamento.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+    // ==========================================================================
+    // 0. VERIFICAÇÃO OBRIGATÓRIA DE LOGIN
+    // ==========================================================================
+    fetch('/DriverLux/public/api/usuarios/me')
+        .then(res => res.json())
+        .then(data => {
+            if (!data.logado || !data.usuario) {
+                const modalAuth = document.getElementById('modal-auth');
+                if (modalAuth) {
+                    const abrirModal = () => {
+                        const container = modalAuth.shadowRoot ? modalAuth.shadowRoot.getElementById('auth-container') : null;
+                        if (container) {
+                            container.classList.remove('hidden');
+                            
+                            // Oculta o botão "X" de fechar
+                            const closeBtn = modalAuth.shadowRoot.getElementById('close-auth');
+                            if (closeBtn) {
+                                closeBtn.style.display = 'none';
+                            }
+                            
+                            // Adiciona o botão voltar dentro do card de login se não houver
+                            const card = modalAuth.shadowRoot.querySelector('.auth-card');
+                            if (card && !modalAuth.shadowRoot.getElementById('auth-btn-voltar')) {
+                                const btnVoltarAuth = document.createElement('button');
+                                btnVoltarAuth.id = 'auth-btn-voltar';
+                                btnVoltarAuth.textContent = '← Voltar para Opcionais';
+                                btnVoltarAuth.style.width = '100%';
+                                btnVoltarAuth.style.marginTop = '15px';
+                                btnVoltarAuth.style.background = 'transparent';
+                                btnVoltarAuth.style.border = '1px solid #6B00CC';
+                                btnVoltarAuth.style.color = '#6B00CC';
+                                btnVoltarAuth.style.padding = '12px';
+                                btnVoltarAuth.style.borderRadius = '8px';
+                                btnVoltarAuth.style.fontWeight = 'bold';
+                                btnVoltarAuth.style.cursor = 'pointer';
+                                btnVoltarAuth.style.fontFamily = 'inherit';
+                                btnVoltarAuth.style.transition = 'all 0.3s ease';
+                                
+                                btnVoltarAuth.addEventListener('mouseenter', () => {
+                                    btnVoltarAuth.style.background = '#6B00CC';
+                                    btnVoltarAuth.style.color = '#fff';
+                                });
+                                btnVoltarAuth.addEventListener('mouseleave', () => {
+                                    btnVoltarAuth.style.background = 'transparent';
+                                    btnVoltarAuth.style.color = '#6B00CC';
+                                });
+                                btnVoltarAuth.addEventListener('click', () => {
+                                    window.location.href = '/DriverLux/app/View/fluxo-reserva/opcionais.php';
+                                });
+                                card.appendChild(btnVoltarAuth);
+                            }
+                        }
+                    };
+
+                    abrirModal();
+                    const interval = setInterval(() => {
+                        const container = modalAuth.shadowRoot ? modalAuth.shadowRoot.getElementById('auth-container') : null;
+                        if (container && !container.classList.contains('hidden')) {
+                            const closeBtn = modalAuth.shadowRoot.getElementById('close-auth');
+                            if (closeBtn) {
+                                closeBtn.style.display = 'none';
+                            }
+                            clearInterval(interval);
+                        } else {
+                            abrirModal();
+                        }
+                    }, 200);
+                }
+            }
+        })
+        .catch(err => console.error('Erro na checagem de login:', err));
+
+    // Botão Voltar da página principal
+    const btnVoltarOpcionais = document.getElementById('btn-voltar-opcionais');
+    if (btnVoltarOpcionais) {
+        btnVoltarOpcionais.addEventListener('click', () => {
+            window.location.href = '/DriverLux/app/View/fluxo-reserva/opcionais.php';
+        });
+    }
+
     // ==========================================================================
     // 1. RECUPERAÇÃO DE DADOS DA SESSÃO
     // ==========================================================================
@@ -234,6 +321,15 @@
     // Atualiza o Card Lateral
     document.getElementById('resumo-modelo').textContent = dadosReserva.veiculo_modelo;
     document.getElementById('resumo-categoria').textContent = dadosReserva.categoria_nome;
+    
+    const fotoCarro = dadosReserva.veiculo_imagem;
+    const imgFoto = document.getElementById('resumo-veiculo-foto');
+    const spanEmoji = document.getElementById('resumo-veiculo-emoji');
+    if (fotoCarro && imgFoto && spanEmoji) {
+        imgFoto.src = fotoCarro;
+        imgFoto.style.display = 'block';
+        spanEmoji.style.display = 'none';
+    }
     
     document.getElementById('label-diarias').textContent = `Diárias (${numDiarias}x)`;
     document.getElementById('val-diarias').textContent = `R$ ${formatarMoeda(subtotalDiarias)}`;

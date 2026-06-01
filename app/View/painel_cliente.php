@@ -11,7 +11,7 @@
 <body>
 
 <header class="topo">
-  <a href="/DriverLux/views/home.html">
+  <a href="/DriverLux/index.html">
     <img src="/DriverLux/public/assets/img/logo.png"
          class="logo"
          alt="DriverLux">
@@ -23,7 +23,7 @@
     <a href="#">LUX - CARRO POR ASSINATURA</a>
   </nav>
   <div class="breadcrumb">
-    <a href="/DriverLux/app/View/home.html" style="color: white">Início</a>
+    <a href="/DriverLux/index.html" style="color: white">Início</a>
     <span class="sep"> › </span>
     <span class="atual">Meu Perfil</span>
   </div>

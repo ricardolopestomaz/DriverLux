@@ -7,11 +7,10 @@ INSERT INTO usuarios (nome, cpf, email, senha_hash, perfil) VALUES
 ('Ana Silva', '555.666.777-88', 'ana.silva@email.com', '$2b$10$L7r/xJ...ficticio', 'cliente');
 
 -- 2. Populando Categorias de Veículos
-INSERT INTO categorias_veiculos (nome, descricao, valor_base_diaria) VALUES 
-('Grupo B - Compacto', 'Carros econômicos com motor 1.0, ar-condicionado e 4 portas.', 89.90),
-('Grupo C - Sedã', 'Carros com porta-malas amplo, motor 1.6 e maior conforto.', 129.90),
-('Grupo L - Luxo', 'Veículos premium, bancos de couro e câmbio automático.', 259.90),
-('Grupo SUV', 'Utilitários esportivos, ideais para viagens e terrenos mistos.', 189.90);
+INSERT INTO categorias_veiculos (id, nome, descricao, valor_base_diaria) VALUES 
+(1, 'Econômico', 'Carros populares e eficientes', 150.00),
+(2, 'Plus',      'Carros executivos e confortáveis', 350.00),
+(3, 'Max',       'Supercarros e veículos exclusivos', 1200.00);
 
 -- 3. Populando Veículos (Frota inicial)
 INSERT INTO veiculos (categoria_id, marca, modelo, ano, placa, chassi, status_disponibilidade) VALUES 
@@ -19,7 +18,7 @@ INSERT INTO veiculos (categoria_id, marca, modelo, ano, placa, chassi, status_di
 (1, 'Fiat', 'Mobi', 2022, 'DFG-5678', '9BW-ZZZ123-DEF-002', 'livre'),
 (2, 'Chevrolet', 'Onix Plus', 2024, 'GHI-9012', '9BW-ZZZ123-GHI-003', 'alugado'),
 (3, 'BMW', '320i', 2023, 'LUX-0001', '9BW-ZZZ123-LUX-004', 'livre'),
-(4, 'Jeep', 'Compass', 2024, 'SUV-2024', '9BW-ZZZ123-SUV-005', 'manutencao');
+(2, 'Jeep', 'Compass', 2024, 'SUV-2024', '9BW-ZZZ123-SUV-005', 'manutencao');
 
 -- 4. Populando Pacotes de Proteção
 INSERT INTO pacotes_protecao (nome, descricao, valor_diario) VALUES 

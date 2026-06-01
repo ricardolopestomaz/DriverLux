@@ -116,6 +116,11 @@ class PagamentoService {
             ];
         }
 
+        // Mascara o número do cartão antes de salvar no banco por segurança (PCI-DSS)
+        $num_limpo = preg_replace('/\D/', '', $data->numero_cartao);
+        $ultimos_quatro = substr($num_limpo, -4);
+        $data->numero_cartao = '**** **** **** ' . ($ultimos_quatro ?: '0000');
+
         $resultado = $this->model->inserir($data, $usuario_id, $parcelas);
 
         if ($resultado) {

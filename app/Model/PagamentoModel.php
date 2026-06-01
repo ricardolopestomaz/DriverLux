@@ -58,7 +58,6 @@ class PagamentoModel {
                     parcelas,
                     nome_titular,
                     numero_cartao,
-                    cvv,
                     mes_vencimento,
                     ano_vencimento
                   ) VALUES (
@@ -69,7 +68,6 @@ class PagamentoModel {
                     :parcelas,
                     :nome_titular,
                     :numero_cartao,
-                    :cvv,
                     :mes_vencimento,
                     :ano_vencimento
                   )";
@@ -84,7 +82,6 @@ class PagamentoModel {
             ":parcelas" => $parcelas,
             ":nome_titular" => $data->nome_titular,
             ":numero_cartao" => $data->numero_cartao,
-            ":cvv" => $data->cvv,
             ":mes_vencimento" => $data->mes_vencimento,
             ":ano_vencimento" => $data->ano_vencimento
         ]);

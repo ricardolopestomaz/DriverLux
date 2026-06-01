@@ -245,6 +245,7 @@ if (!empty($veiculos)) {
                                     data-modelo="<?= htmlspecialchars(($carro['marca'] ?? '') . ' ' . ($carro['modelo'] ?? '')) ?>"
                                     data-categoria="<?= htmlspecialchars($carro['categoria_nome'] ?? 'Premium') ?>"
                                     data-valor-diaria="<?= $valorOriginal ?>"
+                                    data-imagem-url="<?= htmlspecialchars($imagem) ?>"
                                 >
                                     <span>Reservar Agora</span>
                                 </a>
@@ -407,6 +408,7 @@ document.addEventListener('DOMContentLoaded', () => {
             dadosAtualizados.veiculo_modelo = botao.dataset.modelo;
             dadosAtualizados.categoria_nome = botao.dataset.categoria;
             dadosAtualizados.valor_diaria = parseFloat(botao.dataset.valorDiaria);
+            dadosAtualizados.veiculo_imagem = botao.dataset.imagemUrl;
 
             // Salva de volta no Session Storage
             sessionStorage.setItem('dados_reserva', JSON.stringify(dadosAtualizados));

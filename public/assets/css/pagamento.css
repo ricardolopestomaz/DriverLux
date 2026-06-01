@@ -705,46 +705,24 @@ body {
 /* ── botão de pagar ── */
 .btn-pagar {
   width: 100%;
-  padding: 14px;
-  margin-top: 20px;
+  margin-top: 22px;
+  padding: 15px;
   border: none;
-  border-radius: 15px;
-  font-size: 13px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--roxo-medio), var(--roxo-claro));
+  color: #fff;
   font-weight: 900;
   font-family: "Poppins", sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 1px;
   cursor: pointer;
-  background: linear-gradient(140deg, var(--ouro), var(--roxo-medio));
-  color: var(--texto-claro);
+  text-transform: uppercase;
+  transition: 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: all 0.25s;
-  position: relative;
-  overflow: hidden;
-}
-
-.btn-pagar::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(140deg, var(--dourado), var(--roxo-medio));
-  opacity: 0;
-  transition: opacity 0.25s;
-}
-
-.btn-pagar span {
-  position: relative;
-  z-index: 1;
 }
 
 .btn-pagar:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 24px rgba(106, 13, 173, 0.4);
-}
-
-.btn-pagar:hover::after {
-  opacity: 1;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(106, 13, 173, 0.35);
 }

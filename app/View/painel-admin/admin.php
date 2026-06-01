@@ -4,49 +4,27 @@ session_start();
 // ==========================================
 // 1. CONEXÃO COM O BANCO DE DADOS
 // ==========================================
-$host   = 'localhost';
-$dbname = 'driverlux';
-$user   = 'root';
-$pass   = '';
+require_once __DIR__ . '/../../../config/db_connect.php';
 
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Erro na conexão: " . $e->getMessage());
+    $database = new Database();
+    $pdo = $database->getConnection();
+} catch (Exception $e) {
+    die("Erro na conexão com o banco de dados: " . $e->getMessage());
 }
 
 // ==========================================
-// PROTEÇÃO: GARANTE QUE A COLUNA 'ativo' EXISTA
-// ==========================================
-try {
-    $pdo->exec("ALTER TABLE veiculos ADD COLUMN ativo TINYINT(1) DEFAULT 1");
-} catch (PDOException $e) { 
-    // Se der erro, é porque a coluna já existe, então ignoramos.
-}
-
-// ==========================================
-// AÇÃO: OCULTAR/EXIBIR VEÍCULO
+// AÇÃO: OCULTAR/EXIBIR VEÍCULO (Preparado/Parametrizado)
 // ==========================================
 if (isset($_GET['toggle_ativo']) && isset($_GET['id'])) {
     $idToggle = (int)$_GET['id'];
-    // Se for 1 vira 0, se for 0 vira 1
-    $pdo->exec("UPDATE veiculos SET ativo = IF(ativo = 1, 0, 1) WHERE id = $idToggle");
+    
+    $stmtToggle = $pdo->prepare("UPDATE veiculos SET ativo = IF(ativo = 1, 0, 1) WHERE id = :id");
+    $stmtToggle->execute([':id' => $idToggle]);
     
     // Recarrega a página para atualizar a tabela
     header("Location: admin.php");
     exit;
-}
-
-// ==========================================
-// 1.5. SEED DE CATEGORIAS
-// ==========================================
-$checkCategorias = $pdo->query("SELECT COUNT(*) FROM categorias_veiculos")->fetchColumn();
-if ($checkCategorias == 0) {
-    $pdo->exec("INSERT IGNORE INTO categorias_veiculos (id, nome, descricao, valor_base_diaria) VALUES
-        (1, 'Econômico', 'Carros populares e eficientes', 150.00),
-        (2, 'Plus',      'Carros executivos e confortáveis', 350.00),
-        (3, 'Max',       'Supercarros e veículos exclusivos', 1200.00)");
 }
 
 // ==========================================
@@ -63,8 +41,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $imagem_url = null;
     if (isset($_FILES['foto_carro']) && $_FILES['foto_carro']['error'] === UPLOAD_ERR_OK) {
-        $pastaDestino = __DIR__ . '/../public/assets/img/veiculos/';
-        if (!is_dir($pastaDestino)) mkdir($pastaDestino, 0755, true);
+        $pastaDestino = __DIR__ . '/../../../public/assets/img/veiculos/';
+        if (!is_dir($pastaDestino)) {
+            mkdir($pastaDestino, 0755, true);
+        }
         $extensao      = pathinfo($_FILES['foto_carro']['name'], PATHINFO_EXTENSION);
         $nomeArquivo   = 'carro_' . uniqid() . '.' . strtolower($extensao);
         $caminhoCompleto = $pastaDestino . $nomeArquivo;
@@ -74,11 +54,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (isset($_POST['cadastrar_veiculo'])) {
-        if (empty($imagem_url)) $imagem_url = '/DriverLux/public/assets/img/default-car.png';
+        if (empty($imagem_url)) {
+            $imagem_url = '/DriverLux/public/assets/img/default-car.png';
+        }
         $stmt = $pdo->prepare("INSERT INTO veiculos (categoria_id, marca, modelo, ano, placa, chassi, imagem_url, status_disponibilidade)
                                VALUES (:categoria_id, :marca, :modelo, :ano, :placa, :chassi, :imagem_url, :status_disponibilidade)");
-        $stmt->execute([':categoria_id'=>$categoria_id,':marca'=>$marca,':modelo'=>$modelo,':ano'=>$ano,
-                        ':placa'=>$placa,':chassi'=>$chassi,':imagem_url'=>$imagem_url,':status_disponibilidade'=>$status_disponibilidade]);
+        $stmt->execute([
+            ':categoria_id' => $categoria_id,
+            ':marca' => $marca,
+            ':modelo' => $modelo,
+            ':ano' => $ano,
+            ':placa' => $placa,
+            ':chassi' => $chassi,
+            ':imagem_url' => $imagem_url,
+            ':status_disponibilidade' => $status_disponibilidade
+        ]);
         header("Location: admin.php?categoria_id=$categoria_id&sucesso=cadastrado");
         exit;
 
@@ -87,13 +77,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($imagem_url) {
             $stmt = $pdo->prepare("UPDATE veiculos SET categoria_id=:categoria_id, marca=:marca, modelo=:modelo, ano=:ano,
                                    placa=:placa, chassi=:chassi, imagem_url=:imagem_url, status_disponibilidade=:status_disponibilidade WHERE id=:id");
-            $stmt->execute([':categoria_id'=>$categoria_id,':marca'=>$marca,':modelo'=>$modelo,':ano'=>$ano,
-                            ':placa'=>$placa,':chassi'=>$chassi,':imagem_url'=>$imagem_url,':status_disponibilidade'=>$status_disponibilidade,':id'=>$veiculo_id]);
+            $stmt->execute([
+                ':categoria_id' => $categoria_id,
+                ':marca' => $marca,
+                ':modelo' => $modelo,
+                ':ano' => $ano,
+                ':placa' => $placa,
+                ':chassi' => $chassi,
+                ':imagem_url' => $imagem_url,
+                ':status_disponibilidade' => $status_disponibilidade,
+                ':id' => $veiculo_id
+            ]);
         } else {
             $stmt = $pdo->prepare("UPDATE veiculos SET categoria_id=:categoria_id, marca=:marca, modelo=:modelo, ano=:ano,
                                    placa=:placa, chassi=:chassi, status_disponibilidade=:status_disponibilidade WHERE id=:id");
-            $stmt->execute([':categoria_id'=>$categoria_id,':marca'=>$marca,':modelo'=>$modelo,':ano'=>$ano,
-                            ':placa'=>$placa,':chassi'=>$chassi,':status_disponibilidade'=>$status_disponibilidade,':id'=>$veiculo_id]);
+            $stmt->execute([
+                ':categoria_id' => $categoria_id,
+                ':marca' => $marca,
+                ':modelo' => $modelo,
+                ':ano' => $ano,
+                ':placa' => $placa,
+                ':chassi' => $chassi,
+                ':status_disponibilidade' => $status_disponibilidade,
+                ':id' => $veiculo_id
+            ]);
         }
         header("Location: admin.php?categoria_id=$categoria_id&sucesso=editado");
         exit;
@@ -127,10 +134,10 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
             try {
                 const res  = await fetch('/DriverLux/public/api/usuarios/me');
                 const data = await res.json();
-                if (!data || !data.logado || !data.usuario) { window.location.href = '/DriverLux/views/home.html'; return; }
+                if (!data || !data.logado || !data.usuario) { window.location.href = '/DriverLux/index.html'; return; }
                 const perfil = data.usuario.perfil;
-                if (perfil !== 'administrador' && perfil !== 'admin') { window.location.href = '/DriverLux/views/home.html'; }
-            } catch (err) { window.location.href = '/DriverLux/views/home.html'; }
+                if (perfil !== 'administrador' && perfil !== 'admin') { window.location.href = '/DriverLux/index.html'; }
+            } catch (err) { window.location.href = '/DriverLux/index.html'; }
         });
     </script>
 </head>
@@ -439,7 +446,7 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
         try {
             await fetch('/DriverLux/public/api/usuarios/logout', { method: 'POST' });
         } catch (_) {}
-        window.location.href = '/DriverLux/app/View/home.html';
+        window.location.href = '/DriverLux/index.html';
     }
 
     /* Fechar modal clicando no overlay */
