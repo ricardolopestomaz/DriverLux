@@ -1,5 +1,9 @@
 <?php
 
+require_once __DIR__ . '/BaseControllerTestCase.php';
+require_once __DIR__ . '/../app/Controller/ReservaController.php';
+require_once __DIR__ . '/../app/Service/ReservaService.php';
+
 class ReservaControllerTest extends BaseControllerTestCase {
 
     private $controller;

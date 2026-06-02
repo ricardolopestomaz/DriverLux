@@ -6,8 +6,8 @@ class CupomModel {
 
     private $db;
 
-    public function __construct() {
-        $this->db = (new Database())->getConnection();
+    public function __construct($db) {
+        $this->db = $db;
     }
 
     public function buscarTodos() {
@@ -117,5 +117,15 @@ class CupomModel {
         return [
             "success" => $stmt->rowCount() > 0
         ];
+    }
+
+    public function buscarPorCodigo($codigo) {
+        $query = "SELECT * FROM cupons 
+                  WHERE codigo = :codigo 
+                  AND ativo = TRUE 
+                  AND (data_validade >= NOW() OR data_validade IS NULL)";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([":codigo" => $codigo]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }

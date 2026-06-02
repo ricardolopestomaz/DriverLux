@@ -6,8 +6,8 @@ class ProtecaoService {
 
     private $model;
 
-    public function __construct() {
-        $this->model = new ProtecaoModel();
+    public function __construct($model) {
+        $this->model = $model;
     }
 
     public function listarProtecoes() {
@@ -15,8 +15,8 @@ class ProtecaoService {
         $protecoes = $this->model->buscarTodas();
 
         return [
-            "code" => 200,
-            "data" => [
+            "status_code" => 200,
+            "body" => [
                 "status" => "success",
                 "total" => count($protecoes),
                 "data" => $protecoes
@@ -26,16 +26,14 @@ class ProtecaoService {
 
     public function criarProtecao($data) {
 
-        $this->verificarAcessoAdmin();
-
         if (
             empty($data->nome) ||
             !isset($data->valor_diario)
         ) {
 
             return [
-                "code" => 400,
-                "data" => [
+                "status_code" => 400,
+                "body" => [
                     "erro" => "Dados incompletos."
                 ]
             ];
@@ -46,16 +44,16 @@ class ProtecaoService {
         if ($resultado) {
 
             return [
-                "code" => 201,
-                "data" => [
+                "status_code" => 201,
+                "body" => [
                     "mensagem" => "Pacote de proteção cadastrado com sucesso."
                 ]
             ];
         }
 
         return [
-            "code" => 500,
-            "data" => [
+            "status_code" => 500,
+            "body" => [
                 "erro" => "Erro ao cadastrar pacote de proteção."
             ]
         ];
@@ -63,13 +61,11 @@ class ProtecaoService {
 
     public function atualizarProtecao($id, $data) {
 
-        $this->verificarAcessoAdmin();
-
         if (empty($id)) {
 
             return [
-                "code" => 400,
-                "data" => [
+                "status_code" => 400,
+                "body" => [
                     "erro" => "ID obrigatório."
                 ]
             ];
@@ -78,8 +74,8 @@ class ProtecaoService {
         if (empty($data)) {
 
             return [
-                "code" => 400,
-                "data" => [
+                "status_code" => 400,
+                "body" => [
                     "erro" => "Nenhum dado enviado."
                 ]
             ];
@@ -90,8 +86,8 @@ class ProtecaoService {
         if ($resultado["success"]) {
 
             return [
-                "code" => 200,
-                "data" => [
+                "status_code" => 200,
+                "body" => [
                     "status" => "success",
                     "mensagem" => "Proteção atualizada com sucesso."
                 ]
@@ -99,40 +95,11 @@ class ProtecaoService {
         }
 
         return [
-            "code" => 404,
-            "data" => [
+            "status_code" => 404,
+            "body" => [
                 "status" => "warning",
                 "mensagem" => "Nenhuma alteração feita."
             ]
         ];
-    }
-
-    private function verificarAcessoAdmin() {
-
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        if (!isset($_SESSION['usuario_id'])) {
-
-            http_response_code(401);
-
-            echo json_encode([
-                "erro" => "Faça login primeiro."
-            ]);
-
-            exit;
-        }
-
-        if ($_SESSION['usuario_perfil'] !== 'admin') {
-
-            http_response_code(403);
-
-            echo json_encode([
-                "erro" => "Apenas administradores."
-            ]);
-
-            exit;
-        }
     }
 }

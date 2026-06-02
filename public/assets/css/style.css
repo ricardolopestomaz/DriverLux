@@ -1,3 +1,21 @@
+/* === CORES DO PROJETO DRIVERLUX === */
+:root {
+  --roxo-escuro: #3b0567;
+  --roxo-fundo: #440c77;
+  --roxo-medio: #6a0dad;
+  --roxo-claro: #8014e8;
+  --roxo-glow: rgba(108, 47, 255, 0.13);
+  --dourado: #ffc400;
+  --bg-claro: #f8f9fa;
+  --branco: #ffffff;
+  --texto-escuro: #2b0647;
+  --texto-claro: #ffffff;
+  --cinza: #888;
+  --borda-card: #ede8f5;
+  --sucesso: #2ecc71;
+  --perigo: #e74c3c;
+}
+
 /* ==========================================================================
    CONFIGURAÇÕES GERAIS E RESETS
    ========================================================================== */
@@ -8,9 +26,9 @@
 }
 
 body {
-  background: #440c77;
+  background: var(--bg-claro);
   font-family: "Poppins", Arial, Helvetica, sans-serif;
-  color: #2b0647;
+  color: var(--texto-escuro);
 }
 
 .esconder {
@@ -148,29 +166,37 @@ body {
    BARRA DE BUSCA (LANDING PAGE)
    ========================================================================== */
 .busca {
-  width: 78%;
-  max-width: 1120px;
-  height: 85px;
+  width: 90%;
+  max-width: 1280px;
+  height: auto;
   margin: -1px auto 0;
   background: #7d12de;
-  border-radius: 0 0 8px 8px;
+  border-radius: 0 0 16px 16px;
   display: flex;
-  align-items: center;
-  gap: 22px;
-  padding: 18px 30px;
+  flex-direction: column;
+  gap: 15px;
+  padding: 24px;
   box-shadow: 0 12px 25px rgba(54, 0, 95, 0.25);
   position: relative;
   z-index: 100;
 }
 
+.busca-linha {
+  display: flex;
+  width: 100%;
+  gap: 15px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .campo-localizacao {
   position: relative;
-  width: 420px;
   height: 48px;
-  flex: 0 0 420px; /* Impede que o flexbox esmague a div do input */
+  flex: 1 1 240px; /* Impede que o flexbox esmague a div do input */
 }
 
 .campo-localizacao input,
+.busca input[type="text"],
 .busca input[type="date"],
 .busca input[type="time"] {
   height: 48px;
@@ -182,6 +208,11 @@ body {
   font-family: "Poppins", Arial, sans-serif;
   color: #2b0647;
   background: #fff;
+}
+
+.busca input[type="text"]#cupom-home {
+  width: 140px;
+  flex: 0 0 140px;
 }
 
 .campo-localizacao input {
@@ -241,7 +272,8 @@ body {
   background: #ffffff;
 }
 
-.opcao-local {
+.opcao-local,
+.opcao-local-devolucao {
   display: flex;
   gap: 14px;
   padding: 16px 18px;
@@ -252,16 +284,19 @@ body {
   transition: background 0.2s;
 }
 
-.opcao-local:hover {
+.opcao-local:hover,
+.opcao-local-devolucao:hover {
   background: #f3e8ff;
 }
 
-.opcao-local p {
+.opcao-local p,
+.opcao-local-devolucao p {
   margin: 0;
   font-size: 14px;
 }
 
-.opcao-local strong {
+.opcao-local strong,
+.opcao-local-devolucao strong {
   font-size: 14px;
 }
 
@@ -552,3 +587,230 @@ body {
     gap: 10px;
   }
 }
+
+/* ==========================================================================
+   FAIXA HEADER E STEPPER DE RESERVAS (COMPARTILHADOS)
+   ========================================================================== */
+.faixa-header {
+  background: linear-gradient(
+    135deg,
+    var(--roxo-escuro) 0%,
+    var(--roxo-fundo) 55%,
+    #5b0091 100%
+  );
+  padding: 42px 42px 72px;
+  position: relative;
+  overflow: hidden;
+}
+
+.faixa-header::before {
+  content: "";
+  position: absolute;
+  right: -60px;
+  top: -60px;
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 196, 0, 0.09) 0%,
+    transparent 65%
+  );
+  pointer-events: none;
+}
+
+.faixa-header::after {
+  content: "";
+  position: absolute;
+  left: 40%;
+  bottom: -40px;
+  width: 260px;
+  height: 260px;
+  background: radial-gradient(
+    circle,
+    rgba(128, 20, 232, 0.1) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.faixa-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.faixa-label {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  color: var(--dourado);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.faixa-label::before {
+  content: "";
+  display: inline-block;
+  width: 22px;
+  height: 2px;
+  background: var(--dourado);
+  border-radius: 2px;
+}
+
+.faixa-titulo {
+  font-size: clamp(26px, 3vw, 40px);
+  font-weight: 900;
+  color: var(--texto-claro);
+  line-height: 1.1;
+}
+
+.resumo-pill {
+  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 14px;
+  padding: 16px 26px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.resumo-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 0 20px;
+}
+
+.resumo-item:first-child {
+  padding-left: 0;
+}
+
+.resumo-item:last-child {
+  padding-right: 0;
+}
+
+.resumo-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.resumo-valor {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--texto-claro);
+}
+
+.resumo-sep {
+  width: 1px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Stepper */
+.stepper-wrap {
+  max-width: 860px;
+  margin: -30px auto 44px;
+  padding: 0 20px;
+  position: relative;
+  z-index: 10;
+}
+
+.stepper-container {
+  background: var(--branco);
+  border-radius: 14px;
+  box-shadow: 0 10px 36px rgba(59, 5, 103, 0.13);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 36px;
+  height: 72px;
+  border: 1px solid var(--borda-card);
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  position: relative;
+}
+
+.step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 35%;
+  height: 1px;
+  background: #e5e0ee;
+}
+
+.step-bolinha {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #f3eeff;
+  border: 1.5px solid #d4c5ed;
+  color: #bbb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+
+.step.active .step-bolinha {
+  background: var(--roxo-medio);
+  border-color: var(--roxo-medio);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(106, 13, 173, 0.35);
+}
+
+.step.done .step-bolinha {
+  background: var(--sucesso);
+  border-color: var(--sucesso);
+  color: #fff;
+}
+
+.step-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.step-sub {
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #bbb;
+}
+
+.step-nome {
+  font-size: 12px;
+  font-weight: 700;
+  color: #bbb;
+  text-transform: uppercase;
+}
+
+.step.active .step-sub {
+  color: var(--roxo-medio);
+}
+
+.step.active .step-nome {
+  color: var(--texto-escuro);
+}

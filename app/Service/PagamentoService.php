@@ -6,8 +6,8 @@ class PagamentoService {
 
     private $model;
 
-    public function __construct() {
-        $this->model = new PagamentoModel();
+    public function __construct($model) {
+        $this->model = $model;
     }
 
     public function listarPagamentos() {
@@ -15,8 +15,8 @@ class PagamentoService {
         $pagamentos = $this->model->buscarTodos();
 
         return [
-            "code" => 200,
-            "data" => [
+            "status_code" => 200,
+            "body" => [
                 "status" => "success",
                 "total" => count($pagamentos),
                 "data" => $pagamentos
@@ -31,8 +31,8 @@ class PagamentoService {
         if ($pagamento) {
 
             return [
-                "code" => 200,
-                "data" => [
+                "status_code" => 200,
+                "body" => [
                     "status" => "success",
                     "data" => $pagamento
                 ]
@@ -40,16 +40,14 @@ class PagamentoService {
         }
 
         return [
-            "code" => 404,
-            "data" => [
+            "status_code" => 404,
+            "body" => [
                 "erro" => "Pagamento não encontrado."
             ]
         ];
     }
 
     public function criarPagamento($data) {
-
-        $this->verificarAutenticacao();
 
         $usuario_id = $_SESSION['usuario_id'];
 
@@ -65,8 +63,8 @@ class PagamentoService {
         ) {
 
             return [
-                "code" => 400,
-                "data" => [
+                "status_code" => 400,
+                "body" => [
                     "erro" => "Dados obrigatórios do pagamento estão faltando."
                 ]
             ];
@@ -77,8 +75,8 @@ class PagamentoService {
         if (!in_array($data->tipo_cartao, $tipos_validos)) {
 
             return [
-                "code" => 400,
-                "data" => [
+                "status_code" => 400,
+                "body" => [
                     "erro" => "Tipo de cartão inválido."
                 ]
             ];
@@ -89,8 +87,8 @@ class PagamentoService {
         if ($parcelas < 1 || $parcelas > 12) {
 
             return [
-                "code" => 400,
-                "data" => [
+                "status_code" => 400,
+                "body" => [
                     "erro" => "Parcelas devem estar entre 1 e 12."
                 ]
             ];
@@ -99,8 +97,8 @@ class PagamentoService {
         if (!$this->model->verificarReservaUsuario($data->reserva_id, $usuario_id)) {
 
             return [
-                "code" => 403,
-                "data" => [
+                "status_code" => 403,
+                "body" => [
                     "erro" => "Reserva não pertence ao usuário."
                 ]
             ];
@@ -109,12 +107,17 @@ class PagamentoService {
         if ($this->model->verificarPagamentoDuplicado($data->reserva_id)) {
 
             return [
-                "code" => 409,
-                "data" => [
+                "status_code" => 409,
+                "body" => [
                     "erro" => "Reserva já possui pagamento aprovado."
                 ]
             ];
         }
+
+        // Mascara o número do cartão antes de salvar no banco por segurança (PCI-DSS)
+        $num_limpo = preg_replace('/\D/', '', $data->numero_cartao);
+        $ultimos_quatro = substr($num_limpo, -4);
+        $data->numero_cartao = '**** **** **** ' . ($ultimos_quatro ?: '0000');
 
         $resultado = $this->model->inserir($data, $usuario_id, $parcelas);
 
@@ -123,8 +126,8 @@ class PagamentoService {
             $this->model->confirmarReserva($data->reserva_id);
 
             return [
-                "code" => 201,
-                "data" => [
+                "status_code" => 201,
+                "body" => [
                     "status" => "success",
                     "mensagem" => "Pagamento realizado com sucesso!"
                 ]
@@ -132,8 +135,8 @@ class PagamentoService {
         }
 
         return [
-            "code" => 500,
-            "data" => [
+            "status_code" => 500,
+            "body" => [
                 "erro" => "Erro ao processar pagamento."
             ]
         ];
@@ -144,8 +147,8 @@ class PagamentoService {
         if (empty($id)) {
 
             return [
-                "code" => 400,
-                "data" => [
+                "status_code" => 400,
+                "body" => [
                     "erro" => "ID obrigatório."
                 ]
             ];
@@ -154,8 +157,8 @@ class PagamentoService {
         if (empty($data->status)) {
 
             return [
-                "code" => 400,
-                "data" => [
+                "status_code" => 400,
+                "body" => [
                     "erro" => "Status obrigatório."
                 ]
             ];
@@ -171,8 +174,8 @@ class PagamentoService {
         if (!in_array($data->status, $status_validos)) {
 
             return [
-                "code" => 400,
-                "data" => [
+                "status_code" => 400,
+                "body" => [
                     "erro" => "Status inválido."
                 ]
             ];
@@ -183,8 +186,8 @@ class PagamentoService {
         if ($resultado) {
 
             return [
-                "code" => 200,
-                "data" => [
+                "status_code" => 200,
+                "body" => [
                     "status" => "success",
                     "mensagem" => "Pagamento atualizado com sucesso."
                 ]
@@ -192,29 +195,11 @@ class PagamentoService {
         }
 
         return [
-            "code" => 404,
-            "data" => [
+            "status_code" => 404,
+            "body" => [
                 "status" => "warning",
                 "mensagem" => "Nenhuma alteração feita."
             ]
         ];
-    }
-
-    private function verificarAutenticacao() {
-
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        if (!isset($_SESSION['usuario_id'])) {
-
-            http_response_code(401);
-
-            echo json_encode([
-                "erro" => "Faça login primeiro."
-            ]);
-
-            exit;
-        }
     }
 }

@@ -123,8 +123,7 @@ CREATE TABLE pagamentos (
     parcelas TINYINT UNSIGNED DEFAULT 1,
 
     nome_titular VARCHAR(100) NOT NULL,
-    numero_cartao CHAR(16) NOT NULL,
-    cvv CHAR(3) NOT NULL, 
+    numero_cartao VARCHAR(30) NOT NULL,
     mes_vencimento TINYINT UNSIGNED NOT NULL CHECK (mes_vencimento BETWEEN 1 AND 12),
     ano_vencimento SMALLINT UNSIGNED NOT NULL,
 
