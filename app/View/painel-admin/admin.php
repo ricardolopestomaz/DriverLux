@@ -41,15 +41,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $imagem_url = null;
     if (isset($_FILES['foto_carro']) && $_FILES['foto_carro']['error'] === UPLOAD_ERR_OK) {
-        $pastaDestino = __DIR__ . '/../../../public/assets/img/veiculos/';
-        if (!is_dir($pastaDestino)) {
-            mkdir($pastaDestino, 0755, true);
-        }
-        $extensao      = pathinfo($_FILES['foto_carro']['name'], PATHINFO_EXTENSION);
-        $nomeArquivo   = 'carro_' . uniqid() . '.' . strtolower($extensao);
-        $caminhoCompleto = $pastaDestino . $nomeArquivo;
-        if (move_uploaded_file($_FILES['foto_carro']['tmp_name'], $caminhoCompleto)) {
-            $imagem_url = '/DriverLux/public/assets/img/veiculos/' . $nomeArquivo;
+        $tmpName = $_FILES['foto_carro']['tmp_name'];
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+        
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($finfo, $tmpName);
+        finfo_close($finfo);
+
+        if (in_array($mimeType, $allowedMimes)) {
+            $pastaDestino = __DIR__ . '/../../../public/assets/img/veiculos/';
+            if (!is_dir($pastaDestino)) {
+                mkdir($pastaDestino, 0755, true);
+            }
+            $extensao      = pathinfo($_FILES['foto_carro']['name'], PATHINFO_EXTENSION);
+            $nomeArquivo   = 'carro_' . uniqid() . '.' . strtolower($extensao);
+            $caminhoCompleto = $pastaDestino . $nomeArquivo;
+            if (move_uploaded_file($tmpName, $caminhoCompleto)) {
+                $imagem_url = '/DriverLux/public/assets/img/veiculos/' . $nomeArquivo;
+            }
+        } else {
+            header("Location: admin.php?categoria_id=" . (int)$categoria_id . "&erro=mime_invalido");
+            exit;
         }
     }
 
@@ -211,6 +223,11 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
                 <div class="alerta-sucesso">
                     <span class="alerta-icon">✏️</span>
                     Veículo atualizado com sucesso!
+                </div>
+            <?php elseif (isset($_GET['erro']) && $_GET['erro'] === 'mime_invalido'): ?>
+                <div class="alerta-erro" style="background: #fdf2f2; border: 1.5px solid #f8b4b4; color: #9b1c1c; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: 600; display: flex; align-items: center; gap: 10px;">
+                    <span class="alerta-icon">❌</span>
+                    Erro no upload: Apenas imagens válidas (JPG, JPEG, PNG, WEBP) são permitidas!
                 </div>
             <?php endif; ?>
 

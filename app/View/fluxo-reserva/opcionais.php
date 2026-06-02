@@ -55,8 +55,9 @@ $opcoesKm = $kmResponse['data'] ?? [];
   <meta charset="UTF-8">
   <title>Opcionais - DriverLux</title>
 
-  <link rel="stylesheet" href="../../../public/assets/css/veiculos.css">
-  <link rel="stylesheet" href="../../../public/assets/css/opcionais.css?v=30">
+  <link rel="stylesheet" href="/DriverLux/public/assets/css/style.css">
+  <link rel="stylesheet" href="/DriverLux/public/assets/css/veiculos.css">
+  <link rel="stylesheet" href="/DriverLux/public/assets/css/opcionais.css?v=30">
 </head>
 
 <body>
@@ -80,7 +81,7 @@ $opcoesKm = $kmResponse['data'] ?? [];
 
         <div id="menu-usuario" class="menu-usuario esconder">
             <a href="/DriverLux/app/View/painel_cliente.php">Minha conta</a>
-            <a href="#">Minhas reservas</a>
+            <a href="/DriverLux/app/View/fluxo-reserva/minhas-reservas.php">Minhas reservas</a>
             <a href="#" id="btn-sair">Sair</a>
         </div>
 
@@ -347,20 +348,34 @@ $opcoesKm = $kmResponse['data'] ?? [];
     }
 
     // Pré-preenche a data de devolução (1 dia a mais que a retirada, por padrão)
-    if (dadosReserva.data_retirada) {
+    if (dadosReserva.data_devolucao) {
+        inputDataDevolucao.value = dadosReserva.data_devolucao;
+    } else if (dadosReserva.data_retirada) {
         let dataRet = new Date(dadosReserva.data_retirada + 'T' + (dadosReserva.hora_retirada || '12:00'));
         dataRet.setDate(dataRet.getDate() + 1); // Adiciona 1 dia
         
         inputDataDevolucao.value = dataRet.toISOString().split('T')[0];
+    }
+
+    if (dadosReserva.hora_devolucao) {
+        inputHoraDevolucao.value = dadosReserva.hora_devolucao;
+    } else if (dadosReserva.hora_retirada) {
         inputHoraDevolucao.value = dadosReserva.hora_retirada || '12:00';
     }
 
     // Tenta pré-selecionar o local de devolução igual ao de retirada
-    if (dadosReserva.local_retirada) {
+    if (dadosReserva.local_devolucao) {
+        inputLocalDevolucao.value = dadosReserva.local_devolucao;
+    } else if (dadosReserva.local_retirada) {
         let options = Array.from(inputLocalDevolucao.options).map(o => o.value);
         if(options.includes(dadosReserva.local_retirada)) {
             inputLocalDevolucao.value = dadosReserva.local_retirada;
         }
+    }
+
+    // Pré-preenche o cupom
+    if (dadosReserva.cupom) {
+        inputCupom.value = dadosReserva.cupom;
     }
 
     // ==========================================

@@ -26,8 +26,8 @@ class CategoriaControllerTest extends BaseControllerTestCase {
     public function testHandleRequestGetRetornaListaDeCategorias() {
         // Define o que o mock deve retornar
         $mockResult = [
-            "code" => 200,
-            "data" => ["status" => "success", "categorias" => []]
+            "status_code" => 200,
+            "body" => ["status" => "success", "categorias" => []]
         ];
         
         // Diz para o mock: "Quando chamarem o listarCategorias(), retorne $mockResult"
@@ -40,7 +40,7 @@ class CategoriaControllerTest extends BaseControllerTestCase {
 
         // Verificações
         $this->assertEquals(200, http_response_code());
-        $this->assertJsonStringEqualsJsonString(json_encode($mockResult['data']), $output);
+        $this->assertJsonStringEqualsJsonString(json_encode($mockResult['body']), $output);
     }
 
     public function testHandleRequestMetodoInvalido() {

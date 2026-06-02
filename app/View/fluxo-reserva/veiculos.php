@@ -47,7 +47,8 @@ if (!empty($veiculos)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nossa Frota - DriverLux</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/DriverLux/public/assets/css/veiculos.css">
+    <link rel="stylesheet" href="/DriverLux/public/assets/css/style.css">
+    <link rel="stylesheet" href="/DriverLux/public/assets/css/veiculos.css?v=1">
 </head>
 <body>
 
@@ -70,7 +71,7 @@ if (!empty($veiculos)) {
 
         <div id="menu-usuario" class="menu-usuario esconder">
             <a href="/DriverLux/app/View/painel_cliente.php">Minha conta</a>
-            <a href="#">Minhas reservas</a>
+            <a href="/DriverLux/app/View/fluxo-reserva/minhas-reservas.php">Minhas reservas</a>
             <a href="#" id="btn-sair">Sair</a>
         </div>
 
@@ -276,48 +277,6 @@ if (!empty($veiculos)) {
 <script src="/DriverLux/public/assets/js/menu-usuario.js?v=3"></script>
 
 <script>
-// ==========================================================================
-// 1. LÓGICA DE AUTENTICAÇÃO E SESSÃO
-// ==========================================================================
-window.addEventListener('load', async () => {
-    const btnLogin = document.getElementById('btn-login-trigger');
-    const modalAuth = document.getElementById('modal-auth');
-
-    // Abre o modal de login
-    if (btnLogin && modalAuth) {
-        btnLogin.addEventListener('click', () => {
-            const container = modalAuth.shadowRoot ? modalAuth.shadowRoot.getElementById('auth-container') : null;
-            if (container) container.classList.remove('hidden');
-        });
-    }
-
-    // Checa a sessão e atualiza a interface
-    try {
-        const res = await fetch('/DriverLux/public/api/usuarios/me');
-        const data = await res.json();
-
-        if (data.logado && data.usuario) {
-            // Se for admin, expulsa da tela de reserva e manda pro painel
-            if (data.usuario.perfil === 'administrador' || data.usuario.perfil === 'admin') {
-                window.location.href = '/DriverLux/app/View/painel-admin/admin.php';
-                return;
-            }
-
-            // Se for cliente, atualiza o botão de usuário
-            const primeiroNome = data.usuario.nome.split(' ')[0];
-            const nomeUsuario = document.getElementById('nome-usuario');
-            const btnMenuUsuario = document.getElementById('btn-menu-usuario');
-
-            if (nomeUsuario) nomeUsuario.textContent = primeiroNome;
-            if (btnLogin) btnLogin.classList.add('esconder');
-            if (btnMenuUsuario) btnMenuUsuario.classList.remove('esconder');
-        }
-    } catch (e) {
-        console.error('Erro ao verificar sessão do usuário:', e);
-    }
-});
-
-
 // ==========================================================================
 // 2. LÓGICA DE VEÍCULOS (RECUPERAR DADOS, FILTROS E SALVAR RESERVA)
 // ==========================================================================
