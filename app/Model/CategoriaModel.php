@@ -6,8 +6,8 @@ class CategoriaModel {
 
     private $db;
 
-    public function __construct() {
-        $this->db = (new Database())->getConnection();
+    public function __construct($db) {
+        $this->db = $db;
     }
 
     public function buscarTodas() {

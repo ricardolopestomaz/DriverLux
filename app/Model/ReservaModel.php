@@ -68,7 +68,10 @@ class ReservaModel {
         
         $stmt->bindParam(":valor_total_previsto", $data->valor_total_previsto);
 
-        return $stmt->execute();
+        if ($stmt->execute()) {
+            return $this->db->lastInsertId();
+        }
+        return false;
     }
 
     public function update($id, $campos, $parametros) {
@@ -78,5 +81,23 @@ class ReservaModel {
         
         return $stmt->rowCount();
     }
+
+    public function findByUserId($usuario_id) {
+        $query = "SELECT r.id, r.data_retirada, r.data_devolucao, r.local_retirada, r.local_devolucao,
+                         r.valor_total_previsto, r.status, r.criado_em,
+                         v.modelo AS veiculo_modelo, v.imagem_url AS veiculo_imagem,
+                         pp.nome AS protecao_nome, oq.nome AS km_nome
+                  FROM reservas r
+                  JOIN veiculos v ON r.veiculo_id = v.id
+                  LEFT JOIN pacotes_protecao pp ON r.pacote_protecao_id = pp.id
+                  LEFT JOIN opcoes_quilometragem oq ON r.opcao_quilometragem_id = oq.id
+                  WHERE r.usuario_id = :usuario_id
+                  ORDER BY r.criado_em DESC";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(":usuario_id", $usuario_id);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
+
 ?>

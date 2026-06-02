@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../../config/db_connect.php';
+require_once __DIR__ . '/../Model/ProtecaoModel.php';
 require_once __DIR__ . '/../Service/ProtecaoService.php';
 
 class ProtecaoController {
@@ -7,7 +9,10 @@ class ProtecaoController {
     private $service;
 
     public function __construct() {
-        $this->service = new ProtecaoService();
+        $database = new Database();
+        $db = $database->getConnection();
+        $model = new ProtecaoModel($db);
+        $this->service = new ProtecaoService($model);
     }
 
     public function handleRequest($method, $id = null) {
@@ -15,40 +20,52 @@ class ProtecaoController {
         switch ($method) {
 
             case 'GET':
-
                 $resultado = $this->service->listarProtecoes();
-
                 break;
 
             case 'POST':
-
+                $this->verificarAcessoAdmin();
                 $data = json_decode(file_get_contents("php://input"));
-
                 $resultado = $this->service->criarProtecao($data);
-
                 break;
 
             case 'PUT':
-
+                $this->verificarAcessoAdmin();
                 $data = json_decode(file_get_contents("php://input"));
-
                 $resultado = $this->service->atualizarProtecao($id, $data);
-
                 break;
 
             default:
-
-                http_response_code(405);
-
-                echo json_encode([
-                    "erro" => "Método HTTP não permitido."
+                $this->sendResponse([
+                    "status_code" => 405,
+                    "body" => ["erro" => "Método HTTP não permitido."]
                 ]);
-
                 return;
         }
 
-        http_response_code($resultado["code"]);
+        $this->sendResponse($resultado);
+    }
 
-        echo json_encode($resultado["data"]);
+    private function sendResponse($response) {
+        http_response_code($response['status_code']);
+        echo json_encode($response['body']);
+    }
+
+    private function verificarAcessoAdmin() {
+        if (!isset($_SESSION['usuario_id'])) {
+            $this->sendResponse([
+                "status_code" => 401,
+                "body" => ["erro" => "Acesso negado. Faça login primeiro."]
+            ]);
+            exit;
+        }
+
+        if ($_SESSION['usuario_perfil'] !== 'admin') {
+            $this->sendResponse([
+                "status_code" => 403,
+                "body" => ["erro" => "Acesso negado. Apenas administradores podem realizar esta operação."]
+            ]);
+            exit;
+        }
     }
 }

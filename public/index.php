@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 define('ROOT_PATH', dirname(__DIR__));
 
 // ==========================================
@@ -7,10 +9,9 @@ define('ROOT_PATH', dirname(__DIR__));
 // ==========================================
 $request = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-$baseFolder = '/DriverLux/public';
-
-// Remove a pasta base da URL
-$request = str_replace($baseFolder, '', $request);
+// Remove as pastas base da URL
+$request = str_replace('/DriverLux/public', '', $request);
+$request = str_replace('/DriverLux', '', $request);
 
 $request = trim($request, '/');
 
@@ -60,8 +61,6 @@ if (isset($uri[0]) && $uri[0] === 'api') {
                 $controller->login($method);
 
             } elseif ($action === 'logout') {
-
-                session_start();
 
                 session_destroy();
 
@@ -117,6 +116,19 @@ if (isset($uri[0]) && $uri[0] === 'api') {
             break;
 
         // ==========================================
+        // QUILOMETRAGEM
+        // ==========================================
+        case 'km':
+
+            require_once ROOT_PATH . '/app/Controller/KMController.php';
+
+            $controller = new KMController();
+
+            $controller->handleRequest($method, $id);
+
+            break;
+
+        // ==========================================
         // CUPONS
         // ==========================================
         case 'cupons':
@@ -125,7 +137,9 @@ if (isset($uri[0]) && $uri[0] === 'api') {
 
             $controller = new CupomController();
 
-            $controller->handleRequest($method, $id);
+            $param = ($id !== null) ? $id : $action;
+
+            $controller->handleRequest($method, $param);
 
             break;
 
@@ -151,7 +165,8 @@ if (isset($uri[0]) && $uri[0] === 'api') {
 
             $controller = new ReservaController();
 
-            $controller->handleRequest($method, $id);
+            // Rota especial: GET /api/reservas/minhas (reservas do usuário logado)
+            $controller->handleRequest($method, $id, $action);
 
             break;
 

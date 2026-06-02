@@ -16,9 +16,13 @@ class ReservaController {
         $this->service = new ReservaService($model);
     }
 
-    public function handleRequest($method, $id) {
+    public function handleRequest($method, $id, $action = null) {
         if ($method === 'GET') {
-            if ($id) {
+            if ($action === 'minhas') {
+                // GET /api/reservas/minhas — reservas do usuário logado
+                $this->verificarAutenticacao();
+                $response = $this->service->listarReservasPorUsuario($_SESSION['usuario_id']);
+            } elseif ($id) {
                 $response = $this->service->buscarReserva($id);
             } else {
                 $response = $this->service->listarReservas();
@@ -59,10 +63,6 @@ class ReservaController {
 
     // SEGURANÇA E AUTORIZAÇÃO (Nível Cliente)
     private function verificarAutenticacao() {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
         if (!isset($_SESSION['usuario_id'])) {
             $this->sendResponse([
                 "status_code" => 401,

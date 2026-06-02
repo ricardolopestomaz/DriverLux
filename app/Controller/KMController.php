@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../../config/db_connect.php';
+require_once __DIR__ . '/../Model/KMModel.php';
 require_once __DIR__ . '/../Service/KMService.php';
 
 
@@ -8,8 +9,10 @@ class KMController {
     private $service;
 
     public function __construct() {
-        $db = (new Database())->getConnection();
-        $this->service = new KMService($db);
+        $database = new Database();
+        $db = $database->getConnection();
+        $model = new KMModel($db);
+        $this->service = new KMService($model);
     }
 
     public function handleRequest($method, $id) {
@@ -22,59 +25,54 @@ class KMController {
             $this->verificarAcessoAdmin();
             $this->updateOpcaoKM($id);
         } else {
-            http_response_code(405);
-            echo json_encode(["erro" => "Método HTTP não permitido."]);
+            $this->sendResponse([
+                "status_code" => 405,
+                "body" => ["erro" => "Método HTTP não permitido."]
+            ]);
         }
     }
 
     private function getOpcoesKM() {
-        $opcoes = $this->service->listarOpcoes();
-
-        http_response_code(200);
-        echo json_encode([
-            "status" => "success",
-            "total" => count($opcoes),
-            "data" => $opcoes
-        ]);
+        $resultado = $this->service->listarOpcoes();
+        $this->sendResponse($resultado);
     }
 
     private function createOpcaoKM() {
         $data = json_decode(file_get_contents("php://input"));
-
         $resultado = $this->service->criarOpcao($data);
-
-        http_response_code($resultado["status"]);
-        echo json_encode($resultado["resposta"]);
+        $this->sendResponse($resultado);
     }
 
     private function updateOpcaoKM($id) {
         $data = json_decode(file_get_contents("php://input"));
-
         $resultado = $this->service->atualizarOpcao($id, $data);
+        $this->sendResponse($resultado);
+    }
 
-        http_response_code($resultado["status"]);
-        echo json_encode($resultado["resposta"]);
+    private function sendResponse($response) {
+        http_response_code($response['status_code']);
+        echo json_encode($response['body']);
     }
 
     private function verificarAcessoAdmin() {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
         if (!isset($_SESSION['usuario_id'])) {
-            http_response_code(401);
-            echo json_encode([
-                "status" => "error",
-                "erro" => "Acesso negado. Você precisa fazer login primeiro!"
+            $this->sendResponse([
+                "status_code" => 401,
+                "body" => [
+                    "status" => "error",
+                    "erro" => "Acesso negado. Você precisa fazer login primeiro!"
+                ]
             ]);
             exit;
         }
 
         if ($_SESSION['usuario_perfil'] !== 'admin') {
-            http_response_code(403);
-            echo json_encode([
-                "status" => "error",
-                "erro" => "Acesso negado. Apenas administradores podem gerenciar planos de quilometragem."
+            $this->sendResponse([
+                "status_code" => 403,
+                "body" => [
+                    "status" => "error",
+                    "erro" => "Acesso negado. Apenas administradores podem gerenciar planos de quilometragem."
+                ]
             ]);
             exit;
         }
