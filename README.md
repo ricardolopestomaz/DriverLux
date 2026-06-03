@@ -34,8 +34,8 @@
 | Sprint 1 | [v0.1.0](https://github.com/ricardolopestomaz/DriverLux/releases/tag/v0.1.0) | ![Concluída](https://img.shields.io/badge/Concluída-green) |
 | Sprint 2 | [v0.2.0](https://github.com/ricardolopestomaz/DriverLux/releases/tag/v0.2.0) | ![Concluída](https://img.shields.io/badge/Concluída-green) |
 | Sprint 3 | [v0.3.0](https://github.com/ricardolopestomaz/DriverLux/releases/tag/v0.3.0) | ![Concluída](https://img.shields.io/badge/Concluída-green) |
-| Sprint 4 | [v0.4.0]() | ![Em andamento](https://img.shields.io/badge/Em%20Andamento-yellow) |
-| Sprint 5 | [v0.5.0]() | ![Planejada](https://img.shields.io/badge/Planejada-blue) |
+| Sprint 4 | [v0.4.0](https://github.com/ricardolopestomaz/DriverLux/releases/tag/v0.4.0) |  ![Concluída](https://img.shields.io/badge/Concluída-green)|
+| Sprint 5 | [v0.5.0]() | ![Em andamento](https://img.shields.io/badge/Em%20Andamento-yellow)  |
 ---
 ## 🚗 Drive Lux
 O Drive Lux é um sistema de locação de veículos de alto padrão, focado em marcas de luxo como Porsche, Ferrari e Rolls-Royce.
