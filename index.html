@@ -10,6 +10,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/DriverLux/public/assets/css/style.css?v=3" />
+    <link rel="shortcut icon" href="./public/assets/img/corrida.png" type="image/x-icon">
   </head>
 
   <body>
@@ -194,27 +195,9 @@
       <div class="cards">
         <article class="card">
           <span class="tag">
-            <i
-              style="
-                font-size: 18px;
-                margin-right: 5px;
-                font-style: normal;
-                line-height: 1;
-              "
-              >★</i
-            >DESTAQUE
+            <i style="font-size:18px;margin-right:5px;font-style:normal;line-height:1;">&#9733;</i>DESTAQUE
           </span>
-          <img
-            src="/DriverLux/public/assets/img/bmw-m4.png"
-            alt="BMW M4"
-            style="
-              width: 280px;
-              height: 220px;
-              object-fit: contain;
-              display: block;
-              margin: 25px auto 0 auto;
-            "
-          />
+          <img src="/DriverLux/public/assets/img/bmw-m4.png" alt="BMW M4" />
           <h3>BMW M4 COMPETITION</h3>
           <p>Performance esportiva com elegância incomparável.</p>
           <small>A PARTIR DE</small>
@@ -223,27 +206,10 @@
 
         <article class="card">
           <span class="tag">
-            <i
-              style="
-                font-size: 18px;
-                margin-right: 5px;
-                font-style: normal;
-                line-height: 1;
-              "
-              >★</i
-            >DESTAQUE
+            <i style="font-size:18px;margin-right:5px;font-style:normal;line-height:1;">&#9733;</i>DESTAQUE
           </span>
-          <img
-            src="/DriverLux/public/assets/img/audi-car.png"
-            alt="Audi RS7"
-            style="
-              width: 280px;
-              height: 220px;
-              object-fit: contain;
-              display: block;
-              margin: 25px auto 0 auto;
-            "
-          />
+          <img src="/DriverLux/public/assets/img/audi-car.png" alt="Audi RS7"
+            style="width:280px;height:220px;object-fit:contain;display:block;margin:25px auto 0 auto;" />
           <h3>AUDI RS7</h3>
           <p>Potência, tecnologia e design em perfeita harmonia.</p>
           <small>A PARTIR DE</small>
@@ -252,27 +218,10 @@
 
         <article class="card">
           <span class="tag">
-            <i
-              style="
-                font-size: 18px;
-                margin-right: 5px;
-                font-style: normal;
-                line-height: 1;
-              "
-              >★</i
-            >DESTAQUE
+            <i style="font-size:18px;margin-right:5px;font-style:normal;line-height:1;">&#9733;</i>DESTAQUE
           </span>
-          <img
-            src="/DriverLux/public/assets/img/mercedes.jpg"
-            alt="Mercedes AMG GT"
-            style="
-              width: 280px;
-              height: 220px;
-              object-fit: contain;
-              display: block;
-              margin: 25px auto 0 auto;
-            "
-          />
+          <img src="/DriverLux/public/assets/img/mercedes.jpg" alt="Mercedes AMG GT"
+            style="width:280px;height:220px;object-fit:contain;display:block;margin:25px auto 0 auto;" />
           <h3>MERCEDES AMG GT</h3>
           <p>Luxo extremo com DNA de corrida.</p>
           <small>A PARTIR DE</small>
@@ -281,22 +230,115 @@
       </div>
 
       <div class="cta">
-        <div>
-          <span>PRONTO PARA DIRIGIR O SEU?</span>
-          <h2>Reserve agora e viva essa experiência.</h2>
+        <div class="cta-carousel">
+          <div class="cta-carousel-inner">
 
-          <div class="beneficios">
-            <p>Processo 100% online</p>
-            <p>Atendimento exclusivo</p>
-            <p>Sem burocracia</p>
+              <!-- Slide 1 - Original -->
+            <div class="cta-slide active"
+                 data-bg="/DriverLux/public/assets/img/carro-roxo-novo.jpg"
+                 data-overlay="rgba(244, 240, 250, 0.92) | rgba(244, 240, 250, 0.1)">
+              <span>PRONTO PARA DIRIGIR O SEU?</span>
+              <h2>Reserve agora e viva essa experiência.</h2>
+              <div class="beneficios-linha">
+                <span>Processo 100% online</span>
+                <span class="divisor">|</span>
+                <span>Atendimento exclusivo</span>
+                <span class="divisor">|</span>
+                <span>Sem burocracia</span>
+              </div>
+              <div class="cta-cupom-box">
+                <div class="cta-cupom-icon">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8014e8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="10" rx="2" />
+                    <path d="M22 12h-2" />
+                    <path d="M4 12H2" />
+                    <path d="M12 7v10" stroke-dasharray="2 2" />
+                  </svg>
+                </div>
+                <div class="cta-cupom-text">
+                  <span>Use o cupom <strong class="cupom-badge">CUPOM15</strong></span>
+                  <span>e ganhe <strong>15% off</strong> em qualquer veículo!</span>
+                </div>
+              </div>
+              <a href="#" class="btn roxo">ALUGAR AGORA</a>
+            </div>
+
+            <!-- Slide 2 - Carros disney -->
+            <div class="cta-slide"
+                 data-bg="/DriverLux/public/assets/img/carros-disney.png"
+                 data-overlay="rgba(244, 240, 250, 0.92) | rgba(244, 240, 250, 0.1)">
+              <span>PRONTO PARA DIRIGIR O SEU?</span>
+              <h2>Eu sou a velocidade!</h2>
+              <div class="beneficios-linha">
+                <span>Processo 100% online</span>
+                <span class="divisor">|</span>
+                <span>Atendimento exclusivo</span>
+                <span class="divisor">|</span>
+                <span>Sem burocracia</span>
+              </div>
+              <div class="cta-cupom-box">
+                <div class="cta-cupom-icon">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8014e8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="10" rx="2" />
+                    <path d="M22 12h-2" />
+                    <path d="M4 12H2" />
+                    <path d="M12 7v10" stroke-dasharray="2 2" />
+                  </svg>
+                </div>
+                <div class="cta-cupom-text">
+                  <span>Use o cupom <strong class="cupom-badge">Kachow15</strong></span>
+                  <span>e ganhe <strong>15% off</strong> em qualquer veículo!</span>
+                </div>
+              </div>
+              <a href="#" class="btn roxo">ALUGAR AGORA</a>
+            </div>
+
+            <!-- Slide 2 - Transformers -->
+            <div class="cta-slide"
+                 data-bg="/DriverLux/public/assets/img/transformers.png"
+                 data-overlay="rgba(244, 240, 250, 0.92) | rgba(244, 240, 250, 0.1)"
+                 data-text-color="#3b0567">
+              <span>PRONTO PARA DIRIGIR O SEU?</span>
+              <h2>Autobots,transformar e avançar!</h2>
+              <div class="beneficios-linha">
+                <span>Processo 100% online</span>
+                <span class="divisor">|</span>
+                <span>Atendimento exclusivo</span>
+                <span class="divisor">|</span>
+                <span>Sem burocracia</span>
+              </div>
+              <div class="cta-cupom-box">
+                <div class="cta-cupom-icon">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8014e8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="10" rx="2" />
+                    <path d="M22 12h-2" />
+                    <path d="M4 12H2" />
+                    <path d="M12 7v10" stroke-dasharray="2 2" />
+                  </svg>
+                </div>
+                <div class="cta-cupom-text">
+                  <span>Use o cupom <strong class="cupom-badge">otimusDrive</strong></span>
+                  <span>e ganhe <strong>15% off</strong> em qualquer veículo!</span>
+                </div>
+              </div>
+              <a href="#" class="btn roxo">ALUGAR AGORA</a>
+            </div>
           </div>
 
-          <a href="#" class="btn roxo">ALUGAR AGORA</a>
+          <div class="cta-carousel-controls">
+            <button class="cta-carousel-btn prev" aria-label="Slide anterior">&#10094;</button>
+            <div class="cta-carousel-dots">
+              <span class="cta-dot active" data-slide="0"></span>
+              <span class="cta-dot" data-slide="1"></span>
+            </div>
+            <button class="cta-carousel-btn next" aria-label="Próximo slide">&#10095;</button>
+          </div>
         </div>
       </div>
     </section>
 
     <script src="/DriverLux/public/assets/js/registro-login.js"></script>
     <script src="/DriverLux/public/assets/js/menu-usuario.js?v=3"></script>
+    <script src="/DriverLux/public/assets/js/carrossel.js"></script>
   </body>
 </html>

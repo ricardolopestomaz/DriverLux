@@ -5,6 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DriverLux — Meu Perfil</title>
+
+  <link rel="shortcut icon" href="../../public/assets/img/corrida.png" type="image/x-icon">
+
   <link rel="stylesheet" href="/DriverLux/public/assets/css/style.css?v=3">
   <link rel="stylesheet" href="/DriverLux/public/assets/css/perfil_cliente.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
@@ -14,39 +17,10 @@
 
 <body>
 
-  <header class="topo">
-    <a href="/DriverLux/index.html">
-      <img src="/DriverLux/public/assets/img/logo.png" class="logo" alt="DriverLux">
-    </a>
-    <nav>
-      <a href="/DriverLux/index.html">ALUGUEL DE CARROS</a>
-      <a href="#">GESTÃO DE FROTAS</a>
-      <a href="#">SEMINOVOS</a>
-      <a href="#">LUX - CARRO POR ASSINATURA</a>
-      <a href="javascript:void(0)" id="btn-login-trigger" class="esconder">LOGIN</a>
-    </nav>
-
-    <div style="display: flex; align-items: center; gap: 24px;">
-      <div class="breadcrumb" style="display: inline-block;">
-        <span class="atual" style="color: white; font-weight: bold;">Meu Perfil</span>
-      </div>
-
-      <div class="area-usuario">
-        <button id="btn-menu-usuario" class="btn-usuario esconder">
-          <span id="nome-usuario">Usuário</span>
-          <span class="seta-menu">▼</span>
-        </button>
-
-        <div id="menu-usuario" class="menu-usuario esconder">
-          <a href="/DriverLux/app/View/painel_cliente.php">Minha conta</a>
-          <a href="/DriverLux/app/View/fluxo-reserva/minhas-reservas.php">Minhas reservas</a>
-          <a href="#" id="btn-sair">Sair</a>
-        </div>
-
-        <registro-login id="modal-auth" modo="popover"></registro-login>
-      </div>
-    </div>
-  </header>
+<?php 
+  
+  require_once __DIR__ . '/components/header.php'; 
+?>
 
   <div class="page">
     <div class="perfil-hero">
@@ -128,6 +102,8 @@
   </div>
 
   <div class="toast" id="toast"></div>
+
+  <?php require_once __DIR__ . '/components/footer.php'; ?>
 
   <script src="/DriverLux/public/assets/js/registro-login.js"></script>
   <script src="/DriverLux/public/assets/js/menu-usuario.js"></script>

@@ -19,7 +19,7 @@ class RegistroLogin extends HTMLElement {
             @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap');
 
             :host { 
-                --primary: #6B00CC; 
+                --primary: #3b0567; 
                 font-family: 'Poppins', sans-serif; 
             }
 
@@ -56,7 +56,7 @@ class RegistroLogin extends HTMLElement {
                 transition: background 0.3s, transform 0.2s; 
                 margin-top: 10px; font-family: inherit;
             }
-            .main-btn:hover { background: #5600a3; transform: translateY(-2px); }
+            .main-btn:hover { background: #6a0dad; transform: translateY(-2px); }
 
             input { 
                 width: 100%; padding: 14px; margin-bottom: 12px; 

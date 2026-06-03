@@ -84,11 +84,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     btnMenuUsuario.addEventListener('click', (e) => {
       e.stopPropagation();
       menuUsuario.classList.toggle('esconder');
+      btnMenuUsuario.classList.toggle('ativo');
     });
 
     document.addEventListener('click', (e) => {
       if (!btnMenuUsuario.contains(e.target) && !menuUsuario.contains(e.target)) {
         menuUsuario.classList.add('esconder');
+        btnMenuUsuario.classList.remove('ativo');
       }
     });
   }

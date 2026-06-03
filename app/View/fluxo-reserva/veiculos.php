@@ -46,40 +46,15 @@ if (!empty($veiculos)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nossa Frota - DriverLux</title>
+    <link rel="shortcut icon" href="../../../public/assets/img/corrida.png" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/DriverLux/public/assets/css/style.css">
     <link rel="stylesheet" href="/DriverLux/public/assets/css/veiculos.css?v=1">
 </head>
 <body>
 
-<header class="topo">
-     <a href="/DriverLux/index.html">
-      <img src="/DriverLux/public/assets/img/logo.png" class="logo" alt="DriverLux">
-    </a>
+<?php require_once __DIR__ . '/../components/header.php'; ?>
 
-    <nav>
-        <a href="/DriverLux/index.html">ALUGUEL DE CARROS</a>
-        <a href="#">GESTÃO DE FROTAS</a>
-        <a href="#">SEMINOVOS</a>
-        <a href="#">LUX - CARRO POR ASSINATURA</a>
-        <a href="javascript:void(0)" id="btn-login-trigger">LOGIN</a>
-    </nav>
-
-    <div class="area-usuario">
-        <button id="btn-menu-usuario" class="btn-usuario esconder">
-            <span id="nome-usuario">Usuário</span>
-            <span class="seta-menu">&#9660;</span>
-        </button>
-
-        <div id="menu-usuario" class="menu-usuario esconder">
-            <a href="/DriverLux/app/View/painel_cliente.php">Minha conta</a>
-            <a href="/DriverLux/app/View/fluxo-reserva/minhas-reservas.php">Minhas reservas</a>
-            <a href="#" id="btn-sair">Sair</a>
-        </div>
-
-        <registro-login id="modal-auth" modo="popover"></registro-login>
-    </div>
-</header>
 
 <div class="faixa-header">
     <div class="faixa-inner">
@@ -274,6 +249,8 @@ if (!empty($veiculos)) {
         </div>
     </div>
 </div>
+
+<?php require_once __DIR__ . '/../components/footer.php'; ?>
 
 <script src="/DriverLux/public/assets/js/registro-login.js"></script>
 <script src="/DriverLux/public/assets/js/menu-usuario.js?v=3"></script>

@@ -3,13 +3,13 @@
   --roxo-escuro: #3b0567;
   --roxo-fundo: #440c77;
   --roxo-medio: #6a0dad;
-  --roxo-claro: #8014e8;
+  --roxo-claro: #7b25cc;
   --roxo-glow: rgba(108, 47, 255, 0.13);
   --dourado: #ffc400;
   --ouro2: #ffd32c;
   --bg-claro: #f8f9fa;
   --branco: #ffffff;
-  --texto-escuro: #2b0647;
+  --texto-escuro: #000;
   --texto-claro: #ffffff;
   --cinza: #888;
   --borda-card: #ede8f5;
@@ -27,7 +27,7 @@
 }
 
 body {
-  background: var(--bg-claro);
+  background: var(--branco);
   font-family: "Poppins", Arial, Helvetica, sans-serif;
   color: var(--texto-escuro);
 }
@@ -37,60 +37,87 @@ body {
 }
 
 /* ==========================================================================
-   TOPO / HEADER
+   TOPO / HEADER (OTIMIZADO)
    ========================================================================== */
 .topo {
-  height: 88px;
+  height: 90px;
   background: var(--roxo-fundo);
-  color: #000;
+  color: var(--texto-claro);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 42px;
+  padding: 0 50px;
+  border-bottom: 1px solid rgba(128, 20, 232, 0.2); /* Linha sutil inferior */
 }
 
 .logo {
-  width: 230px;
+  width: 190px; /* Reduzido levemente para melhor proporção */
   height: auto;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.02);
 }
 
 .topo nav {
   display: flex;
-  gap: 42px;
+  align-items: center;
+  gap: 35px;
 }
 
 .topo nav a {
-  color: #fff;
+  color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
-  font-size: 14px;
-  font-weight: 800;
-  transition: color 0.3s;
+  font-size: 13px;
+  font-weight: 750; /* Mais fino traz mais sofisticação */
+  letter-spacing: 0.8px;
+  position: relative;
+  padding: 8px 0;
+  transition: color 0.3s ease;
+}
+
+/* Linha animada ao passar o mouse */
+.topo nav a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--dourado);
+  transition: width 0.3s ease;
 }
 
 .topo nav a:hover {
-  color: #ffc400;
+  color: var(--branco);
 }
 
-.login {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
-  font-size: 14px;
+.topo nav a:hover::after {
+  width: 100%;
 }
 
+/* Estilização Premium para o Gatilho do Login */
 #btn-login-trigger {
-  color: #ffc400 !important;
-  font-weight: 900;
-  transition: 0.3s;
+  color: var(--roxo-escuro) !important;
+  background: var(--dourado);
+  font-weight: 770;
+  padding: 8px 20px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
 }
 
 #btn-login-trigger:hover {
-  color: #ffffff !important;
+  background-color: var(--roxo-fundo);
+  color: var(--dourado) !important;
+}
+
+#btn-login-trigger::after {
+  display: none; /* Remove a linha do hover padrão para o botão */
 }
 
 /* ==========================================================================
-   ÁREA DO USUÁRIO LOGADO
+   ÁREA DO USUÁRIO LOGADO (OTIMIZADO)
    ========================================================================== */
 .area-usuario {
   position: relative;
@@ -101,67 +128,82 @@ body {
 }
 
 .btn-usuario {
-  background: #ffffff;
-  color: #440c77;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--branco);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px 20px;
+  border-radius: 50px; 
   font-family: "Poppins", Arial, sans-serif;
-  font-size: 14px;
-  font-weight: 800;
+  font-size: 13px;
+  font-weight: 650;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
 }
 
 .btn-usuario:hover {
-  background: #ffc400;
-  color: #440c77;
+  background: var(--branco);
+  color: var(--roxo-fundo);
+  border-color: var(--branco);
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15);
 }
 
 .seta-menu {
-  font-size: 11px;
+  font-size: 9px;
+  transition: transform 0.3s ease;
 }
 
 .menu-usuario {
   position: absolute;
-  top: 48px;
+  top: 55px;
   right: 0;
-  width: 230px;
-  background: #ffffff;
+  width: 240px;
+  background: var(--branco);
   border-radius: 12px;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.18);
   overflow: hidden;
   z-index: 999999;
+  border: 1px solid var(--borda-card);
+  transform-origin: top right;
+  transition: all 0.3s ease;
 }
 
 .menu-usuario a {
   display: block;
   width: 100%;
-  padding: 14px 18px;
-  background: #ffffff;
-  color: #2b0647;
+  padding: 14px 20px;
+  background: var(--branco);
+  color: var(--roxo-escuro);
   text-decoration: none;
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 650;
   font-family: "Poppins", Arial, sans-serif;
-  border-bottom: 1px solid #eeeeee;
+  border-bottom: 1px solid #f5f5f5;
+  transition: all 0.2s ease;
 }
 
 .menu-usuario a:hover {
-  background: #f3e8ff;
-  color: #6b00cc;
+  background: #f6efff;
+  color: var(--roxo-medio);
+  padding-left: 24px; /* Efeito sutil de deslocamento */
+}
+
+.menu-usuario a:last-child {
+  border-bottom: none;
 }
 
 #btn-sair {
-  color: #b00020;
+  color: var(--perigo);
 }
 
 #btn-sair:hover {
-  background: #ffe8e8;
-  color: #b00020;
+  background: #fff0f0;
+  color: var(--perigo);
 }
+
 
 /* ==========================================================================
    BARRA DE BUSCA (LANDING PAGE)
@@ -251,7 +293,7 @@ body {
 }
 
 #btn-buscar-disponibilidade:hover {
-  background: var(--ouro2) !important;
+  background: var(--roxo-medio) !important;
 }
 /* Dropdown da Lista de Locais */
 .lista-locais {
@@ -314,17 +356,19 @@ body {
    ========================================================================== */
 .hero {
   min-height: 585px;
-  margin-top: -84px;
+  margin-top: 0;
   background:
     linear-gradient(
       to right,
-      rgba(255, 255, 255, 0.95),
-      rgba(255, 255, 255, 0.18)
+      rgba(255, 255, 255, 0.92),
+      rgba(255, 255, 255, 0.15)
     ),
-    url("../img/hero-\(1\).png") center right / cover no-repeat;
+    url("../img/hero.png") center right / cover no-repeat;
   display: flex;
   align-items: center;
-  padding: 120px 55px 70px;
+  padding: 80px 55px 70px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .hero-texto {
@@ -417,6 +461,13 @@ body {
   color: #fff;
 }
 
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  margin-top: 25px;
+}
+
 .titulo-area {
   display: flex;
   justify-content: space-between;
@@ -442,11 +493,62 @@ body {
   width: 160px;
 }
 
-.cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 32px;
+.cards-carousel-container {
+  overflow: hidden;
+  width: 100%;
   margin-top: 25px;
+  position: relative;
+}
+
+.cards-carousel-track {
+  display: flex;
+  gap: 32px;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.cards-carousel-track .card {
+  flex: 0 0 calc((100% - 64px) / 3);
+  min-width: 0;
+}
+
+.destaques-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.destaques-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.destaques-btn:hover {
+  background: #ffc400;
+  color: #440c77;
+  border-color: #ffc400;
+  transform: scale(1.05);
+}
+
+@media (max-width: 1024px) {
+  .cards-carousel-track .card {
+    flex: 0 0 calc((100% - 32px) / 2);
+  }
+}
+
+@media (max-width: 600px) {
+  .cards-carousel-track .card {
+    flex: 0 0 100%;
+  }
 }
 
 .card {
@@ -535,13 +637,108 @@ body {
    ========================================================================== */
 .cta {
   margin-top: 75px;
-  min-height: 360px;
+  min-height: 380px; /* Aumentado levemente para acomodar confortavelmente textos maiores */
   border-radius: 16px;
-  background: url("../img/carro-roxo-novo.jpg") center right / cover no-repeat;
+  background-color: #f3e8ff;
+  background-position: center right;
+  background-size: cover;
+  background-repeat: no-repeat;
   padding: 45px;
   box-shadow: 0 15px 60px rgba(0, 0, 0, 0.08);
   color: #3b0567;
+  position: relative;
+  overflow: hidden;
+  transition: background-image 0.6s ease-in-out; /* Suaviza a troca das imagens de fundo */
 }
+
+.cta-carousel {
+  position: relative;
+  width: 100%;
+}
+
+.cta-carousel-inner {
+  position: relative;
+  width: 100%;
+  min-height: 250px;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.cta-slide {
+  grid-column: 1;
+  grid-row: 1;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden; /* Evita leitores de tela ou elementos fantasmas focáveis */
+  transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+}
+
+.cta-slide span {
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 1px;
+  display: inline-block;
+  margin-bottom: 10px;
+  color: var(--roxo-medio); /* Traz consistência para o subtítulo superior */
+}
+
+.cta-slide.active {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.cta-carousel-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 15px; /* Ajustado proximidade com os cards de conteúdo */
+  position: relative;
+  z-index: 10;
+}
+
+.cta-carousel-btn {
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(59, 5, 103, 0.15);
+  color: #3b0567;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.cta-carousel-btn:hover {
+  background: #3b0567;
+  color: #fff;
+  border-color: #3b0567;
+}
+
+.cta-carousel-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.cta-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(59, 5, 103, 0.25);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cta-dot.active {
+  background: #3b0567;
+  width: 24px;
+  border-radius: 4px;
+}
+
 .cta h2 {
   font-family: Georgia, serif;
   font-size: 52px;
@@ -560,6 +757,63 @@ body {
 
 #boas-vindas-nome {
   color: #fff;
+}
+
+.beneficios-linha {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 25px;
+  color: #6a5380;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.beneficios-linha .divisor {
+  color: #c5b3d9;
+  font-weight: 300;
+}
+
+.cta-cupom-box {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #f1ebf7;
+  border: 1.5px solid #e1d5ed;
+  border-radius: 8px;
+  padding: 14px 20px;
+  margin-bottom: 30px;
+  max-width: 420px;
+}
+
+.cta-cupom-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cta-cupom-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 14px;
+  color: #3b0567;
+}
+
+.cta-cupom-text span {
+  color: #3b0567 !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+}
+
+.cupom-badge {
+  background: #5b009f;
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-weight: 800;
+  margin-left: 6px;
+  display: inline-block;
 }
 
 /* ==========================================================================
@@ -584,10 +838,6 @@ body {
 
   .hero-texto h1 {
     font-size: 42px;
-  }
-
-  .cards {
-    grid-template-columns: 1fr;
   }
 
   .cta h2 {
@@ -825,4 +1075,174 @@ body {
 
 .step.active .step-nome {
   color: var(--texto-escuro);
+}
+
+/* ==========================================================================
+   RODAPÉ (FOOTER)
+   ========================================================================== */
+.rodape {
+  background: #1a0230;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 80px 42px 30px;
+  font-family: "Poppins", Arial, sans-serif;
+  border-top: 2px solid rgba(128, 20, 232, 0.2);
+  margin-top: 100px;
+}
+
+.rodape-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.5fr;
+  gap: 40px;
+}
+
+.rodape-coluna h3 {
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 800;
+  margin-bottom: 25px;
+  letter-spacing: 1px;
+  position: relative;
+}
+
+.rodape-coluna h3::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+  width: 30px;
+  height: 2px;
+  background: #ffc400;
+}
+
+.rodape-coluna ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.rodape-coluna ul li {
+  margin-bottom: 12px;
+}
+
+.rodape-coluna ul li a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.rodape-coluna ul li a:hover {
+  color: #ffc400;
+  padding-left: 5px;
+}
+
+.rodape-coluna.principal {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.rodape-logo {
+  max-width: 140px;
+}
+
+.rodape-tagline {
+  font-size: 13px;
+  line-height: 1.6;
+  max-width: 300px;
+}
+
+.rodape-sociais {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.social-icon {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.social-icon:hover {
+  background: #ffc400;
+  color: #1a0230;
+  border-color: #ffc400;
+  transform: translateY(-3px);
+}
+
+.contato-lista li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  margin-bottom: 15px !important;
+}
+
+.contato-lista li span {
+  color: #ffc400;
+  font-size: 16px;
+}
+
+.rodape-inferior {
+  margin-top: 60px;
+  padding-top: 30px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.rodape-inferior-conteudo {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  font-size: 13px;
+}
+
+.pagamentos-badges {
+  display: flex;
+  gap: 10px;
+}
+
+.pagamentos-badges span {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+@media (max-width: 900px) {
+  .rodape-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
+  .rodape {
+    padding: 60px 20px 30px;
+  }
+}
+
+@media (max-width: 600px) {
+  .rodape-container {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .rodape-inferior-conteudo {
+    flex-direction: column;
+    text-align: center;
+  }
 }
