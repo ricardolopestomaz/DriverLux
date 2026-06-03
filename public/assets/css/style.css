@@ -6,6 +6,7 @@
   --roxo-claro: #8014e8;
   --roxo-glow: rgba(108, 47, 255, 0.13);
   --dourado: #ffc400;
+  --ouro2: #ffd32c;
   --bg-claro: #f8f9fa;
   --branco: #ffffff;
   --texto-escuro: #2b0647;
@@ -40,7 +41,7 @@ body {
    ========================================================================== */
 .topo {
   height: 88px;
-  background: #3b0567;
+  background: var(--roxo-fundo);
   color: #000;
   display: flex;
   align-items: center;
@@ -49,7 +50,7 @@ body {
 }
 
 .logo {
-  width: 170px;
+  width: 230px;
   height: auto;
 }
 
@@ -170,7 +171,7 @@ body {
   max-width: 1280px;
   height: auto;
   margin: -1px auto 0;
-  background: #7d12de;
+  background: var(--roxo-escuro);
   border-radius: 0 0 16px 16px;
   display: flex;
   flex-direction: column;
@@ -231,6 +232,7 @@ body {
 }
 
 .busca button {
+  font-family: "Poppins", Arial, Helvetica, sans-serif;
   width: 205px;
   height: 48px;
   flex: 0 0 205px;
@@ -238,19 +240,19 @@ body {
   border-radius: 6px;
   padding: 0 16px;
   background: #ffc400;
-  color: #4b0082;
+  color: var(--bg-claro);
   font-weight: 900;
   font-size: 14px;
   cursor: pointer;
   white-space: nowrap;
-  transition: transform 0.2s, background 0.2s;
+  transition:
+    transform 0.2s,
+    background 0.2s;
 }
 
-.busca button:hover {
-  transform: scale(1.02);
-  background: #ffb700;
+#btn-buscar-disponibilidade:hover {
+  background: var(--ouro2) !important;
 }
-
 /* Dropdown da Lista de Locais */
 .lista-locais {
   position: absolute;
@@ -259,7 +261,7 @@ body {
   width: 100%;
   background: #ffffff;
   border-radius: 8px;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
   overflow: hidden;
   z-index: 99999;
 }
@@ -314,8 +316,12 @@ body {
   min-height: 585px;
   margin-top: -84px;
   background:
-    linear-gradient(to right, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.18)),
-    url("../img/hero.jpg") center right / cover no-repeat;
+    linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.95),
+      rgba(255, 255, 255, 0.18)
+    ),
+    url("../img/hero-\(1\).png") center right / cover no-repeat;
   display: flex;
   align-items: center;
   padding: 120px 55px 70px;
@@ -406,7 +412,7 @@ body {
    DESTAQUES (CARDS DE CARROS)
    ========================================================================== */
 .destaques {
-  background: #440c77;
+  background: #fff;
   padding: 42px 55px 70px;
   color: #fff;
 }
@@ -417,14 +423,19 @@ body {
   align-items: center;
 }
 
+.titulo-area span {
+  color: var(--roxo-fundo);
+}
+
 .titulo-area h2 {
+  color: #000;
+  font-weight: bold;
   font-size: 32px;
-  font-weight: 400;
   margin-top: 12px;
 }
 
 .titulo-area h2 b {
-  color: #ffc400;
+  color: var(--roxo-fundo);
 }
 
 .titulo-area img {
@@ -439,7 +450,8 @@ body {
 }
 
 .card {
-  background: #eee6f3;
+  background: var(--branco);
+  box-shadow: 0 15px 60px rgba(0, 0, 0, 0.08);
   color: #2b0647;
   border-radius: 16px;
   padding: 22px 26px;
@@ -455,7 +467,7 @@ body {
 
 .tag {
   display: inline-block;
-  background: #8014e8;
+  background: var(--roxo-medio);
   color: #fff !important;
   padding: 9px 17px;
   border-radius: 7px;
@@ -475,7 +487,7 @@ body {
 }
 
 .card p {
-  color: #5f2b88;
+  color: #101010;
   font-size: 16px;
   line-height: 1.4;
   min-height: 48px;
@@ -488,7 +500,7 @@ body {
 }
 
 .card h4 {
-  color: #8014e8;
+  color: var(--roxo-medio);
   font-size: 34px;
 }
 
@@ -514,8 +526,8 @@ body {
 }
 
 .card a:hover {
-    background: #8014e8;
-    color: #fff;
+  background: #8014e8;
+  color: #fff;
 }
 
 /* ==========================================================================
@@ -525,11 +537,11 @@ body {
   margin-top: 75px;
   min-height: 360px;
   border-radius: 16px;
-  background: url("../img/carro-roxo.jpg") center right / cover no-repeat;
+  background: url("../img/carro-roxo-novo.jpg") center right / cover no-repeat;
   padding: 45px;
+  box-shadow: 0 15px 60px rgba(0, 0, 0, 0.08);
   color: #3b0567;
 }
-
 .cta h2 {
   font-family: Georgia, serif;
   font-size: 52px;
@@ -813,4 +825,4 @@ body {
 
 .step.active .step-nome {
   color: var(--texto-escuro);
-}
+}

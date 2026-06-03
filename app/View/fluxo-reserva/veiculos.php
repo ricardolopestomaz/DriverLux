@@ -53,10 +53,12 @@ if (!empty($veiculos)) {
 <body>
 
 <header class="topo">
-    <img src="/DriverLux/public/assets/img/logo.png" class="logo" alt="DriverLux">
+     <a href="/DriverLux/index.html">
+      <img src="/DriverLux/public/assets/img/logo.png" class="logo" alt="DriverLux">
+    </a>
 
     <nav>
-        <a href="#">ALUGUEL DE CARROS</a>
+        <a href="/DriverLux/index.html">ALUGUEL DE CARROS</a>
         <a href="#">GESTÃO DE FROTAS</a>
         <a href="#">SEMINOVOS</a>
         <a href="#">LUX - CARRO POR ASSINATURA</a>
