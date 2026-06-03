@@ -6,8 +6,8 @@ class CupomService {
 
     private $model;
 
-    public function __construct() {
-        $this->model = new CupomModel();
+    public function __construct($model) {
+        $this->model = $model;
     }
 
     public function listarCupons() {
@@ -15,8 +15,8 @@ class CupomService {
         $cupons = $this->model->buscarTodos();
 
         return [
-            "code" => 200,
-            "data" => [
+            "status_code" => 200,
+            "body" => [
                 "status" => "success",
                 "total" => count($cupons),
                 "data" => $cupons
@@ -26,8 +26,6 @@ class CupomService {
 
     public function criarCupom($data) {
 
-        $this->verificarAcessoAdmin();
-
         if (
             empty($data->codigo) ||
             empty($data->tipo_desconto) ||
@@ -36,8 +34,8 @@ class CupomService {
         ) {
 
             return [
-                "code" => 400,
-                "data" => [
+                "status_code" => 400,
+                "body" => [
                     "erro" => "Dados incompletos."
                 ]
             ];
@@ -50,8 +48,8 @@ class CupomService {
             if ($resultado) {
 
                 return [
-                    "code" => 201,
-                    "data" => [
+                    "status_code" => 201,
+                    "body" => [
                         "mensagem" => "Cupom cadastrado com sucesso."
                     ]
                 ];
@@ -62,16 +60,16 @@ class CupomService {
             if ($e->getCode() == 23000) {
 
                 return [
-                    "code" => 400,
-                    "data" => [
+                    "status_code" => 400,
+                    "body" => [
                         "erro" => "Este código de cupom já existe."
                     ]
                 ];
             }
 
             return [
-                "code" => 500,
-                "data" => [
+                "status_code" => 500,
+                "body" => [
                     "erro" => "Erro ao cadastrar cupom."
                 ]
             ];
@@ -80,13 +78,11 @@ class CupomService {
 
     public function atualizarCupom($id, $data) {
 
-        $this->verificarAcessoAdmin();
-
         if (empty($id)) {
 
             return [
-                "code" => 400,
-                "data" => [
+                "status_code" => 400,
+                "body" => [
                     "erro" => "ID obrigatório."
                 ]
             ];
@@ -95,8 +91,8 @@ class CupomService {
         if (empty($data)) {
 
             return [
-                "code" => 400,
-                "data" => [
+                "status_code" => 400,
+                "body" => [
                     "erro" => "Nenhum dado enviado."
                 ]
             ];
@@ -107,8 +103,8 @@ class CupomService {
         if ($resultado["success"]) {
 
             return [
-                "code" => 200,
-                "data" => [
+                "status_code" => 200,
+                "body" => [
                     "status" => "success",
                     "mensagem" => "Cupom atualizado com sucesso."
                 ]
@@ -116,40 +112,41 @@ class CupomService {
         }
 
         return [
-            "code" => 404,
-            "data" => [
+            "status_code" => 404,
+            "body" => [
                 "status" => "warning",
                 "mensagem" => "Nenhuma alteração feita."
             ]
         ];
     }
 
-    private function verificarAcessoAdmin() {
-
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
+    public function buscarPorCodigo($codigo) {
+        if (empty($codigo)) {
+            return [
+                "status_code" => 400,
+                "body" => [
+                    "erro" => "Código do cupom é obrigatório."
+                ]
+            ];
         }
 
-        if (!isset($_SESSION['usuario_id'])) {
+        $cupom = $this->model->buscarPorCodigo($codigo);
 
-            http_response_code(401);
-
-            echo json_encode([
-                "erro" => "Faça login primeiro."
-            ]);
-
-            exit;
+        if ($cupom) {
+            return [
+                "status_code" => 200,
+                "body" => [
+                    "status" => "success",
+                    "data" => $cupom
+                ]
+            ];
         }
 
-        if ($_SESSION['usuario_perfil'] !== 'admin') {
-
-            http_response_code(403);
-
-            echo json_encode([
-                "erro" => "Apenas administradores."
-            ]);
-
-            exit;
-        }
+        return [
+            "status_code" => 404,
+            "body" => [
+                "erro" => "Cupom inválido ou expirado."
+            ]
+        ];
     }
 }

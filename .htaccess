@@ -1,8 +1,8 @@
 RewriteEngine On
 RewriteBase /DriverLux/
 
-# 1. Se o cara acessar a raiz purinha, joga pra home
-RewriteRule ^$ public/index.php [L]
+# 1. Se o cara acessar a raiz purinha, abre index.html direto
+RewriteRule ^$ index.html [L]
 
 # 2. Se o arquivo ou pasta não existir, manda pra public
 RewriteCond %{REQUEST_FILENAME} !-f

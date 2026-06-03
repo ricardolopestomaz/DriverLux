@@ -9,17 +9,24 @@ document.addEventListener('DOMContentLoaded', async () => {
   const nomeUsuario = document.getElementById('nome-usuario');
   const menuUsuario = document.getElementById('menu-usuario');
   const btnSair = document.getElementById('btn-sair');
+  
+  let usuarioLogado = null;
+
+  // -- A. Abrir o modal de login quando clicar em "LOGIN"
+  const modalAuth = document.getElementById('modal-auth');
+  if (btnLogin && modalAuth) {
+    btnLogin.addEventListener('click', () => {
+      const container = modalAuth.shadowRoot ? modalAuth.shadowRoot.getElementById('auth-container') : null;
+      if (container) container.classList.remove('hidden');
+    });
+  }
 
   try {
     const res = await fetch('/DriverLux/public/api/usuarios/me');
     const data = await res.json();
     
     if (data.logado && data.usuario) {
-      // Bloqueio de Administrador no front
-      if (data.usuario.perfil === 'administrador' || data.usuario.perfil === 'admin') {
-          window.location.href = '/DriverLux/app/View/painel-admin/admin.php'; // Ajuste a rota se necessário
-          return;
-      }
+      usuarioLogado = data.usuario;
 
       // Atualiza o menu superior com o nome do usuário
       if (nomeUsuario) {
@@ -30,9 +37,44 @@ document.addEventListener('DOMContentLoaded', async () => {
       // Alterna a visibilidade dos botões
       if (btnLogin) btnLogin.classList.add('esconder');
       if (btnMenuUsuario) btnMenuUsuario.classList.remove('esconder');
+
+      // Se for admin, adiciona a opção "Administração" no menu suspenso do usuário
+      if (data.usuario.perfil === 'administrador' || data.usuario.perfil === 'admin') {
+        if (menuUsuario && !document.getElementById('lnk-admin')) {
+          const lnkAdmin = document.createElement('a');
+          lnkAdmin.href = '/DriverLux/app/View/painel-admin/admin.php';
+          lnkAdmin.id = 'lnk-admin';
+          lnkAdmin.textContent = 'Administração';
+          
+          if (btnSair) {
+            menuUsuario.insertBefore(lnkAdmin, btnSair);
+          } else {
+            menuUsuario.appendChild(lnkAdmin);
+          }
+        }
+      }
     }
   } catch (e) {
     console.error("Erro ao verificar sessão do usuário:", e);
+  }
+
+  // Intercepta o link "GESTÃO DE FROTAS" na navbar
+  const linkGestao = Array.from(document.querySelectorAll('nav a')).find(a => a.textContent.trim() === 'GESTÃO DE FROTAS');
+  if (linkGestao) {
+    linkGestao.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (usuarioLogado && (usuarioLogado.perfil === 'administrador' || usuarioLogado.perfil === 'admin')) {
+        window.location.href = '/DriverLux/app/View/painel-admin/admin.php';
+      } else if (usuarioLogado) {
+        alert('Acesso restrito a administradores.');
+      } else {
+        // Abre o modal de login se não estiver logado
+        if (modalAuth) {
+          const container = modalAuth.shadowRoot ? modalAuth.shadowRoot.getElementById('auth-container') : null;
+          if (container) container.classList.remove('hidden');
+        }
+      }
+    });
   }
 
   // ==========================================================================
@@ -69,31 +111,55 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // ==========================================================================
-  // 4. LÓGICA DA BUSCA (HOME) - Mantida do seu arquivo original
+  // 4. LÓGICA DA BUSCA (HOME)
   // ==========================================================================
   const btnBuscar = document.getElementById('btn-buscar-disponibilidade');
   if (btnBuscar) {
     btnBuscar.addEventListener('click', () => {
-      const local = document.getElementById('local-retirada')?.value.trim();
-      const data = document.getElementById('data-retirada')?.value;
-      const hora = document.getElementById('hora-retirada')?.value;
+      const localRet = document.getElementById('local-retirada')?.value.trim();
+      const localDev = document.getElementById('local-devolucao')?.value.trim();
+      const dataRet = document.getElementById('data-retirada')?.value;
+      const horaRet = document.getElementById('hora-retirada')?.value;
+      const dataDev = document.getElementById('data-devolucao')?.value;
+      const horaDev = document.getElementById('hora-devolucao')?.value;
+      const cupom = document.getElementById('cupom-home')?.value.trim();
 
-      if (!local || !data || !hora) {
-        alert('Preencha local, data e hora.');
+      if (!localRet || !localDev || !dataRet || !horaRet || !dataDev || !horaDev) {
+        alert('Por favor, preencha todos os campos do formulário (Locais, Datas e Horários de Retirada e Devolução).');
+        return;
+      }
+
+      // Validação de Data/Hora de Retirada (Do momento atual para frente)
+      const agora = new Date();
+      const dtRet = new Date(`${dataRet}T${horaRet}`);
+      if (dtRet < agora) {
+        alert('A data e hora de retirada não podem ser no passado.');
+        return;
+      }
+
+      // Validação de Data/Hora de Devolução (Deve ser posterior à Retirada)
+      const dtDev = new Date(`${dataDev}T${horaDev}`);
+      if (dtDev <= dtRet) {
+        alert('A data e hora de devolução devem ser posteriores à data e hora de retirada.');
         return;
       }
 
       const dadosReserva = {
-        local_retirada: local,
-        data_retirada: data,
-        hora_retirada: hora
+        local_retirada: localRet,
+        local_devolucao: localDev,
+        data_retirada: dataRet,
+        hora_retirada: horaRet,
+        data_devolucao: dataDev,
+        hora_devolucao: horaDev,
+        cupom: cupom || ''
       };
 
       sessionStorage.setItem('dados_reserva', JSON.stringify(dadosReserva));
-      window.location.href = '/DriverLux/app/View/fluxo-reserva/veiculos.php'; // MERDA PURA
+      window.location.href = '/DriverLux/app/View/fluxo-reserva/veiculos.php';
     });
   }
 
+  // Controle do dropdown de Local de Retirada
   const inputLocal = document.getElementById('local-retirada');
   const listaLocais = document.getElementById('lista-locais');
   const opcoesLocais = document.querySelectorAll('.opcao-local');
@@ -107,6 +173,35 @@ document.addEventListener('DOMContentLoaded', async () => {
         inputLocal.value = opcao.dataset.local;
         listaLocais.classList.add('esconder');
       });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!inputLocal.contains(e.target) && !listaLocais.contains(e.target)) {
+        listaLocais.classList.add('esconder');
+      }
+    });
+  }
+
+  // Controle do dropdown de Local de Devolução
+  const inputLocalDevolucao = document.getElementById('local-devolucao');
+  const listaLocaisDevolucao = document.getElementById('lista-locais-devolucao');
+  const opcoesLocaisDevolucao = document.querySelectorAll('.opcao-local-devolucao');
+
+  if (inputLocalDevolucao && listaLocaisDevolucao) {
+    inputLocalDevolucao.addEventListener('focus', () => listaLocaisDevolucao.classList.remove('esconder'));
+    inputLocalDevolucao.addEventListener('input', () => listaLocaisDevolucao.classList.remove('esconder'));
+
+    opcoesLocaisDevolucao.forEach((opcao) => {
+      opcao.addEventListener('click', () => {
+        inputLocalDevolucao.value = opcao.dataset.local;
+        listaLocaisDevolucao.classList.add('esconder');
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!inputLocalDevolucao.contains(e.target) && !listaLocaisDevolucao.contains(e.target)) {
+        listaLocaisDevolucao.classList.add('esconder');
+      }
     });
   }
 });

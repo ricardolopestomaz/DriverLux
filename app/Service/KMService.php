@@ -1,23 +1,31 @@
 <?php
 
-require_once __DIR__ . '/../Model/kmModel.php';
+require_once __DIR__ . '/../Model/KMModel.php';
 
 class KMService {
     private $model;
 
-    public function __construct($db) {
-        $this->model = new KMModel($db);
+    public function __construct($model) {
+        $this->model = $model;
     }
 
     public function listarOpcoes() {
-        return $this->model->listar();
+        $opcoes = $this->model->listar();
+        return [
+            "status_code" => 200,
+            "body" => [
+                "status" => "success",
+                "total" => count($opcoes),
+                "data" => $opcoes
+            ]
+        ];
     }
 
     public function criarOpcao($data) {
         if (empty($data->nome) || !isset($data->valor_diario)) {
             return [
-                "status" => 400,
-                "resposta" => ["erro" => "Dados incompletos. Nome e valor_diario são obrigatórios."]
+                "status_code" => 400,
+                "body" => ["erro" => "Dados incompletos. Nome e valor_diario são obrigatórios."]
             ];
         }
 
@@ -25,29 +33,29 @@ class KMService {
 
         if ($criado) {
             return [
-                "status" => 201,
-                "resposta" => ["mensagem" => "Opção de quilometragem cadastrada com sucesso."]
+                "status_code" => 201,
+                "body" => ["mensagem" => "Opção de quilometragem cadastrada com sucesso."]
             ];
         }
 
         return [
-            "status" => 400,
-            "resposta" => ["erro" => "Erro ao cadastrar opção de KM."]
+            "status_code" => 400,
+            "body" => ["erro" => "Erro ao cadastrar opção de KM."]
         ];
     }
 
     public function atualizarOpcao($id, $data) {
         if (empty($id)) {
             return [
-                "status" => 400,
-                "resposta" => ["erro" => "O ID da opção de KM é obrigatório para atualização."]
+                "status_code" => 400,
+                "body" => ["erro" => "O ID da opção de KM é obrigatório para atualização."]
             ];
         }
 
         if (empty($data)) {
             return [
-                "status" => 400,
-                "resposta" => ["erro" => "Nenhum dado enviado para atualização."]
+                "status_code" => 400,
+                "body" => ["erro" => "Nenhum dada enviado para atualização."]
             ];
         }
 
@@ -81,8 +89,8 @@ class KMService {
 
         if (empty($campos)) {
             return [
-                "status" => 400,
-                "resposta" => ["erro" => "Nenhum campo válido fornecido para atualização."]
+                "status_code" => 400,
+                "body" => ["erro" => "Nenhum campo válido fornecido para atualização."]
             ];
         }
 
@@ -90,14 +98,14 @@ class KMService {
 
         if ($alteracoes > 0) {
             return [
-                "status" => 200,
-                "resposta" => ["status" => "success", "mensagem" => "Opção de KM atualizada com sucesso."]
+                "status_code" => 200,
+                "body" => ["status" => "success", "mensagem" => "Opção de KM atualizada com sucesso."]
             ];
         }
 
         return [
-            "status" => 404,
-            "resposta" => ["status" => "warning", "mensagem" => "Nenhuma alteração feita. ID não encontrado ou dados iguais."]
+            "status_code" => 404,
+            "body" => ["status" => "warning", "mensagem" => "Nenhuma alteração feita. ID não encontrado ou dados iguais."]
         ];
     }
 }

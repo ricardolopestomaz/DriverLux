@@ -3,7 +3,7 @@ use PHPUnit\Framework\TestCase;
 
 require_once __DIR__ . '/BaseControllerTestCase.php';
 require_once __DIR__ . '/../app/Controller/CupomController.php';
-require_once __DIR__ . '/../app/Service/CupomService.php'; // Ou o caminho correto da sua pasta
+require_once __DIR__ . '/../app/Service/CupomService.php';
 
 class CupomControllerTest extends BaseControllerTestCase {
 
@@ -17,7 +17,7 @@ class CupomControllerTest extends BaseControllerTestCase {
     }
 
     public function testListarCupons() {
-        $mockResult = ["code" => 200, "data" => ["status" => "success", "cupons" => []]];
+        $mockResult = ["status_code" => 200, "body" => ["status" => "success", "cupons" => []]];
         $this->serviceMock->method('listarCupons')->willReturn($mockResult);
 
         ob_start();

@@ -17,6 +17,17 @@ class ReservaService {
         ];
     }
 
+    public function listarReservasPorUsuario($usuario_id) {
+        if (empty($usuario_id)) {
+            return ["status_code" => 401, "body" => ["erro" => "Usuário não autenticado."]];
+        }
+        $reservas = $this->model->findByUserId($usuario_id);
+        return [
+            "status_code" => 200,
+            "body" => ["status" => "success", "total" => count($reservas), "data" => $reservas]
+        ];
+    }
+
     public function buscarReserva($id) {
         $reserva = $this->model->findById($id);
         if ($reserva) {
@@ -31,8 +42,11 @@ class ReservaService {
         }
 
         try {
-            $this->model->create($data, $usuario_id);
-            return ["status_code" => 201, "body" => ["mensagem" => "Reserva criada com sucesso!"]];
+            $reservaId = $this->model->create($data, $usuario_id);
+            if ($reservaId) {
+                return ["status_code" => 201, "body" => ["status" => "success", "mensagem" => "Reserva criada com sucesso!", "id" => $reservaId]];
+            }
+            return ["status_code" => 400, "body" => ["erro" => "Erro ao gravar reserva no banco de dados."]];
         } catch (PDOException $e) {
             return ["status_code" => 400, "body" => ["erro" => "Erro ao criar reserva: " . $e->getMessage()]];
         }

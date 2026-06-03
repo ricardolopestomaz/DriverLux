@@ -1,5 +1,9 @@
 <?php
 
+require_once __DIR__ . '/BaseControllerTestCase.php';
+require_once __DIR__ . '/../app/Controller/KMController.php';
+require_once __DIR__ . '/../app/Service/KMService.php';
+
 class KMControllerTest extends BaseControllerTestCase {
 
     private $controller;
@@ -9,13 +13,18 @@ class KMControllerTest extends BaseControllerTestCase {
         $this->serviceMock = $this->createMock(KMService::class);
         $this->controller = new KMController();
         $this->injectMockService($this->controller, $this->serviceMock);
-        @session_start();
     }
 
     public function testGetOpcoesKMRetornaSucesso() {
-        $this->serviceMock->method('listarOpcoes')->willReturn([
-            ["id" => 1, "nome" => "Livre"]
-        ]);
+        $mockResponse = [
+            "status_code" => 200,
+            "body" => [
+                "status" => "success",
+                "total" => 1,
+                "data" => [["id" => 1, "nome" => "Livre"]]
+            ]
+        ];
+        $this->serviceMock->method('listarOpcoes')->willReturn($mockResponse);
 
         ob_start();
         $this->controller->handleRequest('GET', null);

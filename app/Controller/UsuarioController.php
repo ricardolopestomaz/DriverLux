@@ -92,9 +92,6 @@ class UsuarioController {
 
         // Se o login foi um sucesso, lida com a sessão local do PHP
         if ($response['status_code'] === 200 && isset($response['session_data'])) {
-            if (session_status() === PHP_SESSION_NONE) {
-                session_start();
-            }
             $usuario = $response['session_data'];
             $_SESSION['usuario_id']     = $usuario['id'];
             $_SESSION['usuario_perfil'] = $usuario['perfil'];
@@ -111,9 +108,6 @@ class UsuarioController {
     }
 
     private function logout() {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
         session_destroy();
         $this->sendResponse([
             "status_code" => 200,
@@ -122,9 +116,6 @@ class UsuarioController {
     }
 
     private function me() {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
         $id_sessao = isset($_SESSION['usuario_id']) ? $_SESSION['usuario_id'] : null;
         
         $response = $this->service->obterDadosMe($id_sessao);
@@ -138,9 +129,6 @@ class UsuarioController {
     }
 
     private function verificarAutenticacao() {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
         if (!isset($_SESSION['usuario_id'])) {
             $this->sendResponse([
                 "status_code" => 401,
