@@ -1,7 +1,7 @@
 .concluido-body {
-  background: linear-gradient(135deg, #3b0567 0%, #1c0035 100%);
+  background: #ffffff; /* Fundo totalmente branco */
   min-height: 100vh;
-  color: #fff;
+  color: #1c0035; /* Texto principal alterado para o roxo escuro da marca */
   font-family: "Poppins", sans-serif;
 }
 
@@ -12,13 +12,12 @@
 }
 
 .card-sucesso {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #ffffff; /* Fundo do card em branco puro */
+  border: 1px solid #e0e0e0; /* Borda cinza clara para dar estrutura sobre o fundo */
   border-radius: 24px;
   padding: 40px;
   text-align: center;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.05); /* Sombra suave e elegante */
   animation: fadeIn 0.6s ease-out;
 }
 
@@ -27,7 +26,6 @@
     opacity: 0;
     transform: translateY(20px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -45,7 +43,7 @@
   align-items: center;
   justify-content: center;
   margin-bottom: 24px;
-  box-shadow: 0 0 30px rgba(46, 204, 113, 0.5);
+  box-shadow: 0 0 30px rgba(46, 204, 113, 0.3);
   animation: pulse 2s infinite;
 }
 
@@ -53,11 +51,9 @@
   0% {
     box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7);
   }
-
   70% {
     box-shadow: 0 0 0 15px rgba(46, 204, 113, 0);
   }
-
   100% {
     box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
   }
@@ -66,18 +62,18 @@
 .card-sucesso h1 {
   font-size: 32px;
   font-weight: 800;
-  color: #fff;
+  color: var(--roxo-escuro); /* Título em roxo escuro */
   margin-bottom: 8px;
 }
 
 .subtitulo-sucesso {
-  color: rgba(255, 255, 255, 0.7);
+  color: #555555; /* Subtítulo em cinza escuro para melhor leitura */
   font-size: 16px;
   margin-bottom: 30px;
 }
 
 .codigo-reserva {
-  background: rgba(255, 196, 0, 0.1);
+  background: rgba(212, 172, 13, 0.1);
   border: 1.5px dashed var(--dourado);
   border-radius: 12px;
   padding: 12px 24px;
@@ -91,7 +87,7 @@
 
 .divisor-sucesso {
   height: 1px;
-  background: rgba(255, 255, 255, 0.1);
+  background: #e0e0e0; /* Divisor claro */
   margin: 30px 0;
 }
 
@@ -104,7 +100,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  color: var(--dourado);
+  color: var(--roxo-medio); /* Destaque do bloco em roxo */
   margin-bottom: 20px;
 }
 
@@ -112,8 +108,8 @@
   display: flex;
   align-items: center;
   gap: 20px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: #f9f9f9; /* Fundo do bloco do carro em cinza bem claro */
+  border: 1px solid #eaeaea;
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 25px;
@@ -123,19 +119,19 @@
   width: 140px;
   height: 80px;
   object-fit: contain;
-  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.08));
 }
 
 .carro-detalhes-sucesso h3 {
   font-size: 18px;
   font-weight: 800;
-  color: #fff;
+  color: var(--roxo-escuro); /* Nome do carro em roxo escuro */
   margin-bottom: 4px;
 }
 
 .carro-detalhes-sucesso p {
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.5);
+  color: #777777; /* Categoria em cinza */
   text-transform: uppercase;
   font-weight: 600;
   letter-spacing: 0.5px;
@@ -149,17 +145,17 @@
 }
 
 .detalhe-item {
-  background: rgba(255, 255, 255, 0.02);
+  background: #f9f9f9; /* Itens do grid com fundo claro */
   border-radius: 12px;
   padding: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  border: 1px solid #eaeaea;
 }
 
 .detalhe-item label {
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.4);
+  color: #888888; /* Labels das informações em cinza */
   letter-spacing: 1px;
   display: block;
   margin-bottom: 6px;
@@ -168,12 +164,12 @@
 .detalhe-item span {
   font-size: 14px;
   font-weight: 600;
-  color: #fff;
+  color: #222222; /* Dados da reserva em texto escuro */
 }
 
 .valores-pagamento {
-  background: rgba(106, 13, 173, 0.15);
-  border: 1px solid rgba(128, 20, 232, 0.25);
+  background: rgba(106, 13, 173, 0.06); /* Fundo roxo bem sutil e claro */
+  border: 1px solid rgba(128, 20, 232, 0.15);
   border-radius: 16px;
   padding: 22px;
   display: flex;
@@ -185,7 +181,7 @@
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.5);
+  color: #666666;
   letter-spacing: 1px;
   margin-bottom: 4px;
 }
@@ -193,7 +189,7 @@
 .pagamento-info-val {
   font-size: 14px;
   font-weight: 600;
-  color: #fff;
+  color: var(--roxo-escuro);
 }
 
 .total-pago-box {
@@ -203,7 +199,7 @@
 .total-pago-lbl {
   font-size: 11px;
   font-weight: 700;
-  color: var(--dourado);
+  color: var(--roxo-medio); /* Roxo médio para ornar com o fundo claro */
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-bottom: 4px;
@@ -212,7 +208,7 @@
 .total-pago-val {
   font-size: 26px;
   font-weight: 900;
-  color: #fff;
+  color: var(--roxo-escuro); /* Valor total em destaque escuro */
   line-height: 1;
 }
 
@@ -239,49 +235,42 @@
 }
 
 .btn-sucesso-acao.principal {
-  background: linear-gradient(
-    135deg,
-    var(--roxo-medio) 0%,
-    var(--roxo-claro) 100%
-  );
-  color: #fff;
+  background: var(--roxo-escuro);
+ 
   border: none;
-  box-shadow: 0 8px 20px rgba(106, 13, 173, 0.4);
+  box-shadow: 0 6px 15px rgba(106, 13, 173, 0.2);
 }
 
 .btn-sucesso-acao.principal:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 25px rgba(106, 13, 173, 0.6);
+  box-shadow: 0 10px 22px rgba(106, 13, 173, 0.35);
 }
 
 .btn-sucesso-acao.secundario {
   background: transparent;
-  color: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #555555;
+  border: 1px solid #cccccc;
 }
 
 .btn-sucesso-acao.secundario:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.4);
-  color: #fff;
+  background: #f5f5f5;
+  border-color: #999999;
+  color: #222222;
 }
 
 @media (max-width: 600px) {
   .resumo-detalhes-grid {
     grid-template-columns: 1fr;
   }
-
   .botoes-sucesso {
     flex-direction: column;
     gap: 12px;
   }
-
   .valores-pagamento {
     flex-direction: column;
     align-items: flex-start;
     gap: 15px;
   }
-
   .total-pago-box {
     text-align: left;
   }

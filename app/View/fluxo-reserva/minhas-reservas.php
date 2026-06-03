@@ -46,6 +46,38 @@ if (session_status() === PHP_SESSION_NONE) {
 
     <script src="/DriverLux/public/assets/js/menu-usuario.js"></script>
     <script>
+        // Função corrigida baseada na rota PUT do seu ReservaController
+        async function cancelarReserva(reservaId) {
+            if (!confirm('Tem certeza que deseja cancelar esta reserva?')) {
+                return;
+            }
+
+            try {
+                // Passando o ID na URL e usando o método PUT conforme seu Controller gerencia atualizações
+                const response = await fetch(`/DriverLux/public/api/reservas/${reservaId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        status: 'Cancelada' 
+                    })
+                });
+
+                const resultado = await response.json();
+
+                if (response.ok || resultado.status === 'success') {
+                    alert('Reserva cancelada com sucesso!');
+                    window.location.reload(); 
+                } else {
+                    alert(resultado.erro || resultado.message || 'Erro ao cancelar a reserva.');
+                }
+            } catch (error) {
+                console.error('Erro ao cancelar:', error);
+                alert('Não foi possível conectar ao servidor para cancelar.');
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             // Verifica sessão do usuário
             try {
@@ -86,6 +118,14 @@ if (session_status() === PHP_SESSION_NONE) {
 
                         const statusClass = reserva.status.toLowerCase();
                         const fotoCarro = reserva.veiculo_imagem || 'https://cdn-icons-png.flaticon.com/512/3202/3202003.png';
+                        
+                        // Capturando a chave correta identificadora do banco
+                        const idAtual = reserva.id || reserva.id_reserva;
+
+                        // O botão só será exibido se o status atual não for 'cancelada'
+                        const botaoCancelar = statusClass !== 'cancelada' 
+                            ? `<button class="btn-cancelar-reserva" onclick="cancelarReserva('${idAtual}')">Cancelar Reserva</button>` 
+                            : '';
 
                         card.innerHTML = `
                             <div class="reserva-detalhes">
@@ -104,6 +144,7 @@ if (session_status() === PHP_SESSION_NONE) {
                             <div class="reserva-status-preco">
                                 <span class="status-badge ${statusClass}">${reserva.status}</span>
                                 <div class="preco-reserva"><span>Total:</span> ${formatarMoeda(reserva.valor_total_previsto)}</div>
+                                ${botaoCancelar}
                             </div>
                         `;
                         container.appendChild(card);

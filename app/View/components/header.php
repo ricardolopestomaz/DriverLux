@@ -1,6 +1,6 @@
 <header class="topo">
     <a href="/DriverLux/index.html">
-        <img src="/DriverLux/public/assets/img/logo.png" class="logo" alt="DriverLux" />
+        <img src="/DriverLux/public/assets/img/DriverLux.png" class="logo" alt="DriverLux" />
     </a>
 
     <nav>

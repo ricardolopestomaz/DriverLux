@@ -12,12 +12,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   let usuarioLogado = null;
 
-  // -- A. Abrir o modal de login quando clicar em "LOGIN"
+  // -- A. Abrir o modal de login quando clicar em "LOGIN" (Com a limpeza integrada!)
   const modalAuth = document.getElementById('modal-auth');
   if (btnLogin && modalAuth) {
-    btnLogin.addEventListener('click', () => {
+    btnLogin.addEventListener('click', (e) => {
+      e.preventDefault(); // Evita qualquer comportamento padrão do link
+
+      // 1. Acessa o contêiner interno do Web Component e abre o modal
       const container = modalAuth.shadowRoot ? modalAuth.shadowRoot.getElementById('auth-container') : null;
-      if (container) container.classList.remove('hidden');
+      if (container) {
+        container.classList.remove('hidden');
+      }
+
+      // 2. Executa a limpeza para que os dados e erros antigos sumam ao abrir
+      if (typeof modalAuth.limparFormularios === 'function') {
+        modalAuth.limparFormularios();
+      }
     });
   }
 
@@ -113,7 +123,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // ==========================================================================
-  // 4. LÓGICA DA BUSCA (HOME)
+  // 4. LÓGICA DA BUSCA (HOME) - AJUSTADA E CORRIGIDA
   // ==========================================================================
   const btnBuscar = document.getElementById('btn-buscar-disponibilidade');
   if (btnBuscar) {
@@ -131,16 +141,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
       }
 
-      // Validação de Data/Hora de Retirada (Do momento atual para frente)
-      const agora = new Date();
-      const dtRet = new Date(`${dataRet}T${horaRet}`);
-      if (dtRet < agora) {
+      // CORREÇÃO: Força a criação da data no contexto LOCAL do navegador
+      const dtRet = new Date(`${dataRet}T${horaRet}:00`);
+      const dtDev = new Date(`${dataDev}T${horaDev}:00`);
+      
+      // Dá uma tolerância de 5 minutos para o passado, evitando bugs de segundos decorridos
+      const agoraComTolerancia = new Date();
+      agoraComTolerancia.setMinutes(agoraComTolerancia.getMinutes() - 5);
+
+      // Validação de Data/Hora de Retirada
+      if (dtRet < agoraComTolerancia) {
         alert('A data e hora de retirada não podem ser no passado.');
         return;
       }
 
-      // Validação de Data/Hora de Devolução (Deve ser posterior à Retirada)
-      const dtDev = new Date(`${dataDev}T${horaDev}`);
+      // Validação de Data/Hora de Devolução
       if (dtDev <= dtRet) {
         alert('A data e hora de devolução devem ser posteriores à data e hora de retirada.');
         return;

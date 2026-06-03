@@ -1,5 +1,5 @@
 .reservas-body {
-  background: var(--bg-claro); /* Corrigido de var(--braco) */
+  background: var(--bg-claro);
   min-height: 100vh;
   color: var(--texto-escuro);
   font-family: "Poppins", sans-serif;
@@ -230,5 +230,40 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 15px;
+  }
+}
+
+/* Botão de Cancelar Reserva */
+.btn-cancelar-reserva {
+  background: transparent;
+  color: #c0392b;
+  border: 1px solid rgba(231, 76, 60, 0.4);
+  padding: 8px 16px;
+  border-radius: 50px;
+  font-family: "Poppins", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.btn-cancelar-reserva:hover {
+  background: #c0392b;
+  color: #fff;
+  border-color: #c0392b;
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Ajuste responsivo para mobile */
+@media (max-width: 768px) {
+  .btn-cancelar-reserva {
+    width: 100%;
+    text-align: center;
+    padding: 12px;
+    font-size: 13px;
   }
 }

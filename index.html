@@ -17,7 +17,7 @@
     <header class="topo">
       <a href="/DriverLux/index.html">
         <img
-          src="/DriverLux/public/assets/img/logo.png"
+          src="/DriverLux/public/assets/img/DriverLux.png"
           class="logo"
           alt="DriverLux"
         />
@@ -268,7 +268,7 @@
                  data-bg="/DriverLux/public/assets/img/carros-disney.png"
                  data-overlay="rgba(244, 240, 250, 0.92) | rgba(244, 240, 250, 0.1)">
               <span>PRONTO PARA DIRIGIR O SEU?</span>
-              <h2>Eu sou a velocidade!</h2>
+              <h2>Eu sou a velocidade! - Relâmpago McQueen</h2>
               <div class="beneficios-linha">
                 <span>Processo 100% online</span>
                 <span class="divisor">|</span>
@@ -340,5 +340,30 @@
     <script src="/DriverLux/public/assets/js/registro-login.js"></script>
     <script src="/DriverLux/public/assets/js/menu-usuario.js?v=3"></script>
     <script src="/DriverLux/public/assets/js/carrossel.js"></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const btnLogin = document.getElementById('btn-login-trigger');
+        const componenteAuth = document.getElementById('modal-auth');
+
+        if (btnLogin && componenteAuth) {
+          btnLogin.onclick = (e) => {
+            e.preventDefault();
+            
+            // 1. Acessa o contêiner interno do Web Component e remove o hidden para abrir
+            const container = componenteAuth.shadowRoot.getElementById('auth-container');
+            if (container) {
+              container.classList.remove('hidden');
+            }
+            
+            // 2. DISPARO DA DICA EXTRA: Garante que os dados antigos sumam ao abrir
+            if (typeof componenteAuth.limparFormularios === 'function') {
+              componenteAuth.limparFormularios();
+            }
+          };
+        }
+      });
+    </script>
+    
   </body>
 </html>

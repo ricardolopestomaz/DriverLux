@@ -40,29 +40,27 @@ body {
    TOPO / HEADER (OTIMIZADO)
    ========================================================================== */
 .topo {
+  margin-bottom: 0 !important;
   height: 90px;
   background: var(--roxo-fundo);
   color: var(--texto-claro);
   display: flex;
-  align-items: center;
+  align-items: center; /* Alinha verticalmente a Logo e o Nav */
   justify-content: space-between;
   padding: 0 50px;
-  border-bottom: 1px solid rgba(128, 20, 232, 0.2); /* Linha sutil inferior */
+  border-bottom: 1px solid rgba(128, 20, 232, 0.2);
 }
 
 .logo {
-  width: 190px; /* Reduzido levemente para melhor proporção */
+  width: 200px;
   height: auto;
+  display: block; /* Remove o espaçamento padrão de elementos inline (inline-block) embaixo da imagem */
   transition: transform 0.3s ease;
-}
-
-.logo:hover {
-  transform: scale(1.02);
 }
 
 .topo nav {
   display: flex;
-  align-items: center;
+  align-items: center; /* Garante que o contêiner dos links esteja centralizado verticalmente */
   gap: 35px;
 }
 
@@ -70,10 +68,13 @@ body {
   color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
   font-size: 13px;
-  font-weight: 750; /* Mais fino traz mais sofisticação */
+  font-weight: 750;
   letter-spacing: 0.8px;
   position: relative;
-  padding: 8px 0;
+  /* O estofamento vertical (8px) pode criar uma ilusão de desalinhamento por causa da linha animada */
+  padding: 4px 0; 
+  display: inline-flex; /* Transforma o link em flex para alinhar o texto perfeitamente */
+  align-items: center;
   transition: color 0.3s ease;
 }
 
@@ -222,6 +223,8 @@ body {
   box-shadow: 0 12px 25px rgba(54, 0, 95, 0.25);
   position: relative;
   z-index: 100;
+  position: relative;
+  z-index: 10;
 }
 
 .busca-linha {
@@ -354,19 +357,26 @@ body {
 /* ==========================================================================
    HERO SECTION
    ========================================================================== */
+
 .hero {
   min-height: 585px;
-  margin-top: 0;
+  margin-top: -157px; /* Mantém a imagem do carro subindo até o header */
+  position: relative;
+  z-index: 1; 
+
   background:
     linear-gradient(
       to right,
-      rgba(255, 255, 255, 0.92),
+      rgba(255, 255, 255, 0.95),
       rgba(255, 255, 255, 0.15)
     ),
-    url("../img/hero.png") center right / cover no-repeat;
+    url("../img/hero.png") right center / cover no-repeat;
+    
   display: flex;
   align-items: center;
-  padding: 80px 55px 70px;
+  
+  padding: 220px 55px 70px; 
+  
   width: 100%;
   box-sizing: border-box;
 }

@@ -110,7 +110,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
             <div class="botoes-sucesso">
                 <a href="/DriverLux/app/View/fluxo-reserva/minhas-reservas.php"
-                    class="btn-sucesso-acao principal">Minhas Reservas</a>
+                    class="btn-sucesso-acao principal" style="color: white">Minhas Reservas</a>
                 <a href="/DriverLux/index.html" class="btn-sucesso-acao secundario">Voltar para o Início</a>
             </div>
         </div>
