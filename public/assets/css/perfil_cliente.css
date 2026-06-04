@@ -14,6 +14,7 @@
   --borda2: #2d2d2d;
   --roxo: #6c2fff;
   --roxo2: #8a52ff;
+  --roxo-escuro: #3b0567;
   --roxo-glow: rgba(108, 47, 255, 0.22);
   --ouro: #c9a84c;
   --ouro2: #e8c96a;
@@ -150,7 +151,7 @@ body {
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.14em;
-  color: var(--roxo2);
+  color: var(--roxo-escuro);
   text-transform: uppercase;
   margin-bottom: 0.3rem;
 }
@@ -199,7 +200,7 @@ body {
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.14em;
-  color: var(--roxo2);
+  color: var(--roxo-escuro);
   text-transform: uppercase;
   margin-bottom: 1.2rem;
 }
@@ -405,11 +406,11 @@ body {
 }
 
 .tab-btn:hover {
-  color: var(--roxo);
+  color: var(--roxo-glow);
 }
 
 .tab-btn.active {
-  color: var(--roxo);
+  color: var(--roxo-escuro);
 }
 
 .tab-btn.active::after {
@@ -419,7 +420,7 @@ body {
   left: 0;
   right: 0;
   height: 3px;
-  background: var(--roxo);
+  background: var(--roxo-escuro);
   border-radius: 3px;
 }
 
@@ -584,5 +585,51 @@ body {
     width: 100%;
     border-top: 1px solid #eee;
     padding-top: 12px;
+  }
+}
+
+/* ── FILTRAGEM DENTRO DE RESERVAS ── */
+.abas-internas-reservas {
+  display: flex;
+  gap: 12px;
+  margin-top: 5px;
+  margin-bottom: 25px;
+}
+
+.aba-filtro-btn {
+  background: transparent;
+  border: 1px solid var(--borda2);
+  color: var(--cinza);
+  padding: 8px 20px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.aba-filtro-btn:hover {
+  color: var(--roxo-glow);
+  border-color: var(--branco);
+  background: rgba(108, 47, 255, 0.03);
+}
+
+.aba-filtro-btn.ativa {
+  background:linear-gradient(135deg, var(--cinza), var(--roxo-claro));
+  color: #ffffff;
+  border-color: var(--roxo-glow);
+  box-shadow: 0 4px 15px var(--roxo-glow);
+}
+
+@media (max-width: 480px) {
+  .abas-internas-reservas {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .aba-filtro-btn {
+    width: 100%;
+    text-align: center;
   }
 }

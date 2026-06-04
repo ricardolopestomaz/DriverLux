@@ -12,15 +12,13 @@
   <link rel="stylesheet" href="/DriverLux/public/assets/css/perfil_cliente.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
     rel="stylesheet">
-
 </head>
 
 <body>
 
-<?php 
-  
-  require_once __DIR__ . '/components/header.php'; 
-?>
+  <?php
+  require_once __DIR__ . '/components/header.php';
+  ?>
 
   <div class="page">
     <div class="perfil-hero">
@@ -45,19 +43,17 @@
 
     <div class="divisor"></div>
 
-    <!-- ABAS DE NAVEGAÇÃO -->
     <div class="tabs-container">
       <button class="tab-btn active" id="btn-tab-cadastro" onclick="switchTab('cadastro')">Meu Cadastro</button>
       <button class="tab-btn" id="btn-tab-reservas" onclick="switchTab('reservas')">Minhas Reservas</button>
     </div>
 
-    <!-- CONTEÚDO: CADASTRO -->
     <div id="tab-cadastro" class="tab-content active">
       <div class="foto-preview-strip" id="foto-strip">
         <img id="foto-strip-img" src="" alt="Preview">
         <p>
           <strong>Nova foto selecionada</strong>
-          Salve para confirmar a alteração.
+          Salve para confirmar a alteration.
         </p>
       </div>
 
@@ -90,14 +86,22 @@
       </div>
     </div>
 
-    <!-- CONTEÚDO: RESERVAS -->
     <div id="tab-reservas" class="tab-content">
       <div class="secao-label">Histórico de Reservas</div>
-      <div class="reserva-lista" id="lista-reservas">
+      
+      <div class="abas-internas-reservas">
+        <button class="aba-filtro-btn ativa" onclick="filtrarReservasPerfil('ativas')">Reservas Ativas</button>
+        <button class="aba-filtro-btn" onclick="filtrarReservasPerfil('canceladas')">Histórico de Canceladas</button>
+      </div>
+
+      <div class="reserva-lista" id="lista-ativas-perfil">
         <div style="text-align: center; padding: 40px; color: #888;">
           Carregando suas reservas...
         </div>
       </div>
+
+      <div class="reserva-lista" id="lista-canceladas-perfil" style="display: none;">
+        </div>
     </div>
   </div>
 
