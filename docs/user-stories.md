@@ -35,7 +35,6 @@
 | User Story | Descrição |
 |------------|-----------|
 | **US010** | Como **cliente**, quero pagar com cartão de crédito em até 12x para facilitar o pagamento. |
-| **US011** | Como **cliente**, quero pagar via PIX com QR Code gerado automaticamente. |
 | **US012** | Como **sistema**, quero liberar a reserva somente após confirmação do pagamento para garantir a integridade. |
 
 ---

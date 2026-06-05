@@ -19,7 +19,7 @@ class RegistroLogin extends HTMLElement {
             @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap');
 
             :host { 
-                --primary: #6B00CC; 
+                --primary: #3b0567; 
                 font-family: 'Poppins', sans-serif; 
             }
 
@@ -56,7 +56,7 @@ class RegistroLogin extends HTMLElement {
                 transition: background 0.3s, transform 0.2s; 
                 margin-top: 10px; font-family: inherit;
             }
-            .main-btn:hover { background: #5600a3; transform: translateY(-2px); }
+            .main-btn:hover { background: #6a0dad; transform: translateY(-2px); }
 
             input { 
                 width: 100%; padding: 14px; margin-bottom: 12px; 
@@ -119,27 +119,57 @@ class RegistroLogin extends HTMLElement {
         `;
     }
 
+    // NOVA FUNÇÃO: Limpa campos de texto, esconde mensagens e reseta para a tela de Login
+    limparFormularios() {
+        const shadow = this.shadowRoot;
+        
+        const loginForm = shadow.getElementById('login-form');
+        const registerForm = shadow.getElementById('register-form');
+        if (loginForm) loginForm.reset();
+        if (registerForm) registerForm.reset();
+
+        const loginMsg = shadow.getElementById('login-msg');
+        const registerMsg = shadow.getElementById('register-msg');
+        
+        if (loginMsg) {
+            loginMsg.style.display = 'none';
+            loginMsg.className = 'msg';
+            loginMsg.textContent = '';
+        }
+        if (registerMsg) {
+            registerMsg.style.display = 'none';
+            registerMsg.className = 'msg';
+            registerMsg.textContent = '';
+        }
+
+        const telaLogin = shadow.getElementById('tela-de-login');
+        const telaCadastro = shadow.getElementById('tela-de-cadastro');
+        if (telaLogin && telaCadastro) {
+            telaLogin.classList.remove('hidden');
+            telaCadastro.classList.add('hidden');
+        }
+    }
+
     setupEvents() {
         const shadow = this.shadowRoot;
 
         // Navegação entre Telas
         shadow.getElementById('go-to-register').onclick = () => {
-            shadow.getElementById('login-form').reset();
-            shadow.getElementById('login-msg').style.display = 'none';
+            this.limparFormularios(); // Limpa ao alternar de tela
             shadow.getElementById('tela-de-login').classList.add('hidden');
             shadow.getElementById('tela-de-cadastro').classList.remove('hidden');
         };
         
         shadow.getElementById('go-to-login').onclick = () => {
-            shadow.getElementById('register-form').reset();
-            shadow.getElementById('register-msg').style.display = 'none';
+            this.limparFormularios(); // Limpa ao alternar de tela
             shadow.getElementById('tela-de-cadastro').classList.add('hidden');
             shadow.getElementById('tela-de-login').classList.remove('hidden');
         };
         
-        // Botão de fechar (X)
+        // Botão de fechar (X) - Agora limpa tudo ao fechar!
         shadow.getElementById('close-auth').onclick = () => {
             shadow.getElementById('auth-container').classList.add('hidden');
+            this.limparFormularios();
         };
 
         // Submissão do Formulário de Login
@@ -166,9 +196,10 @@ class RegistroLogin extends HTMLElement {
                     msgDiv.classList.add('success');
                     msgDiv.style.display = 'block';
                     
-                    // Aguarda 1 segundo para o usuário ler a mensagem e recarrega a página
+                    // Aguarda 1 segundo, limpa o formulário e recarrega a página
                     setTimeout(() => {
                         shadow.getElementById('auth-container').classList.add('hidden');
+                        this.limparFormularios();
                         window.location.reload();
                     }, 1000);
 
@@ -215,10 +246,9 @@ class RegistroLogin extends HTMLElement {
                     msgDiv.classList.add('success');
                     msgDiv.style.display = 'block';
 
-                    // Aguarda 2 segundos e joga o usuário pra tela de login
+                    // Aguarda 2 segundos e joga o usuário pra tela de login limpa
                     setTimeout(() => {
-                        e.target.reset();
-                        msgDiv.style.display = 'none';
+                        this.limparFormularios();
                         shadow.getElementById('tela-de-cadastro').classList.add('hidden');
                         shadow.getElementById('tela-de-login').classList.remove('hidden');
                     }, 2000);
@@ -233,6 +263,7 @@ class RegistroLogin extends HTMLElement {
 
             } catch (err) {
                 console.error("Erro de leitura, verificando status...", err);
+                this.limparFormularios();
                 shadow.getElementById('tela-de-cadastro').classList.add('hidden');
                 shadow.getElementById('tela-de-login').classList.remove('hidden');
             }
