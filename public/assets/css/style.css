@@ -45,7 +45,7 @@ body {
   background: var(--roxo-fundo);
   color: var(--texto-claro);
   display: flex;
-  align-items: center; /* Alinha verticalmente a Logo e o Nav */
+  align-items: center;
   justify-content: space-between;
   padding: 0 50px;
   border-bottom: 1px solid rgba(128, 20, 232, 0.2);
@@ -54,13 +54,13 @@ body {
 .logo {
   width: 200px;
   height: auto;
-  display: block; /* Remove o espaçamento padrão de elementos inline (inline-block) embaixo da imagem */
+  display: block;
   transition: transform 0.3s ease;
 }
 
 .topo nav {
   display: flex;
-  align-items: center; /* Garante que o contêiner dos links esteja centralizado verticalmente */
+  align-items: center;
   gap: 35px;
 }
 
@@ -71,16 +71,14 @@ body {
   font-weight: 750;
   letter-spacing: 0.8px;
   position: relative;
-  /* O estofamento vertical (8px) pode criar uma ilusão de desalinhamento por causa da linha animada */
-  padding: 4px 0; 
-  display: inline-flex; /* Transforma o link em flex para alinhar o texto perfeitamente */
+  padding: 4px 0;
+  display: inline-flex;
   align-items: center;
   transition: color 0.3s ease;
 }
 
-/* Linha animada ao passar o mouse */
 .topo nav a::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 0;
@@ -98,7 +96,6 @@ body {
   width: 100%;
 }
 
-/* Estilização Premium para o Gatilho do Login */
 #btn-login-trigger {
   color: var(--roxo-escuro) !important;
   background: var(--dourado);
@@ -114,11 +111,11 @@ body {
 }
 
 #btn-login-trigger::after {
-  display: none; /* Remove a linha do hover padrão para o botão */
+  display: none;
 }
 
 /* ==========================================================================
-   ÁREA DO USUÁRIO LOGADO (OTIMIZADO)
+   ÁREA DO USUÁRIO LOGADO
    ========================================================================== */
 .area-usuario {
   position: relative;
@@ -133,7 +130,7 @@ body {
   color: var(--branco);
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 10px 20px;
-  border-radius: 50px; 
+  border-radius: 50px;
   font-family: "Poppins", Arial, sans-serif;
   font-size: 13px;
   font-weight: 650;
@@ -189,7 +186,7 @@ body {
 .menu-usuario a:hover {
   background: #f6efff;
   color: var(--roxo-medio);
-  padding-left: 24px; /* Efeito sutil de deslocamento */
+  padding-left: 24px;
 }
 
 .menu-usuario a:last-child {
@@ -205,9 +202,8 @@ body {
   color: var(--perigo);
 }
 
-
 /* ==========================================================================
-   BARRA DE BUSCA (LANDING PAGE)
+   BARRA DE BUSCA
    ========================================================================== */
 .busca {
   width: 90%;
@@ -238,7 +234,7 @@ body {
 .campo-localizacao {
   position: relative;
   height: 48px;
-  flex: 1 1 240px; /* Impede que o flexbox esmague a div do input */
+  flex: 1 1 240px;
 }
 
 .campo-localizacao input,
@@ -301,7 +297,7 @@ body {
 /* Dropdown da Lista de Locais */
 .lista-locais {
   position: absolute;
-  top: calc(100% + 5px); /* Posiciona exatamente abaixo do input */
+  top: calc(100% + 5px);
   left: 0;
   width: 100%;
   background: #ffffff;
@@ -362,7 +358,7 @@ body {
   min-height: 585px;
   margin-top: -157px; /* Mantém a imagem do carro subindo até o header */
   position: relative;
-  z-index: 1; 
+  z-index: 1;
 
   background:
     linear-gradient(
@@ -371,12 +367,12 @@ body {
       rgba(255, 255, 255, 0.15)
     ),
     url("../img/hero.png") right center / cover no-repeat;
-    
+
   display: flex;
   align-items: center;
-  
-  padding: 220px 55px 70px; 
-  
+
+  padding: 220px 55px 70px;
+
   width: 100%;
   box-sizing: border-box;
 }
@@ -647,7 +643,7 @@ body {
    ========================================================================== */
 .cta {
   margin-top: 75px;
-  min-height: 380px; /* Aumentado levemente para acomodar confortavelmente textos maiores */
+  min-height: 380px;
   border-radius: 16px;
   background-color: #f3e8ff;
   background-position: center right;
@@ -658,7 +654,7 @@ body {
   color: #3b0567;
   position: relative;
   overflow: hidden;
-  transition: background-image 0.6s ease-in-out; /* Suaviza a troca das imagens de fundo */
+  transition: background-image 0.6s ease-in-out;
 }
 
 .cta-carousel {
@@ -679,8 +675,10 @@ body {
   grid-row: 1;
   opacity: 0;
   pointer-events: none;
-  visibility: hidden; /* Evita leitores de tela ou elementos fantasmas focáveis */
-  transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+  visibility: hidden;
+  transition:
+    opacity 0.5s ease-in-out,
+    visibility 0.5s ease-in-out;
 }
 
 .cta-slide span {
@@ -689,7 +687,7 @@ body {
   letter-spacing: 1px;
   display: inline-block;
   margin-bottom: 10px;
-  color: var(--roxo-medio); /* Traz consistência para o subtítulo superior */
+  color: var(--roxo-medio);
 }
 
 .cta-slide.active {
@@ -702,7 +700,7 @@ body {
   display: flex;
   align-items: center;
   gap: 15px;
-  margin-top: 15px; /* Ajustado proximidade com os cards de conteúdo */
+  margin-top: 15px;
   position: relative;
   z-index: 10;
 }
@@ -989,7 +987,6 @@ body {
   background: rgba(255, 255, 255, 0.15);
 }
 
-/* Stepper */
 .stepper-wrap {
   max-width: 860px;
   margin: -30px auto 44px;

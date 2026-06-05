@@ -184,10 +184,12 @@ body {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg,
-      var(--roxo-medio),
-      var(--roxo-claro),
-      var(--dourado));
+  background: linear-gradient(
+    90deg,
+    var(--roxo-medio),
+    var(--roxo-claro),
+    var(--dourado)
+  );
   opacity: 0;
   transition: opacity 0.3s;
 }
@@ -338,9 +340,11 @@ body {
   left: 10%;
   right: 10%;
   height: 18px;
-  background: radial-gradient(ellipse,
-      rgba(106, 13, 173, 0.07) 0%,
-      transparent 70%);
+  background: radial-gradient(
+    ellipse,
+    rgba(106, 13, 173, 0.07) 0%,
+    transparent 70%
+  );
 }
 
 .carro-img {
@@ -416,9 +420,11 @@ body {
   text-align: center;
   text-decoration: none;
   display: block;
-  background: linear-gradient(135deg,
-      var(--roxo-medio) 0%,
-      var(--roxo-claro) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--roxo-medio) 0%,
+    var(--roxo-claro) 100%
+  );
   color: var(--texto-claro);
   transition: all 0.25s;
   position: relative;
@@ -429,9 +435,11 @@ body {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg,
-      var(--roxo-claro) 0%,
-      var(--roxo-medio) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--roxo-claro) 0%,
+    var(--roxo-medio) 100%
+  );
   opacity: 0;
   transition: opacity 0.25s;
 }
@@ -573,14 +581,10 @@ body {
   .grid-veiculos {
     grid-template-columns: repeat(2, 1fr);
   }
-
-  /* 2 colunas no tablet */
 }
 
 @media (max-width: 600px) {
   .grid-veiculos {
     grid-template-columns: 1fr;
   }
-
-  /* 1 coluna no celular */
 }

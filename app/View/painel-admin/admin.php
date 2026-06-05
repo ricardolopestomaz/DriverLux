@@ -160,7 +160,7 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
     <!-- ═══ SIDEBAR ═══ -->
     <aside id="sidebar">
         <div class="sidebar-logo">
-            <img src="/DriverLux/public/assets/img/logo.png" alt="DriverLux">
+            <img src="/DriverLux/public/assets/img/DriverLux2.png" alt="DriverLux">
         </div>
 
         <div class="sidebar-perfil">

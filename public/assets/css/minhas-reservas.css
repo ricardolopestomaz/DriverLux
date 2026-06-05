@@ -16,7 +16,7 @@
   border: 1px solid var(--borda-card);
   border-radius: 24px;
   padding: 40px;
-  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.05); /* Sombra suave e elegante */
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.05);
   animation: fadeIn 0.6s ease-out;
 }
 
@@ -140,7 +140,7 @@
 .preco-reserva {
   font-size: 22px;
   font-weight: 900;
-  color: var(--roxo-medio); /* Trocado para roxo para ornar melhor no fundo branco */
+  color: var(--roxo-medio);
 }
 
 .preco-reserva span {
@@ -262,9 +262,7 @@
   }
 }
 
-/* ==========================================================================
-   Estilização da Seção de Abas Interativas (Separação Ativas / Canceladas)
-   ========================================================================== */
+/* Reservas Ativas / Canceladas */
 .abas-reservas {
   display: flex;
   justify-content: center;
@@ -293,12 +291,11 @@
 }
 
 .aba-btn.ativa {
-  background:linear-gradient(135deg, var(--cinza), var(--roxo-claro));
+  background: linear-gradient(135deg, var(--cinza), var(--roxo-claro));
   color: var(--branco);
   box-shadow: 0 6px 18px rgba(106, 13, 173, 0.2);
 }
 
-/* Ajuste responsivo para telas menores */
 @media (max-width: 480px) {
   .abas-reservas {
     flex-direction: column;

@@ -32,19 +32,16 @@ body {
   min-height: 100vh;
 }
 
-/* topo/header styles are imported from style.css */
-
-.breadcrumb span{
-    font-weight: bold;
-    color:var(--branco);
+.breadcrumb span {
+  font-weight: bold;
+  color: var(--branco);
 }
 
-.breadcrumb span:hover{
-    font-weight: bold;
-    color:var(--ouro2);
+.breadcrumb span:hover {
+  font-weight: bold;
+  color: var(--ouro2);
 }
 
-/* ── wrappper ── */
 .page {
   max-width: 1000px;
   margin: 0 auto;
@@ -52,7 +49,6 @@ body {
   animation: up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* ── HERO DO PERFIL ── */
 .perfil-hero {
   display: flex;
   align-items: flex-end;
@@ -302,7 +298,7 @@ body {
   color: var(--branco);
   display: block;
   font-size: 0.9rem;
-} 
+}
 
 /* botão salvar */
 .rodape-form {
@@ -334,7 +330,6 @@ body {
   font-size: 0.88rem;
   cursor: pointer;
   letter-spacing: 0.06em;
- 
 }
 .btn-salvar:hover {
   opacity: 0.9;
@@ -363,7 +358,7 @@ body {
   position: fixed;
   bottom: 2rem;
   right: 2rem;
-  background: var(--sucesso);;
+  background: var(--sucesso);
   border-radius: 12px;
   padding: 0.9rem 1.4rem;
   font-size: 0.86rem;
@@ -394,7 +389,7 @@ body {
 .tab-btn {
   background: transparent;
   border: none;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: 15px;
   font-weight: 700;
   color: var(--cinza);
@@ -434,8 +429,14 @@ body {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ── LISTA E CARD DE RESERVAS ── */
@@ -473,7 +474,7 @@ body {
   width: 130px;
   height: 75px;
   object-fit: contain;
-  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.12));
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.12));
 }
 
 .reserva-info h3 {
@@ -601,7 +602,7 @@ body {
   border: 1px solid var(--borda2);
   color: var(--cinza);
   padding: 8px 20px;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
@@ -617,7 +618,7 @@ body {
 }
 
 .aba-filtro-btn.ativa {
-  background:linear-gradient(135deg, var(--cinza), var(--roxo-claro));
+  background: linear-gradient(135deg, var(--cinza), var(--roxo-claro));
   color: #ffffff;
   border-color: var(--roxo-glow);
   box-shadow: 0 4px 15px var(--roxo-glow);

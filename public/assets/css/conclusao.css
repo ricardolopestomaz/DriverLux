@@ -1,7 +1,7 @@
 .concluido-body {
   background: #ffffff; /* Fundo totalmente branco */
   min-height: 100vh;
-  color: #1c0035; /* Texto principal alterado para o roxo escuro da marca */
+  color: #1c0035;
   font-family: "Poppins", sans-serif;
 }
 
@@ -12,12 +12,12 @@
 }
 
 .card-sucesso {
-  background: #ffffff; /* Fundo do card em branco puro */
-  border: 1px solid #e0e0e0; /* Borda cinza clara para dar estrutura sobre o fundo */
+  background: #ffffff; /* Fundo do card em branco */
+  border: 1px solid #e0e0e0;
   border-radius: 24px;
   padding: 40px;
   text-align: center;
-  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.05); /* Sombra suave e elegante */
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.05);
   animation: fadeIn 0.6s ease-out;
 }
 
@@ -67,7 +67,7 @@
 }
 
 .subtitulo-sucesso {
-  color: #555555; /* Subtítulo em cinza escuro para melhor leitura */
+  color: #555555;
   font-size: 16px;
   margin-bottom: 30px;
 }
@@ -100,7 +100,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  color: var(--roxo-medio); /* Destaque do bloco em roxo */
+  color: var(--roxo-medio); 
   margin-bottom: 20px;
 }
 
@@ -108,7 +108,7 @@
   display: flex;
   align-items: center;
   gap: 20px;
-  background: #f9f9f9; /* Fundo do bloco do carro em cinza bem claro */
+  background: #f9f9f9; 
   border: 1px solid #eaeaea;
   border-radius: 16px;
   padding: 20px;
@@ -125,13 +125,13 @@
 .carro-detalhes-sucesso h3 {
   font-size: 18px;
   font-weight: 800;
-  color: var(--roxo-escuro); /* Nome do carro em roxo escuro */
+  color: var(--roxo-escuro);
   margin-bottom: 4px;
 }
 
 .carro-detalhes-sucesso p {
   font-size: 13px;
-  color: #777777; /* Categoria em cinza */
+  color: #777777;
   text-transform: uppercase;
   font-weight: 600;
   letter-spacing: 0.5px;
@@ -145,7 +145,7 @@
 }
 
 .detalhe-item {
-  background: #f9f9f9; /* Itens do grid com fundo claro */
+  background: #f9f9f9; 
   border-radius: 12px;
   padding: 16px;
   border: 1px solid #eaeaea;
@@ -155,7 +155,7 @@
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
-  color: #888888; /* Labels das informações em cinza */
+  color: #888888; 
   letter-spacing: 1px;
   display: block;
   margin-bottom: 6px;
@@ -164,11 +164,11 @@
 .detalhe-item span {
   font-size: 14px;
   font-weight: 600;
-  color: #222222; /* Dados da reserva em texto escuro */
+  color: #222222;
 }
 
 .valores-pagamento {
-  background: rgba(106, 13, 173, 0.06); /* Fundo roxo bem sutil e claro */
+  background: rgba(106, 13, 173, 0.06);
   border: 1px solid rgba(128, 20, 232, 0.15);
   border-radius: 16px;
   padding: 22px;
@@ -199,7 +199,7 @@
 .total-pago-lbl {
   font-size: 11px;
   font-weight: 700;
-  color: var(--roxo-medio); /* Roxo médio para ornar com o fundo claro */
+  color: var(--roxo-medio); 
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-bottom: 4px;
@@ -208,7 +208,7 @@
 .total-pago-val {
   font-size: 26px;
   font-weight: 900;
-  color: var(--roxo-escuro); /* Valor total em destaque escuro */
+  color: var(--roxo-escuro);
   line-height: 1;
 }
 
