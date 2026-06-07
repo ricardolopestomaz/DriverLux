@@ -23,7 +23,8 @@
 📗 <a href="https://github.com/ricardolopestomaz/DriverLux/blob/develop/docs/requisitos-funcionais.md">Requisitos Funcionais</a><br>
 📙 <a href="https://github.com/ricardolopestomaz/DriverLux/blob/develop/docs/requisitos-n-funcionais.md">Requisitos Não Funcionais</a><br>
 🎭 <a href="https://github.com/ricardolopestomaz/DriverLux/blob/develop/docs/user-stories.md">User Stories</a><br>
-⚙️ <a href="https://github.com/ricardolopestomaz/DriverLux/blob/develop/docs/api.md">Documentação da API</a>
+⚙️ <a href="https://github.com/ricardolopestomaz/DriverLux/blob/develop/docs/api.md">Documentação da API</a><br>
+📁 <a href="#">Estrutura do Projeto</a>
 </small>
 
 ---
