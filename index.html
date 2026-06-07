@@ -1,211 +1,369 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DriverLux - Aluguel de Carros de Luxo</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DriverLux - Aluguel de Carros de Luxo</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/DriverLux/public/assets/css/style.css?v=3">
-</head>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/DriverLux/public/assets/css/style.css?v=3" />
+    <link rel="shortcut icon" href="./public/assets/img/corrida.png" type="image/x-icon">
+  </head>
 
-<body>
+  <body>
+    <header class="topo">
+      <a href="/DriverLux/index.html">
+        <img
+          src="/DriverLux/public/assets/img/DriverLux.png"
+          class="logo"
+          alt="DriverLux"
+        />
+      </a>
 
-<header class="topo">
-  <img src="/DriverLux/public/assets/img/logo.png" class="logo" alt="DriverLux">
+      <nav>
+        <a href="/DriverLux/index.html">ALUGUEL DE CARROS</a>
+        <a href="#">GESTÃO DE FROTAS</a>
+        <a href="#">SEMINOVOS</a>
+        <a href="#">LUX - CARRO POR ASSINATURA</a>
+        <a href="javascript:void(0)" id="btn-login-trigger">LOGIN</a>
+      </nav>
 
-  <nav>
-    <a href="#">ALUGUEL DE CARROS</a>
-    <a href="#">GESTÃO DE FROTAS</a>
-    <a href="#">SEMINOVOS</a>
-    <a href="#">LUX - CARRO POR ASSINATURA</a>
-    <a href="javascript:void(0)" id="btn-login-trigger">LOGIN</a>
-  </nav>
+      <div class="area-usuario">
+        <button id="btn-menu-usuario" class="btn-usuario esconder">
+          <span id="nome-usuario">Usuário</span>
+          <span class="seta-menu">▼</span>
+        </button>
 
-  <div class="area-usuario">
-    <button id="btn-menu-usuario" class="btn-usuario esconder">
-      <span id="nome-usuario">Usuário</span>
-      <span class="seta-menu">▼</span>
-    </button>
+        <div id="menu-usuario" class="menu-usuario esconder">
+          <a href="/DriverLux/app/View/painel_cliente.php">Minha conta</a>
+          <a href="/DriverLux/app/View/fluxo-reserva/minhas-reservas.php"
+            >Minhas reservas</a
+          >
+          <a href="#" id="btn-sair">Sair</a>
+        </div>
 
-    <div id="menu-usuario" class="menu-usuario esconder">
-      <a href="/DriverLux/app/View/painel_cliente.php">Minha conta</a>
-      <a href="/DriverLux/app/View/fluxo-reserva/minhas-reservas.php">Minhas reservas</a>
-      <a href="#" id="btn-sair">Sair</a>
-    </div>
+        <registro-login id="modal-auth" modo="popover"></registro-login>
+      </div>
+    </header>
 
-    <registro-login id="modal-auth" modo="popover"></registro-login>
-  </div>
-</header>
+    <section class="busca">
+      <!-- Linha 1: Locais -->
+      <div class="busca-linha">
+        <!-- Local de Retirada -->
+        <div class="campo-localizacao">
+          <input
+            id="local-retirada"
+            type="text"
+            placeholder="Retirada (Onde pegar o carro?)"
+            autocomplete="off"
+          />
 
-<section class="busca">
-  <!-- Linha 1: Locais -->
-  <div class="busca-linha">
-    <!-- Local de Retirada -->
-    <div class="campo-localizacao">
-      <input 
-        id="local-retirada"
-        type="text"
-        placeholder="Retirada (Onde pegar o carro?)"
-        autocomplete="off"
-      >
+          <div id="lista-locais" class="lista-locais esconder">
+            <div class="titulo-lista">BRASIL</div>
 
-      <div id="lista-locais" class="lista-locais esconder">
-        <div class="titulo-lista">BRASIL</div>
+            <div class="opcao-local" data-local="Agência Aeroporto Palmas">
+              <span>✈️</span>
+              <div>
+                <p>Palmas</p>
+                <strong>Agência Aeroporto Palmas</strong>
+              </div>
+            </div>
 
-        <div class="opcao-local" data-local="Agência Aeroporto Palmas">
-          <span>✈️</span>
-          <div>
-            <p>Palmas</p>
-            <strong>Agência Aeroporto Palmas</strong>
+            <div class="opcao-local" data-local="Agência Centro Palmas">
+              <span>📍</span>
+              <div>
+                <p>Palmas</p>
+                <strong>Agência Centro Palmas</strong>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="opcao-local" data-local="Agência Centro Palmas">
-          <span>📍</span>
-          <div>
-            <p>Palmas</p>
-            <strong>Agência Centro Palmas</strong>
+        <!-- Local de Devolução -->
+        <div class="campo-localizacao">
+          <input
+            id="local-devolucao"
+            type="text"
+            placeholder="Devolução (Onde entregar o carro?)"
+            autocomplete="off"
+          />
+
+          <div id="lista-locais-devolucao" class="lista-locais esconder">
+            <div class="titulo-lista">BRASIL</div>
+
+            <div
+              class="opcao-local opcao-local-devolucao"
+              data-local="Agência Aeroporto Palmas"
+            >
+              <span>✈️</span>
+              <div>
+                <p>Palmas</p>
+                <strong>Agência Aeroporto Palmas</strong>
+              </div>
+            </div>
+
+            <div
+              class="opcao-local opcao-local-devolucao"
+              data-local="Agência Centro Palmas"
+            >
+              <span>📍</span>
+              <div>
+                <p>Palmas</p>
+                <strong>Agência Centro Palmas</strong>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Local de Devolução -->
-    <div class="campo-localizacao">
-      <input 
-        id="local-devolucao"
-        type="text"
-        placeholder="Devolução (Onde entregar o carro?)"
-        autocomplete="off"
-      >
-
-      <div id="lista-locais-devolucao" class="lista-locais esconder">
-        <div class="titulo-lista">BRASIL</div>
-
-        <div class="opcao-local opcao-local-devolucao" data-local="Agência Aeroporto Palmas">
-          <span>✈️</span>
-          <div>
-            <p>Palmas</p>
-            <strong>Agência Aeroporto Palmas</strong>
-          </div>
+      <!-- Linha 2: Datas, Horários, Cupom e Buscar -->
+      <div class="busca-linha">
+        <div style="display: flex; gap: 8px; flex: 1; min-width: 250px">
+          <input
+            id="data-retirada"
+            type="date"
+            placeholder="Data Retirada"
+            style="flex: 1"
+          />
+          <input
+            id="hora-retirada"
+            type="time"
+            placeholder="Hora Retirada"
+            style="width: 110px; flex: 0 0 110px"
+          />
         </div>
 
-        <div class="opcao-local opcao-local-devolucao" data-local="Agência Centro Palmas">
-          <span>📍</span>
-          <div>
-            <p>Palmas</p>
-            <strong>Agência Centro Palmas</strong>
+        <div style="display: flex; gap: 8px; flex: 1; min-width: 250px">
+          <input
+            id="data-devolucao"
+            type="date"
+            placeholder="Data Devolução"
+            style="flex: 1"
+          />
+          <input
+            id="hora-devolucao"
+            type="time"
+            placeholder="Hora Devolução"
+            style="width: 110px; flex: 0 0 110px"
+          />
+        </div>
+
+        <!-- Cupom de Desconto -->
+        <input
+          id="cupom-home"
+          type="text"
+          placeholder="Cupom (Opcional)"
+          style="width: 140px; flex: 0 0 140px"
+        />
+
+        <button id="btn-buscar-disponibilidade">Buscar</button>
+      </div>
+    </section>
+
+    <section class="hero">
+      <div class="hero-texto">
+        <span>DIRIJA O</span>
+        <h1>EXTRAORDINÁRIO.</h1>
+        <p>
+          Aluguel de carros de luxo para quem exige mais do que o comum.
+          <b>Viva a experiência DRIVERLUX</b>
+        </p>
+
+        <div class="botoes">
+          <a href="#" class="btn roxo">RESERVAR AGORA</a>
+        </div>
+
+        <div class="infos">
+          <div><strong>+500</strong><br />CLIENTES<br />SATISFEITOS</div>
+          <div><strong>24/7</strong><br />ATENDIMENTO<br />EXCLUSIVO</div>
+          <div><strong>100%</strong><br />SEGURANÇA E<br />CONFIANÇA</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="destaques">
+      <div class="titulo-area">
+        <div>
+          <span>ESCOLHA SUA MÁQUINA</span>
+          <h2>Carros em <b>destaque.</b></h2>
+        </div>
+      </div>
+
+      <div class="cards">
+        <article class="card">
+          <span class="tag">
+            <i style="font-size:18px;margin-right:5px;font-style:normal;line-height:1;">&#9733;</i>DESTAQUE
+          </span>
+          <img src="/DriverLux/public/assets/img/bmw-m4.png" alt="BMW M4" />
+          <h3>BMW M4 COMPETITION</h3>
+          <p>Performance esportiva com elegância incomparável.</p>
+          <small>A PARTIR DE</small>
+          <h4>R$ 1.200<span>/dia</span></h4>
+        </article>
+
+        <article class="card">
+          <span class="tag">
+            <i style="font-size:18px;margin-right:5px;font-style:normal;line-height:1;">&#9733;</i>DESTAQUE
+          </span>
+          <img src="/DriverLux/public/assets/img/audi-car.png" alt="Audi RS7"
+            style="width:280px;height:220px;object-fit:contain;display:block;margin:25px auto 0 auto;" />
+          <h3>AUDI RS7</h3>
+          <p>Potência, tecnologia e design em perfeita harmonia.</p>
+          <small>A PARTIR DE</small>
+          <h4>R$ 1.500<span>/dia</span></h4>
+        </article>
+
+        <article class="card">
+          <span class="tag">
+            <i style="font-size:18px;margin-right:5px;font-style:normal;line-height:1;">&#9733;</i>DESTAQUE
+          </span>
+          <img src="/DriverLux/public/assets/img/mercedes.jpg" alt="Mercedes AMG GT"
+            style="width:280px;height:220px;object-fit:contain;display:block;margin:25px auto 0 auto;" />
+          <h3>MERCEDES AMG GT</h3>
+          <p>Luxo extremo com DNA de corrida.</p>
+          <small>A PARTIR DE</small>
+          <h4>R$ 1.800<span>/dia</span></h4>
+        </article>
+      </div>
+
+      <div class="cta">
+        <div class="cta-carousel">
+          <div class="cta-carousel-inner">
+
+              <!-- Slide 1 - Original -->
+            <div class="cta-slide active"
+                 data-bg="/DriverLux/public/assets/img/carro-roxo-novo.jpg"
+                 data-overlay="rgba(244, 240, 250, 0.92) | rgba(244, 240, 250, 0.1)">
+              <span>PRONTO PARA DIRIGIR O SEU?</span>
+              <h2>Reserve agora e viva essa experiência.</h2>
+              <div class="beneficios-linha">
+                <span>Processo 100% online</span>
+                <span class="divisor">|</span>
+                <span>Atendimento exclusivo</span>
+                <span class="divisor">|</span>
+                <span>Sem burocracia</span>
+              </div>
+              <div class="cta-cupom-box">
+                <div class="cta-cupom-icon">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8014e8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="10" rx="2" />
+                    <path d="M22 12h-2" />
+                    <path d="M4 12H2" />
+                    <path d="M12 7v10" stroke-dasharray="2 2" />
+                  </svg>
+                </div>
+                <div class="cta-cupom-text">
+                  <span>Use o cupom <strong class="cupom-badge">CUPOM15</strong></span>
+                  <span>e ganhe <strong>15% off</strong> em qualquer veículo!</span>
+                </div>
+              </div>
+              <a href="#" class="btn roxo">ALUGAR AGORA</a>
+            </div>
+
+            <!-- Slide 2 - Carros disney -->
+            <div class="cta-slide"
+                 data-bg="/DriverLux/public/assets/img/carros-disney.png"
+                 data-overlay="rgba(244, 240, 250, 0.92) | rgba(244, 240, 250, 0.1)">
+              <span>PRONTO PARA DIRIGIR O SEU?</span>
+              <h2>Eu sou a velocidade! - Relâmpago McQueen</h2>
+              <div class="beneficios-linha">
+                <span>Processo 100% online</span>
+                <span class="divisor">|</span>
+                <span>Atendimento exclusivo</span>
+                <span class="divisor">|</span>
+                <span>Sem burocracia</span>
+              </div>
+              <div class="cta-cupom-box">
+                <div class="cta-cupom-icon">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8014e8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="10" rx="2" />
+                    <path d="M22 12h-2" />
+                    <path d="M4 12H2" />
+                    <path d="M12 7v10" stroke-dasharray="2 2" />
+                  </svg>
+                </div>
+                <div class="cta-cupom-text">
+                  <span>Use o cupom <strong class="cupom-badge">Kachow15</strong></span>
+                  <span>e ganhe <strong>15% off</strong> em qualquer veículo!</span>
+                </div>
+              </div>
+              <a href="#" class="btn roxo">ALUGAR AGORA</a>
+            </div>
+
+            <!-- Slide 2 - Transformers -->
+            <div class="cta-slide"
+                 data-bg="/DriverLux/public/assets/img/transformers.png"
+                 data-overlay="rgba(244, 240, 250, 0.92) | rgba(244, 240, 250, 0.1)"
+                 data-text-color="#3b0567">
+              <span>PRONTO PARA DIRIGIR O SEU?</span>
+              <h2>Autobots,transformar e avançar!</h2>
+              <div class="beneficios-linha">
+                <span>Processo 100% online</span>
+                <span class="divisor">|</span>
+                <span>Atendimento exclusivo</span>
+                <span class="divisor">|</span>
+                <span>Sem burocracia</span>
+              </div>
+              <div class="cta-cupom-box">
+                <div class="cta-cupom-icon">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8014e8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="10" rx="2" />
+                    <path d="M22 12h-2" />
+                    <path d="M4 12H2" />
+                    <path d="M12 7v10" stroke-dasharray="2 2" />
+                  </svg>
+                </div>
+                <div class="cta-cupom-text">
+                  <span>Use o cupom <strong class="cupom-badge">otimusDrive</strong></span>
+                  <span>e ganhe <strong>15% off</strong> em qualquer veículo!</span>
+                </div>
+              </div>
+              <a href="#" class="btn roxo">ALUGAR AGORA</a>
+            </div>
+          </div>
+
+          <div class="cta-carousel-controls">
+            <button class="cta-carousel-btn prev" aria-label="Slide anterior">&#10094;</button>
+            <div class="cta-carousel-dots">
+              <span class="cta-dot active" data-slide="0"></span>
+              <span class="cta-dot" data-slide="1"></span>
+            </div>
+            <button class="cta-carousel-btn next" aria-label="Próximo slide">&#10095;</button>
           </div>
         </div>
       </div>
-    </div>
-  </div>
+    </section>
 
-  <!-- Linha 2: Datas, Horários, Cupom e Buscar -->
-  <div class="busca-linha">
-    <div style="display: flex; gap: 8px; flex: 1; min-width: 250px;">
-      <input id="data-retirada" type="date" placeholder="Data Retirada" style="flex: 1;">
-      <input id="hora-retirada" type="time" placeholder="Hora Retirada" style="width: 110px; flex: 0 0 110px;">
-    </div>
+    <script src="/DriverLux/public/assets/js/registro-login.js"></script>
+    <script src="/DriverLux/public/assets/js/menu-usuario.js?v=3"></script>
+    <script src="/DriverLux/public/assets/js/carrossel.js"></script>
 
-    <div style="display: flex; gap: 8px; flex: 1; min-width: 250px;">
-      <input id="data-devolucao" type="date" placeholder="Data Devolução" style="flex: 1;">
-      <input id="hora-devolucao" type="time" placeholder="Hora Devolução" style="width: 110px; flex: 0 0 110px;">
-    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const btnLogin = document.getElementById('btn-login-trigger');
+        const componenteAuth = document.getElementById('modal-auth');
 
-    <!-- Cupom de Desconto -->
-    <input id="cupom-home" type="text" placeholder="Cupom (Opcional)" style="width: 140px; flex: 0 0 140px;">
-
-    <button id="btn-buscar-disponibilidade" style="flex: 0 0 200px; width: 200px;">
-      Buscar
-    </button>
-  </div>
-</section>
-
-<section class="hero">
-  <div class="hero-texto">
-    <span>DIRIJA O</span>
-    <h1>EXTRAORDINÁRIO.</h1>
-    <p>
-      Aluguel de carros de luxo para quem exige mais do que o comum.
-      <b>Viva a experiência DRIVERLUX</b>
-    </p>
-
-    <div class="botoes">
-      <a href="#" class="btn roxo">RESERVAR AGORA</a>
-      <a href="#" class="btn branco">VER FROTA</a>
-    </div>
-
-    <div class="infos">
-      <div><strong>+500</strong><br>CLIENTES<br>SATISFEITOS</div>
-      <div><strong>24/7</strong><br>ATENDIMENTO<br>EXCLUSIVO</div>
-      <div><strong>100%</strong><br>SEGURANÇA E<br>CONFIANÇA</div>
-    </div>
-  </div>
-</section>
-
-<section class="destaques">
-  <div class="titulo-area">
-    <div>
-      <span>ESCOLHA SUA MÁQUINA</span>
-      <h2>Carros em <b>destaque.</b></h2>
-    </div>
-    <img src="/DriverLux/public/assets/img/logo.png" alt="DriverLux">
-  </div>
-
-  <div class="cards">
-    <article class="card">
-      <span class="tag">DESTAQUE</span>
-      <img src="/DriverLux/public/assets/img/bmw.jpg" alt="BMW M4">
-      <h3>BMW M4 COMPETITION</h3>
-      <p>Performance esportiva com elegância incomparável.</p>
-      <small>A PARTIR DE</small>
-      <h4>R$ 1.200<span>/dia</span></h4>
-      <a href="#">→</a>
-    </article>
-
-    <article class="card">
-      <span class="tag">DESTAQUE</span>
-      <img src="/DriverLux/public/assets/img/audi.jpg" alt="Audi RS7">
-      <h3>AUDI RS7</h3>
-      <p>Potência, tecnologia e design em perfeita harmonia.</p>
-      <small>A PARTIR DE</small>
-      <h4>R$ 1.500<span>/dia</span></h4>
-      <a href="#">→</a>
-    </article>
-
-    <article class="card">
-      <span class="tag">DESTAQUE</span>
-      <img src="/DriverLux/public/assets/img/mercedes.jpg" alt="Mercedes AMG GT">
-      <h3>MERCEDES AMG GT</h3>
-      <p>Luxo extremo com DNA de corrida.</p>
-      <small>A PARTIR DE</small>
-      <h4>R$ 1.800<span>/dia</span></h4>
-      <a href="#">→</a>
-    </article>
-  </div>
-
-  <div class="cta">
-    <div>
-      <span>PRONTO PARA DIRIGIR O SEU?</span>
-      <h2>Reserve agora e viva essa experiência.</h2>
-
-      <div class="beneficios">
-        <p>Processo 100% online</p>
-        <p>Atendimento exclusivo</p>
-        <p>Sem burocracia</p>
-      </div>
-
-      <a href="#" class="btn roxo">ALUGAR AGORA</a>
-    </div>
-  </div>
-</section>
-
-<script src="/DriverLux/public/assets/js/registro-login.js"></script>
-<script src="/DriverLux/public/assets/js/menu-usuario.js?v=3"></script>
-
-
-
-</body>
+        if (btnLogin && componenteAuth) {
+          btnLogin.onclick = (e) => {
+            e.preventDefault();
+            
+            // 1. Acessa o contêiner interno do Web Component e remove o hidden para abrir
+            const container = componenteAuth.shadowRoot.getElementById('auth-container');
+            if (container) {
+              container.classList.remove('hidden');
+            }
+            
+            // 2. DISPARO DA DICA EXTRA: Garante que os dados antigos sumam ao abrir
+            if (typeof componenteAuth.limparFormularios === 'function') {
+              componenteAuth.limparFormularios();
+            }
+          };
+        }
+      });
+    </script>
+    
+  </body>
 </html>
