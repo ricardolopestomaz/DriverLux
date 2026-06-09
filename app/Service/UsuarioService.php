@@ -140,6 +140,18 @@ class UsuarioService {
         $usuario = $this->model->findByEmail($data->email);
 
         if ($usuario && password_verify($data->senha, $usuario['senha_hash'])) {
+            
+            // 🛑 ALTERAÇÃO CRÍTICA AQUI: Verifica se a conta está inativa (ativo == 0 ou false)
+            if (isset($usuario['ativo']) && (int)$usuario['ativo'] === 0) {
+                return [
+                    "status_code" => 403, // Proibido
+                    "body" => [
+                        "status" => "error",
+                        "erro" => "Sua conta foi desativada pelo administrador."
+                    ]
+                ];
+            }
+
             return [
                 "status_code" => 200,
                 "body" => [
@@ -162,6 +174,20 @@ class UsuarioService {
         $usuario = $this->model->findByIdMe($id_sessao);
 
         if ($usuario) {
+            
+            // 🛑 SEGUNDA TRAVA DE SEGURANÇA: Se o utilizador já estiver online mas for desativado
+            // pelo painel admin no meio da sessão, ele será derrubado na próxima validação da página
+            if (isset($usuario['ativo']) && (int)$usuario['ativo'] === 0) {
+                return [
+                    "status_code" => 403,
+                    "body" => [
+                        "status" => "error",
+                        "logado" => false,
+                        "erro" => "Conta desativada."
+                    ]
+                ];
+            }
+
             return [
                 "status_code" => 200,
                 "body" => ["status" => "success", "logado" => true, "usuario" => $usuario]
