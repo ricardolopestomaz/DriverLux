@@ -123,7 +123,8 @@ class CupomModel {
         $query = "SELECT * FROM cupons 
                   WHERE codigo = :codigo 
                   AND ativo = TRUE 
-                  AND (data_validade >= NOW() OR data_validade IS NULL)";
+                  AND (data_validade >= NOW() OR data_validade IS NULL)
+                  AND (limite_usos IS NULL OR usos_atuais < limite_usos)";
         $stmt = $this->db->prepare($query);
         $stmt->execute([":codigo" => $codigo]);
         return $stmt->fetch(PDO::FETCH_ASSOC);

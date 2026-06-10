@@ -84,7 +84,8 @@ $reservas = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <span class="nav-icon">📋</span> Reservas
                 </a>
 
-                <a href="usuarios.php" class="<?= basename($_SERVER['PHP_SELF']) == 'usuarios.php' ? 'ativo' : '' ?>">
+                <a href="/DriverLux/app/View/painel-admin/usuarios.php"
+                    class="<?= basename($_SERVER['PHP_SELF']) == 'usuarios.php' ? 'ativo' : '' ?>">
                     <span class="nav-icon">👥</span> Usuários
                 </a>
 

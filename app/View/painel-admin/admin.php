@@ -122,9 +122,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // ==========================================
 // 3. BUSCAR VEÍCULOS
 // ==========================================
-$categoria_id = isset($_GET['categoria_id']) ? (int) $_GET['categoria_id'] : 1;
-$nomes_categorias = [1 => 'Econômico', 2 => 'Plus', 3 => 'Max'];
-$nome_categoria_atual = $nomes_categorias[$categoria_id] ?? 'Econômico';
+$categoria_id = isset($_GET['categoria_id']) ? (int) $_GET['categoria_id'] : 2;
+$nomes_categorias = [2 => 'Plus', 3 => 'Max'];
+$nome_categoria_atual = $nomes_categorias[$categoria_id] ?? 'Plus';
 
 $stmtBusca = $pdo->prepare("SELECT v.*, c.valor_base_diaria
                              FROM veiculos v INNER JOIN categorias_veiculos c ON v.categoria_id = c.id
@@ -186,18 +186,13 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
                     <span class="nav-icon">📋</span> Reservas
                 </a>
 
-                <a href="DriverLux/app/View/painel-admin/usuarios.php"
+                <a href="/DriverLux/app/View/painel-admin/usuarios.php"
                     class="<?= basename($_SERVER['PHP_SELF']) == 'usuarios.php' ? 'ativo' : '' ?>">
                     <span class="nav-icon">👥</span> Usuários
                 </a>
 
                 <a href="cupons.php" class="<?= basename($_SERVER['PHP_SELF']) == 'cupons.php' ? 'ativo' : '' ?>">
                     <span class="nav-icon">🏷️</span> Cupons
-                </a>
-
-                <a href="/DriverLux/index.html"
-                    class="<?= basename($_SERVER['PHP_SELF']) == 'index.html' ? 'ativo' : '' ?>">
-                    <span class="nav-icon">🏠</span> Voltar para Home
                 </a>
 
                 <div class="nav-sep"></div>
@@ -248,8 +243,6 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
                 <!-- Filtros de categoria -->
                 <div class="filtros">
                     <span class="filtros-label">Categoria:</span>
-                    <a href="admin.php?categoria_id=1"
-                        class="category-btn <?= $categoria_id == 1 ? 'active' : '' ?>">Econômico</a>
                     <a href="admin.php?categoria_id=2"
                         class="category-btn <?= $categoria_id == 2 ? 'active' : '' ?>">Plus</a>
                     <a href="admin.php?categoria_id=3"
@@ -375,7 +368,6 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
                         <div class="form-group">
                             <label>Categoria</label>
                             <select name="categoria_id" id="v_categoria" required>
-                                <option value="1">Econômico</option>
                                 <option value="2">Plus</option>
                                 <option value="3">Max</option>
                             </select>

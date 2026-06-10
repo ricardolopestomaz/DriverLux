@@ -17,6 +17,14 @@ class ReservaService {
         ];
     }
 
+    public function listarReservasPorVeiculo($veiculo_id) {
+        $reservas = $this->model->findByVeiculoId($veiculo_id);
+        return [
+            "status_code" => 200, 
+            "body" => ["status" => "success", "total" => count($reservas), "data" => $reservas]
+        ];
+    }
+
     public function listarReservasPorUsuario($usuario_id) {
         if (empty($usuario_id)) {
             return ["status_code" => 401, "body" => ["erro" => "Usuário não autenticado."]];
@@ -41,6 +49,11 @@ class ReservaService {
             return ["status_code" => 400, "body" => ["erro" => "Dados essenciais da reserva estão faltando."]];
         }
 
+        // Verifica conflito de datas antes de reservar
+        if ($this->model->verificarConflito($data->veiculo_id, $data->data_retirada, $data->data_devolucao)) {
+            return ["status_code" => 409, "body" => ["erro" => "Este veículo já está reservado no período selecionado."]];
+        }
+
         try {
             $reservaId = $this->model->create($data, $usuario_id);
             if ($reservaId) {
@@ -57,8 +70,36 @@ class ReservaService {
             return ["status_code" => 400, "body" => ["erro" => "O ID da reserva é obrigatório para atualização."]];
         }
 
+        $reservaAtual = $this->model->findById($id);
+        if (!$reservaAtual) {
+            return ["status_code" => 404, "body" => ["erro" => "Reserva não encontrada."]];
+        }
+
         if (empty((array)$data)) {
-            return ["status_code" => 400, "body" => ["erro" => "Nenhum dado enviado para atualização."]];
+            return ["status_code" => 400, "body" => ["erro" => "Nenhum data enviado para atualização."]];
+        }
+
+        $veiculo_id = isset($data->veiculo_id) ? $data->veiculo_id : $reservaAtual['veiculo_id'];
+        $data_retirada = isset($data->data_retirada) ? $data->data_retirada : $reservaAtual['data_retirada'];
+        $data_devolucao = isset($data->data_devolucao) ? $data->data_devolucao : $reservaAtual['data_devolucao'];
+        // Se a data ou veículo foi alterado, e o status não está sendo alterado para cancelada
+        $novoStatus = isset($data->status) ? strtolower($data->status) : null;
+        if ($novoStatus !== 'cancelada') {
+            if ($this->model->verificarConflito($veiculo_id, $data_retirada, $data_devolucao, $id)) {
+                return ["status_code" => 409, "body" => ["erro" => "Este veículo já está reservado no período selecionado."]];
+            }
+        }
+        // Se o status está sendo alterado para cancelada e possuía cupom, decrementa o contador
+        if ($novoStatus === 'cancelada') {
+            $statusAtual = strtolower($reservaAtual['status'] ?? '');
+            if ($statusAtual !== 'cancelada') {
+                if (!empty($reservaAtual['cupom_id'])) {
+                    $database = new Database();
+                    $db = $database->getConnection();
+                    $stmtDec = $db->prepare("UPDATE cupons SET usos_atuais = GREATEST(0, usos_atuais - 1) WHERE id = :cupom_id");
+                    $stmtDec->execute([":cupom_id" => $reservaAtual['cupom_id']]);
+                }
+            }
         }
 
         $campos = [];

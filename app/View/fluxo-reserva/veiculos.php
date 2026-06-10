@@ -4,6 +4,11 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+if (isset($_SESSION['usuario_perfil']) && ($_SESSION['usuario_perfil'] === 'admin' || $_SESSION['usuario_perfil'] === 'administrador')) {
+    header('Location: /DriverLux/app/View/painel-admin/admin.php');
+    exit;
+}
+
 require_once __DIR__ . '/../../Controller/VeiculoController.php';
 
 ob_start();
@@ -216,22 +221,28 @@ if (!empty($veiculos)) {
                             </div>
 
                             <?php if ($estaDisponivel): ?>
-                                <a
-                                    href="javascript:void(0)"
-                                    class="btn-acao btn-reservar"
-                                    data-carro-id="<?= $carro['id'] ?>"
-                                    data-modelo="<?= htmlspecialchars(($carro['marca'] ?? '') . ' ' . ($carro['modelo'] ?? '')) ?>"
-                                    data-categoria="<?= htmlspecialchars($carro['categoria_nome'] ?? 'Premium') ?>"
-                                    data-valor-diaria="<?= $valorOriginal ?>"
-                                    data-imagem-url="<?= htmlspecialchars($imagem) ?>"
-                                >
-                                    <span>Reservar Agora</span>
-                                </a>
-                            <?php else: ?>
-                                <button class="btn-acao btn-esgotado" disabled>
-                                    <span>Em Manutenção</span>
-                                </button>
-                            <?php endif; ?>
+                                 <?php if (!isset($_SESSION['usuario_perfil']) || ($_SESSION['usuario_perfil'] !== 'admin' && $_SESSION['usuario_perfil'] !== 'administrador')): ?>
+                                     <a
+                                         href="javascript:void(0)"
+                                         class="btn-acao btn-reservar"
+                                         data-carro-id="<?= $carro['id'] ?>"
+                                         data-modelo="<?= htmlspecialchars(($carro['marca'] ?? '') . ' ' . ($carro['modelo'] ?? '')) ?>"
+                                         data-categoria="<?= htmlspecialchars($carro['categoria_nome'] ?? 'Premium') ?>"
+                                         data-valor-diaria="<?= $valorOriginal ?>"
+                                         data-imagem-url="<?= htmlspecialchars($imagem) ?>"
+                                     >
+                                         <span>Reservar Agora</span>
+                                     </a>
+                                 <?php else: ?>
+                                     <button class="btn-acao btn-esgotado" disabled>
+                                         <span>Bloqueado para Admin</span>
+                                     </button>
+                                 <?php endif; ?>
+                             <?php else: ?>
+                                 <button class="btn-acao btn-esgotado" disabled>
+                                     <span>Em Manutenção</span>
+                                 </button>
+                             <?php endif; ?>
                         </div>
                     </div>
 

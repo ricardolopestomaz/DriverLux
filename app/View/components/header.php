@@ -6,8 +6,8 @@
     <nav>
         <a href="/DriverLux/index.html">ALUGUEL DE CARROS</a>
         <a href="#">GESTÃO DE FROTAS</a>
-        <a href="#">SEMINOVOS</a>
-        <a href="#">LUX - CARRO POR ASSINATURA</a>
+        <a href="/DriverLux/public/seminovos">SEMINOVOS</a>
+        <a href="/DriverLux/public/assinatura">LUX - CARRO POR ASSINATURA</a>
         <a href="javascript:void(0)" id="btn-login-trigger">LOGIN</a>
     </nav>
 

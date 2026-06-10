@@ -148,4 +148,17 @@ class PagamentoModel {
 
         return $stmt->rowCount() > 0;
     }
+
+    public function registrarUsoCupomDaReserva($reserva_id) {
+        $query = "SELECT cupom_id FROM reservas WHERE id = :reserva_id";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([":reserva_id" => $reserva_id]);
+        $res = $stmt->fetch();
+        if ($res && !empty($res['cupom_id'])) {
+            $cupom_id = $res['cupom_id'];
+            $queryUpdate = "UPDATE cupons SET usos_atuais = usos_atuais + 1 WHERE id = :cupom_id";
+            $stmtUpdate = $this->db->prepare($queryUpdate);
+            $stmtUpdate->execute([":cupom_id" => $cupom_id]);
+        }
+    }
 }
