@@ -124,6 +124,7 @@ class PagamentoService {
         if ($resultado) {
 
             $this->model->confirmarReserva($data->reserva_id);
+            $this->model->registrarUsoCupomDaReserva($data->reserva_id);
 
             return [
                 "status_code" => 201,

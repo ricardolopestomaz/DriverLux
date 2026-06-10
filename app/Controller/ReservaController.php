@@ -26,11 +26,28 @@ class ReservaController {
                 $response = $this->service->buscarReserva($id);
             } else {
                 $response = $this->service->listarReservas();
+                $veiculo_id = isset($_GET['veiculo_id']) ? (int)$_GET['veiculo_id'] : null;
+                if ($veiculo_id) {
+                    $response = $this->service->listarReservasPorVeiculo($veiculo_id);
+                } else {
+                    $response = $this->service->listarReservas();
+                }
             }
             $this->sendResponse($response);
             
         } elseif ($method === 'POST') {
             $this->verificarAutenticacao();
+
+            
+            // Administradores não podem criar reservas
+            if (isset($_SESSION['usuario_perfil']) && ($_SESSION['usuario_perfil'] === 'admin' || $_SESSION['usuario_perfil'] === 'administrador')) {
+                $this->sendResponse([
+                    "status_code" => 403,
+                    "body" => ["erro" => "Acesso negado. Administradores não podem criar reservas."]
+                ]);
+                exit;
+            }
+
             $data = json_decode(file_get_contents("php://input"));
             
             // Pega o ID do usuário diretamente da Sessão

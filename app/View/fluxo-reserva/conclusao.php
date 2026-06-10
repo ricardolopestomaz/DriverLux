@@ -2,6 +2,11 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+if (isset($_SESSION['usuario_perfil']) && ($_SESSION['usuario_perfil'] === 'admin' || $_SESSION['usuario_perfil'] === 'administrador')) {
+    header('Location: /DriverLux/app/View/painel-admin/admin.php');
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">

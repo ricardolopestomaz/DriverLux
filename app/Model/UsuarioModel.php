@@ -24,7 +24,8 @@ class UsuarioModel {
     }
 
     public function findByIdMe($id) {
-        $query = "SELECT id, nome, email, cpf, perfil, foto_perfil FROM usuarios WHERE id = :id LIMIT 1";
+        // 🛑 ADICIONADO: 'ativo' incluído para validar utilizadores já logados na rota /me
+        $query = "SELECT id, nome, email, cpf, perfil, foto_perfil, ativo FROM usuarios WHERE id = :id LIMIT 1";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(":id", $id);
         $stmt->execute();
@@ -32,7 +33,8 @@ class UsuarioModel {
     }
 
     public function findByEmail($email) {
-        $query = "SELECT id, nome, email, cpf, senha_hash, perfil, foto_perfil FROM usuarios WHERE email = :email LIMIT 1";
+        // 🛑 ADICIONADO: 'ativo' incluído aqui para que o login consiga verificar o status
+        $query = "SELECT id, nome, email, cpf, senha_hash, perfil, foto_perfil, ativo FROM usuarios WHERE email = :email LIMIT 1";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(":email", $email);
         $stmt->execute();

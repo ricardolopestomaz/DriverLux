@@ -110,6 +110,21 @@ class UsuarioController {
 
         if ($response['status_code'] === 200 && isset($response['session_data'])) {
             $usuario = $response['session_data'];
+
+            // 🛑 MODIFICAÇÃO AQUI: Verifica se o usuário retornado está inativo
+            // Se na sua Service/Model a coluna 'ativo' vier mapeada, barramos aqui.
+            // (Geralmente o MySQL retorna 0 para inativo)
+            if (isset($usuario['ativo']) && (int)$usuario['ativo'] === 0) {
+                $this->sendResponse([
+                    "status_code" => 403,
+                    "body" => [
+                        "status" => "error", 
+                        "erro" => "Sua conta foi desativada pelo administrador."
+                    ]
+                ]);
+                exit;
+            }
+
             $_SESSION['usuario_id']     = $usuario['id'];
             $_SESSION['usuario_perfil'] = $usuario['perfil'];
             $_SESSION['usuario_nome']   = $usuario['nome'];
@@ -135,6 +150,20 @@ class UsuarioController {
         $id_sessao = isset($_SESSION['usuario_id']) ? $_SESSION['usuario_id'] : null;
         
         $response = $this->service->obterDadosMe($id_sessao);
+        
+        // 🛑 SEGUNDA TRAVA DE SEGURANÇA: Se o usuário já estiver logado mas o admin desativou ele
+        // a rota '/me' (que roda no JavaScript ao carregar) vai expulsá-lo imediatamente da página.
+        if ($response['status_code'] === 200 && isset($response['body']['usuario']['ativo'])) {
+            if ((int)$response['body']['usuario']['ativo'] === 0) {
+                session_destroy(); // Destrói a sessão atual dele
+                $this->sendResponse([
+                    "status_code" => 403,
+                    "body" => ["logado" => false, "erro" => "Conta desativada."]
+                ]);
+                exit;
+            }
+        }
+
         $this->sendResponse($response);
     }
 

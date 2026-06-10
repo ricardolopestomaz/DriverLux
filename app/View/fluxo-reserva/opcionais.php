@@ -3,6 +3,11 @@ if (session_status() === PHP_SESSION_NONE) {
   session_start();
 }
 
+if (isset($_SESSION['usuario_perfil']) && ($_SESSION['usuario_perfil'] === 'admin' || $_SESSION['usuario_perfil'] === 'administrador')) {
+  header('Location: /DriverLux/app/View/painel-admin/admin.php');
+  exit;
+}
+
 // Auto-seeding automático caso as tabelas estejam vazias
 require_once __DIR__ . '/../../../config/db_connect.php';
 try {
@@ -270,11 +275,18 @@ $opcoesKm = $kmResponse['data'] ?? [];
   <?php require_once __DIR__ . '/../components/footer.php'; ?>
 
   <script src="../../../public/assets/js/opcionais.js?v=30"></script>
+  <script src="/DriverLux/public/assets/js/custom-picker.js"></script>
+
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       // 1. Recupera os dados que vieram do Passo 1 (Veículos e Home)
       const dadosReserva = JSON.parse(sessionStorage.getItem('dados_reserva') || '{}');
+
+      // Vincula o seletor premium de data e hora para devolução com os conflitos do veículo selecionado
+      if (window.attachDriverLuxPicker) {
+        window.attachDriverLuxPicker('data-devolucao', 'hora-devolucao', dadosReserva.veiculo_id);
+      }
 
       // Se o usuário cair aqui de paraquedas sem carro, volta pra tela anterior
       if (!dadosReserva.veiculo_modelo) {
