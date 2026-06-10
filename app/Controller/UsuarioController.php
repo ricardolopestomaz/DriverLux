@@ -29,10 +29,16 @@ class UsuarioController {
                 break;
 
             case 'POST':
-                if ($id === 'login' || $action === 'login') {
+                $urlAtual = $_SERVER['REQUEST_URI'];
+
+                if ($id === 'login' || $action === 'login' || strpos($urlAtual, '/login') !== false) {
                     $this->login($method);
-                } elseif ($id === 'logout' || $action === 'logout') {
+                } elseif ($id === 'logout' || $action === 'logout' || strpos($urlAtual, '/logout') !== false) {
                     $this->logout();
+                } elseif (strpos($urlAtual, '/verificar-email') !== false) {
+                    $this->verificarEmail();
+                } elseif (strpos($urlAtual, '/atualizar-senha-direta') !== false) {
+                    $this->atualizarSenhaDireta();
                 } else {
                     $this->createUsuario();
                 }
@@ -67,6 +73,18 @@ class UsuarioController {
         $this->sendResponse($response);
     }
 
+    private function verificarEmail() {
+        $data = json_decode(file_get_contents("php://input"));
+        $response = $this->service->verificarEmailExistente($data);
+        $this->sendResponse($response);
+    }
+
+    private function atualizarSenhaDireta() {
+        $data = json_decode(file_get_contents("php://input"));
+        $response = $this->service->substituirSenhaDireta($data);
+        $this->sendResponse($response);
+    }
+
     private function updateUsuario($id) {
         $this->verificarAutenticacao();
 
@@ -90,7 +108,6 @@ class UsuarioController {
         $data = json_decode(file_get_contents("php://input"));
         $response = $this->service->tentarLogin($data);
 
-        // Se o login foi um sucesso, lida com a sessão local do PHP
         if ($response['status_code'] === 200 && isset($response['session_data'])) {
             $usuario = $response['session_data'];
             $_SESSION['usuario_id']     = $usuario['id'];
@@ -100,7 +117,6 @@ class UsuarioController {
             $_SESSION['usuario_cpf']    = $usuario['cpf'];
             $_SESSION['usuario_foto']   = $usuario['foto_perfil'];
             
-            // Remove dados sensíveis do retorno HTTP
             unset($response['session_data']); 
         }
 
@@ -122,7 +138,6 @@ class UsuarioController {
         $this->sendResponse($response);
     }
 
-    // Método auxiliar para centralizar as respostas
     private function sendResponse($response) {
         http_response_code($response['status_code']);
         echo json_encode($response['body']);

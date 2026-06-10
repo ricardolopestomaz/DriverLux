@@ -43,6 +43,51 @@ class UsuarioService {
         }
     }
 
+    public function verificarEmailExistente($data) {
+        if (empty($data->email)) {
+            return ["status_code" => 400, "body" => ["erro" => "O e-mail é obrigatório."]];
+        }
+
+        $usuario = $this->model->findByEmail($data->email);
+
+        if (!$usuario) {
+            return ["status_code" => 404, "body" => ["erro" => "Este e-mail está incorreto."]];
+        }
+
+        return [
+            "status_code" => 200,
+            "body" => [
+                "status" => "success",
+                "mensagem" => "Usuário validado! Digite sua nova senha.",
+                "email" => $usuario['email']
+            ]
+        ];
+    }
+
+    public function substituirSenhaDireta($data) {
+        if (empty($data->email) || empty($data->senha)) {
+            return ["status_code" => 400, "body" => ["erro" => "E-mail e nova senha são obrigatórios."]];
+        }
+
+        $usuario = $this->model->findByEmail($data->email);
+        if (!$usuario) {
+            return ["status_code" => 404, "body" => ["erro" => "Usuário não encontrado."]];
+        }
+
+        $campos = ["senha_hash = :senha_hash"];
+        $parametros = [
+            ":id" => $usuario['id'],
+            ":senha_hash" => password_hash($data->senha, PASSWORD_DEFAULT)
+        ];
+
+        try {
+            $this->model->update($usuario['id'], $campos, $parametros);
+            return ["status_code" => 200, "body" => ["status" => "success", "mensagem" => "Senha atualizada com sucesso!"]];
+        } catch (PDOException $e) {
+            return ["status_code" => 500, "body" => ["erro" => "Erro ao redefinir a senha: " . $e->getMessage()]];
+        }
+    }
+
     public function atualizarUsuario($id, $data, $id_logado, $perfil_logado) {
         if ($perfil_logado !== 'admin' && $id_logado != $id) {
             return ["status_code" => 403, "body" => ["status" => "error", "erro" => "Acesso negado. Você só pode alterar o seu próprio cadastro."]];

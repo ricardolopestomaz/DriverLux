@@ -2,8 +2,8 @@ class RegistroLogin extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
-        // Caminho absoluto para a sua API
         this.apiUrl = '/DriverLux/public/api/usuarios';
+        this.emailRecuperacao = ''; // Guarda temporariamente o e-mail validado
     }
 
     connectedCallback() {
@@ -15,7 +15,6 @@ class RegistroLogin extends HTMLElement {
         const modo = this.getAttribute('modo') || 'popover';
         this.shadowRoot.innerHTML = `
         <style>
-            /* Importando a fonte para dentro do Web Component */
             @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap');
 
             :host { 
@@ -23,7 +22,6 @@ class RegistroLogin extends HTMLElement {
                 font-family: 'Poppins', sans-serif; 
             }
 
-            /* Resets básicos para não quebrar o layout */
             * { box-sizing: border-box; margin: 0; padding: 0; }
             h2, h3, p { margin: 0; padding: 0; }
 
@@ -65,7 +63,6 @@ class RegistroLogin extends HTMLElement {
             }
             input:focus { border-color: var(--primary); }
             
-            /* A CLASSE QUE ESCONDE O MODAL */
             .hidden { display: none !important; }
             
             .footer-text { text-align: center; width: 100%; margin-top: 25px; font-size: 14px; color: #555; }
@@ -94,6 +91,11 @@ class RegistroLogin extends HTMLElement {
                     <form id="login-form">
                         <input type="email" name="email" placeholder="E-mail" required>
                         <input type="password" name="senha" placeholder="Senha" required>
+                        
+                        <p style="text-align: right; margin: -5px 0 15px 0; font-size: 13px;">
+                            <span id="go-to-recover" style="color: var(--primary); cursor: pointer; text-decoration: underline;">Esqueci minha senha</span>
+                        </p>
+
                         <div id="login-msg" class="msg"></div>
                         <button type="submit" class="main-btn">Entrar</button>
                     </form>
@@ -114,118 +116,240 @@ class RegistroLogin extends HTMLElement {
                     </form>
                     <p class="footer-text">Já tem conta? <span id="go-to-login">Entrar</span></p>
                 </div>
+
+                <div id="tela-de-recuperacao" class="hidden">
+                    <h2>Recuperar Senha</h2>
+                    <h3 id="recover-subtitle">Insira o seu e-mail cadastrado para redefinir a sua senha.</h3>
+                    
+                    <form id="recover-form">
+                        <div id="etapa-email">
+                            <input type="email" id="recover-email-field" placeholder="Digite seu e-mail">
+                            <button type="button" id="btn-verificar-email" class="main-btn">Verificar Conta</button>
+                        </div>
+
+                        <div id="etapa-nova-senha" class="hidden">
+                            <input type="password" id="recover-new-password" placeholder="Nova Senha">
+                            <input type="password" id="recover-confirm-password" placeholder="Confirmar Nova Senha">
+                            <button type="submit" class="main-btn">Salvar Nova Senha</button>
+                        </div>
+
+                        <div id="recover-msg" class="msg"></div>
+                    </form>
+                    <p class="footer-text"><span id="recover-to-login">Voltar para o Login</span></p>
+                </div>
             </div>
         </div>
         `;
     }
 
-    // NOVA FUNÇÃO: Limpa campos de texto, esconde mensagens e reseta para a tela de Login
     limparFormularios() {
         const shadow = this.shadowRoot;
-        
+        this.emailRecuperacao = '';
+
         const loginForm = shadow.getElementById('login-form');
         const registerForm = shadow.getElementById('register-form');
+
         if (loginForm) loginForm.reset();
         if (registerForm) registerForm.reset();
 
         const loginMsg = shadow.getElementById('login-msg');
         const registerMsg = shadow.getElementById('register-msg');
-        
-        if (loginMsg) {
-            loginMsg.style.display = 'none';
-            loginMsg.className = 'msg';
-            loginMsg.textContent = '';
-        }
-        if (registerMsg) {
-            registerMsg.style.display = 'none';
-            registerMsg.className = 'msg';
-            registerMsg.textContent = '';
-        }
+        const recoverMsg = shadow.getElementById('recover-msg');
+
+        if (loginMsg) { loginMsg.style.display = 'none'; loginMsg.className = 'msg'; loginMsg.textContent = ''; }
+        if (registerMsg) { registerMsg.style.display = 'none'; registerMsg.className = 'msg'; registerMsg.textContent = ''; }
+        if (recoverMsg) { recoverMsg.style.display = 'none'; recoverMsg.className = 'msg'; recoverMsg.textContent = ''; }
+
+        const campoEmail = shadow.getElementById('recover-email-field');
+        if (campoEmail) campoEmail.value = '';
+        const campoS1 = shadow.getElementById('recover-new-password');
+        const campoS2 = shadow.getElementById('recover-confirm-password');
+        if (campoS1) campoS1.value = '';
+        if (campoS2) campoS2.value = '';
+
+        const divEmail = shadow.getElementById('etapa-email');
+        const divSenha = shadow.getElementById('etapa-nova-senha');
+        if (divEmail) divEmail.classList.remove('hidden');
+        if (divSenha) divSenha.classList.add('hidden');
+
+        const sub = shadow.getElementById('recover-subtitle');
+        if (sub) sub.textContent = "Insira o seu e-mail cadastrado para redefinir a sua senha.";
 
         const telaLogin = shadow.getElementById('tela-de-login');
         const telaCadastro = shadow.getElementById('tela-de-cadastro');
-        if (telaLogin && telaCadastro) {
+        const telaRecuperacao = shadow.getElementById('tela-de-recuperacao');
+
+        if (telaLogin && telaCadastro && telaRecuperacao) {
             telaLogin.classList.remove('hidden');
             telaCadastro.classList.add('hidden');
+            telaRecuperacao.classList.add('hidden');
         }
     }
 
     setupEvents() {
         const shadow = this.shadowRoot;
 
-        // Navegação entre Telas
         shadow.getElementById('go-to-register').onclick = () => {
-            this.limparFormularios(); // Limpa ao alternar de tela
+            this.limparFormularios();
             shadow.getElementById('tela-de-login').classList.add('hidden');
             shadow.getElementById('tela-de-cadastro').classList.remove('hidden');
         };
-        
+
         shadow.getElementById('go-to-login').onclick = () => {
-            this.limparFormularios(); // Limpa ao alternar de tela
-            shadow.getElementById('tela-de-cadastro').classList.add('hidden');
-            shadow.getElementById('tela-de-login').classList.remove('hidden');
+            this.limparFormularios();
         };
-        
-        // Botão de fechar (X) - Agora limpa tudo ao fechar!
+
+        shadow.getElementById('go-to-recover').onclick = () => {
+            this.limparFormularios();
+            shadow.getElementById('tela-de-login').classList.add('hidden');
+            shadow.getElementById('tela-de-recuperacao').classList.remove('hidden');
+        };
+
+        shadow.getElementById('recover-to-login').onclick = () => {
+            this.limparFormularios();
+        };
+
         shadow.getElementById('close-auth').onclick = () => {
             shadow.getElementById('auth-container').classList.add('hidden');
             this.limparFormularios();
         };
 
-        // Submissão do Formulário de Login
-        shadow.getElementById('login-form').onsubmit = async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const dados = Object.fromEntries(formData);
-            const msgDiv = shadow.getElementById('login-msg');
-            
+        // EVENTO: ETAPA 1 - VERIFICAR SE EMAIL EXISTE
+        shadow.getElementById('btn-verificar-email').onclick = async () => {
+            const emailInput = shadow.getElementById('recover-email-field').value;
+            const msgDiv = shadow.getElementById('recover-msg');
+
             msgDiv.style.display = 'none';
-            msgDiv.className = 'msg'; // Reseta as classes
+            msgDiv.className = 'msg';
+
+            if (!emailInput) {
+                msgDiv.textContent = "Por favor, introduza o seu e-mail.";
+                msgDiv.classList.add('error');
+                msgDiv.style.display = 'block';
+                return;
+            }
 
             try {
-                const response = await fetch(this.apiUrl + '/login', { 
+                const response = await fetch(this.apiUrl + '/verificar-email', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(dados)
+                    body: JSON.stringify({ email: emailInput })
                 });
 
                 const result = await response.json();
 
-                if (response.ok && result.status === 'success') {
-                    msgDiv.textContent = "Bem-vindo(a)! Redirecionando...";
-                    msgDiv.classList.add('success');
-                    msgDiv.style.display = 'block';
-                    
-                    // Aguarda 1 segundo, limpa o formulário e recarrega a página
-                    setTimeout(() => {
-                        shadow.getElementById('auth-container').classList.add('hidden');
-                        this.limparFormularios();
-                        window.location.reload();
-                    }, 1000);
+                if (response.ok) {
+                    this.emailRecuperacao = result.email; // Salva o e-mail validado na memória
 
+                    // Transiciona para a Etapa 2 de Senha na mesma caixinha
+                    shadow.getElementById('etapa-email').classList.add('hidden');
+                    shadow.getElementById('etapa-nova-senha').classList.remove('hidden');
+                    shadow.getElementById('recover-subtitle').textContent = "Escolha a sua nova senha abaixo:";
                 } else {
-                    msgDiv.textContent = result.erro || "E-mail ou senha incorretos.";
+                    msgDiv.textContent = result.erro || "E-mail não cadastrado.";
                     msgDiv.classList.add('error');
                     msgDiv.style.display = 'block';
                 }
-
             } catch (err) {
-                console.error("Erro ao fazer login:", err);
+                msgDiv.textContent = "Erro ao conectar com o servidor.";
+                msgDiv.classList.add('error');
+                msgDiv.style.display = 'block';
+            }
+        };
+
+        shadow.getElementById('recover-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const novaSenha = shadow.getElementById('recover-new-password').value;
+            const confirmarSenha = shadow.getElementById('recover-confirm-password').value;
+            const msgDiv = shadow.getElementById('recover-msg');
+
+            msgDiv.style.display = 'none';
+            msgDiv.className = 'msg';
+
+            if (novaSenha !== confirmarSenha) {
+                msgDiv.textContent = "As senhas não coincidem!";
+                msgDiv.classList.add('error');
+                msgDiv.style.display = 'block';
+                return;
+            }
+
+            try {
+                const response = await fetch(this.apiUrl + '/atualizar-senha-direta', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: this.emailRecuperacao,
+                        senha: novaSenha
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    msgDiv.textContent = result.mensagem || "Senha redefinida com sucesso!";
+                    msgDiv.classList.add('success');
+                    msgDiv.style.display = 'block';
+
+                    setTimeout(() => {
+                        this.limparFormularios();
+                    }, 2000);
+                } else {
+                    msgDiv.textContent = result.erro || "Erro ao salvar nova senha.";
+                    msgDiv.classList.add('error');
+                    msgDiv.style.display = 'block';
+                }
+            } catch (err) {
                 msgDiv.textContent = "Erro de conexão com o servidor.";
                 msgDiv.classList.add('error');
                 msgDiv.style.display = 'block';
             }
         };
 
-        // Submissão do Formulário de Cadastro
+        // Login Original
+        shadow.getElementById('login-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const dados = Object.fromEntries(formData);
+            const msgDiv = shadow.getElementById('login-msg');
+            msgDiv.style.display = 'none';
+            msgDiv.className = 'msg';
+
+            try {
+                const response = await fetch(this.apiUrl + '/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dados)
+                });
+                const result = await response.json();
+                if (response.ok && result.status === 'success') {
+                    msgDiv.textContent = "Bem-vindo(a)! Redirecionando...";
+                    msgDiv.classList.add('success');
+                    msgDiv.style.display = 'block';
+                    setTimeout(() => {
+                        shadow.getElementById('auth-container').classList.add('hidden');
+                        this.limparFormularios();
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    msgDiv.textContent = result.erro || "E-mail ou senha incorretos.";
+                    msgDiv.classList.add('error');
+                    msgDiv.style.display = 'block';
+                }
+            } catch (err) {
+                msgDiv.textContent = "Erro de conexão com o servidor.";
+                msgDiv.classList.add('error');
+                msgDiv.style.display = 'block';
+            }
+        };
+
+        // Cadastro Original
         shadow.getElementById('register-form').onsubmit = async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
             const dados = Object.fromEntries(formData);
             const msgDiv = shadow.getElementById('register-msg');
-            
             msgDiv.style.display = 'none';
-            msgDiv.className = 'msg'; // Reseta as classes
+            msgDiv.className = 'msg';
 
             if (dados.senha !== dados.confirmar_senha) {
                 msgDiv.textContent = "As senhas não coincidem!";
@@ -240,29 +364,22 @@ class RegistroLogin extends HTMLElement {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(dados)
                 });
-
                 if (response.status === 201 || response.ok) {
                     msgDiv.textContent = "Cadastro realizado com sucesso! Faça o login.";
                     msgDiv.classList.add('success');
                     msgDiv.style.display = 'block';
-
-                    // Aguarda 2 segundos e joga o usuário pra tela de login limpa
                     setTimeout(() => {
                         this.limparFormularios();
                         shadow.getElementById('tela-de-cadastro').classList.add('hidden');
                         shadow.getElementById('tela-de-login').classList.remove('hidden');
                     }, 2000);
-
                     return;
                 }
-
                 const result = await response.json();
                 msgDiv.textContent = result.erro || "Erro ao processar cadastro.";
                 msgDiv.classList.add('error');
                 msgDiv.style.display = 'block';
-
             } catch (err) {
-                console.error("Erro de leitura, verificando status...", err);
                 this.limparFormularios();
                 shadow.getElementById('tela-de-cadastro').classList.add('hidden');
                 shadow.getElementById('tela-de-login').classList.remove('hidden');
