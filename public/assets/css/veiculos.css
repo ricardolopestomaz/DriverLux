@@ -162,7 +162,7 @@ body {
   background: var(--branco);
   border: 1.5px solid var(--borda-card);
   border-radius: 18px;
-  padding: 20px;
+  padding: 20px 15px;
   /* Reduzido levemente para caber bem */
   display: flex;
   flex-direction: column;
@@ -184,10 +184,12 @@ body {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg,
-      var(--roxo-medio),
-      var(--roxo-claro),
-      var(--dourado));
+  background: linear-gradient(
+    90deg,
+    var(--roxo-medio),
+    var(--roxo-claro),
+    var(--dourado)
+  );
   opacity: 0;
   transition: opacity 0.3s;
 }
@@ -326,7 +328,6 @@ body {
   align-items: center;
   justify-content: center;
   margin-bottom: 20px;
-  background: linear-gradient(180deg, #faf7ff 0%, #f3eeff 100%);
   border-radius: 12px;
   position: relative;
   overflow: hidden;
@@ -339,14 +340,16 @@ body {
   left: 10%;
   right: 10%;
   height: 18px;
-  background: radial-gradient(ellipse,
-      rgba(106, 13, 173, 0.07) 0%,
-      transparent 70%);
+  background: radial-gradient(
+    ellipse,
+    rgba(106, 13, 173, 0.07) 0%,
+    transparent 70%
+  );
 }
 
 .carro-img {
   max-height: 110px;
-  max-width: 90%;
+  max-width: 120%;
   object-fit: contain;
   transition: transform 0.4s ease;
   filter: drop-shadow(0 6px 14px rgba(59, 5, 103, 0.15));
@@ -417,9 +420,11 @@ body {
   text-align: center;
   text-decoration: none;
   display: block;
-  background: linear-gradient(135deg,
-      var(--roxo-medio) 0%,
-      var(--roxo-claro) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--roxo-medio) 0%,
+    var(--roxo-claro) 100%
+  );
   color: var(--texto-claro);
   transition: all 0.25s;
   position: relative;
@@ -430,9 +435,11 @@ body {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg,
-      var(--roxo-claro) 0%,
-      var(--roxo-medio) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--roxo-claro) 0%,
+    var(--roxo-medio) 100%
+  );
   opacity: 0;
   transition: opacity 0.25s;
 }
@@ -574,14 +581,10 @@ body {
   .grid-veiculos {
     grid-template-columns: repeat(2, 1fr);
   }
-
-  /* 2 colunas no tablet */
 }
 
 @media (max-width: 600px) {
   .grid-veiculos {
     grid-template-columns: 1fr;
   }
-
-  /* 1 coluna no celular */
 }

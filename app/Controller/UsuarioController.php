@@ -29,10 +29,16 @@ class UsuarioController {
                 break;
 
             case 'POST':
-                if ($id === 'login' || $action === 'login') {
+                $urlAtual = $_SERVER['REQUEST_URI'];
+
+                if ($id === 'login' || $action === 'login' || strpos($urlAtual, '/login') !== false) {
                     $this->login($method);
-                } elseif ($id === 'logout' || $action === 'logout') {
+                } elseif ($id === 'logout' || $action === 'logout' || strpos($urlAtual, '/logout') !== false) {
                     $this->logout();
+                } elseif (strpos($urlAtual, '/verificar-email') !== false) {
+                    $this->verificarEmail();
+                } elseif (strpos($urlAtual, '/atualizar-senha-direta') !== false) {
+                    $this->atualizarSenhaDireta();
                 } else {
                     $this->createUsuario();
                 }
@@ -67,6 +73,18 @@ class UsuarioController {
         $this->sendResponse($response);
     }
 
+    private function verificarEmail() {
+        $data = json_decode(file_get_contents("php://input"));
+        $response = $this->service->verificarEmailExistente($data);
+        $this->sendResponse($response);
+    }
+
+    private function atualizarSenhaDireta() {
+        $data = json_decode(file_get_contents("php://input"));
+        $response = $this->service->substituirSenhaDireta($data);
+        $this->sendResponse($response);
+    }
+
     private function updateUsuario($id) {
         $this->verificarAutenticacao();
 
@@ -90,9 +108,23 @@ class UsuarioController {
         $data = json_decode(file_get_contents("php://input"));
         $response = $this->service->tentarLogin($data);
 
-        // Se o login foi um sucesso, lida com a sessão local do PHP
         if ($response['status_code'] === 200 && isset($response['session_data'])) {
             $usuario = $response['session_data'];
+
+            // 🛑 MODIFICAÇÃO AQUI: Verifica se o usuário retornado está inativo
+            // Se na sua Service/Model a coluna 'ativo' vier mapeada, barramos aqui.
+            // (Geralmente o MySQL retorna 0 para inativo)
+            if (isset($usuario['ativo']) && (int)$usuario['ativo'] === 0) {
+                $this->sendResponse([
+                    "status_code" => 403,
+                    "body" => [
+                        "status" => "error", 
+                        "erro" => "Sua conta foi desativada pelo administrador."
+                    ]
+                ]);
+                exit;
+            }
+
             $_SESSION['usuario_id']     = $usuario['id'];
             $_SESSION['usuario_perfil'] = $usuario['perfil'];
             $_SESSION['usuario_nome']   = $usuario['nome'];
@@ -100,7 +132,6 @@ class UsuarioController {
             $_SESSION['usuario_cpf']    = $usuario['cpf'];
             $_SESSION['usuario_foto']   = $usuario['foto_perfil'];
             
-            // Remove dados sensíveis do retorno HTTP
             unset($response['session_data']); 
         }
 
@@ -119,10 +150,23 @@ class UsuarioController {
         $id_sessao = isset($_SESSION['usuario_id']) ? $_SESSION['usuario_id'] : null;
         
         $response = $this->service->obterDadosMe($id_sessao);
+        
+        // 🛑 SEGUNDA TRAVA DE SEGURANÇA: Se o usuário já estiver logado mas o admin desativou ele
+        // a rota '/me' (que roda no JavaScript ao carregar) vai expulsá-lo imediatamente da página.
+        if ($response['status_code'] === 200 && isset($response['body']['usuario']['ativo'])) {
+            if ((int)$response['body']['usuario']['ativo'] === 0) {
+                session_destroy(); // Destrói a sessão atual dele
+                $this->sendResponse([
+                    "status_code" => 403,
+                    "body" => ["logado" => false, "erro" => "Conta desativada."]
+                ]);
+                exit;
+            }
+        }
+
         $this->sendResponse($response);
     }
 
-    // Método auxiliar para centralizar as respostas
     private function sendResponse($response) {
         http_response_code($response['status_code']);
         echo json_encode($response['body']);

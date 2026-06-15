@@ -1,7 +1,7 @@
 # 🚀 Sprint 03: Fluxo de Reserva, Área do Cliente e Testes Unitários
 
 ## 📅 Período
-- **Início:** 29/05/2026
+- **Início:** 29/04/2026
 - **Fim:** 13/05/2026
 
 ## 🎯 Valor da Sprint
@@ -12,26 +12,17 @@ Permitir que os usuários visualizem veículos disponíveis, realizem reservas e
 ## 📋 Quadro de Tarefas (Tasks)
 | Task | Responsável | Ref. Requisito |
 | :--- | :--- | :--- |
-| **Tela de Minhas Reservas** | Grazyelle Bento | US07 / RF11 |
-| **Fluxo de Reserva - Listagem de Veículos (Parte 1)** | Ricardo Lopes | US03 / RF03 / RF04 |
+|**Landing Page - Continuação**| Grazyelle Bento | US01 |
 | **Painel do Cliente (Minha Conta)** | Anna Beatriz | US06 |
-| **Tela de Cadastro de Carro** | Pedro Ryan | US013 / RF08 |
-| **Implementação de Testes Unitários** | Equipe | RF03 / RF04 / RF11 |
+| **Correção de Bugs** | Ricardo Lopes | |
+
 ---
 
 ## ✅ Critérios de Aceite
-- O usuário consegue visualizar a listagem de veículos disponíveis para reserva.
-- O sistema permite o cadastro de novos veículos (painel do admin)
 - O usuário possui acesso ao painel "Minha Conta" para visualizar seu perfil ou modificar.
-- O usuário consegue visualizar suas reservas realizadas.
-- O fluxo inicial de reserva (parcial).
-- Os testes unitários validam as principais funcionalidades do sistema.
+- Continuação do Landing Page.
 ---
 
-### 📦 Entregáveis da Sprint:
-- Tela de listagem de veículos implementada.
-- Funcionalidade de cadastro de carros disponível.
+### 📦 Entregáveis da Sprint
+- Landing Page integrada ao sistema.
 - Painel do cliente (Minha Conta) estruturado e pronto para edições.
-- Tela de "Minhas Reservas" desenvolvida.
-- Integração inicial do fluxo de reserva.
-- Testes unitários implementados para funcionalidades principais.

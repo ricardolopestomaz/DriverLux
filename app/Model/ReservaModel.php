@@ -82,6 +82,35 @@ class ReservaModel {
         return $stmt->rowCount();
     }
 
+    public function verificarConflito($veiculo_id, $data_retirada, $data_devolucao, $reserva_id_ignorar = null) {
+        $query = "SELECT COUNT(*) FROM reservas 
+                  WHERE veiculo_id = :veiculo_id 
+                  AND status != 'cancelada' 
+                  AND (:data_retirada < data_devolucao AND :data_devolucao > data_retirada)";
+        if ($reserva_id_ignorar !== null) {
+            $query .= " AND id != :reserva_id_ignorar";
+        }
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(":veiculo_id", $veiculo_id);
+        $stmt->bindParam(":data_retirada", $data_retirada);
+        $stmt->bindParam(":data_devolucao", $data_devolucao);
+        if ($reserva_id_ignorar !== null) {
+            $stmt->bindParam(":reserva_id_ignorar", $reserva_id_ignorar);
+        }
+        
+        $stmt->execute();
+        return $stmt->fetchColumn() > 0;
+    }
+    public function findByVeiculoId($veiculo_id) {
+        $query = "SELECT data_retirada, data_devolucao FROM reservas 
+                  WHERE veiculo_id = :veiculo_id AND status != 'cancelada'";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(":veiculo_id", $veiculo_id);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function findByUserId($usuario_id) {
         $query = "SELECT r.id, r.data_retirada, r.data_devolucao, r.local_retirada, r.local_devolucao,
                          r.valor_total_previsto, r.status, r.criado_em,

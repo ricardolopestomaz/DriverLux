@@ -24,7 +24,8 @@ class UsuarioModel {
     }
 
     public function findByIdMe($id) {
-        $query = "SELECT id, nome, email, cpf, perfil, foto_perfil FROM usuarios WHERE id = :id LIMIT 1";
+        // 🛑 ADICIONADO: 'ativo' incluído para validar utilizadores já logados na rota /me
+        $query = "SELECT id, nome, email, cpf, perfil, foto_perfil, ativo FROM usuarios WHERE id = :id LIMIT 1";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(":id", $id);
         $stmt->execute();
@@ -32,7 +33,8 @@ class UsuarioModel {
     }
 
     public function findByEmail($email) {
-        $query = "SELECT id, nome, email, cpf, senha_hash, perfil, foto_perfil FROM usuarios WHERE email = :email LIMIT 1";
+        // 🛑 ADICIONADO: 'ativo' incluído aqui para que o login consiga verificar o status
+        $query = "SELECT id, nome, email, cpf, senha_hash, perfil, foto_perfil, ativo FROM usuarios WHERE email = :email LIMIT 1";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(":email", $email);
         $stmt->execute();
@@ -58,6 +60,40 @@ class UsuarioModel {
         $stmt = $this->db->prepare($query);
         $stmt->execute($parametros);
         return $stmt->rowCount();
+    }
+
+    public function salvarTokenRecuperacao($email, $token, $expiracao) {
+        $query = "UPDATE usuarios 
+                  SET recuperacao_token = :token, recuperacao_expira_em = :expiracao 
+                  WHERE email = :email";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(":token", $token);
+        $stmt->bindParam(":expiracao", $expiracao);
+        $stmt->bindParam(":email", $email);
+        return $stmt->execute();
+    }
+
+    public function findByTokenValido($token) {
+        $query = "SELECT id FROM usuarios 
+                  WHERE recuperacao_token = :token 
+                    AND recuperacao_expira_em > NOW() 
+                  LIMIT 1";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(":token", $token);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function redefinirSenhaComToken($id, $senha_hash) {
+        $query = "UPDATE usuarios 
+                  SET senha_hash = :senha_hash, 
+                      recuperacao_token = NULL, 
+                      recuperacao_expira_em = NULL 
+                  WHERE id = :id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(":senha_hash", $senha_hash);
+        $stmt->bindParam(":id", $id);
+        return $stmt->execute();
     }
 }
 ?>

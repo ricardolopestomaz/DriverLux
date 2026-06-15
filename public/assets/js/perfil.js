@@ -53,11 +53,9 @@ async function onSelecionarFoto(event) {
     const file = event.target.files[0];
     if (!file) return;
 
-    // Mostrar estado de carregamento visual temporário usando a própria barra informativa
     const strip = document.getElementById('foto-strip');
     const stripImg = document.getElementById('foto-strip-img');
 
-    // Preview em base64 local rápido enquanto faz o upload
     const reader = new FileReader();
     reader.onload = (e) => {
         mostrarFotoImg(e.target.result);
@@ -69,7 +67,6 @@ async function onSelecionarFoto(event) {
     };
     reader.readAsDataURL(file);
 
-    // Preparar envio multipart/form-data
     const formData = new FormData();
     formData.append('foto', file);
 
@@ -82,9 +79,7 @@ async function onSelecionarFoto(event) {
         const data = await res.json();
         if (data.status === 'success') {
             usuario.foto_perfil = data.url;
-
             if (strip) strip.classList.remove('visivel');
-
             mostrarFotoImg(`${data.url}?t=${new Date().getTime()}`);
             toast('Foto de perfil atualizada com sucesso!');
         } else {
@@ -134,12 +129,10 @@ async function salvar() {
 
         usuario = { ...usuario, ...dados };
         document.getElementById('exibe-nome').textContent = usuario.nome;
-
-        toast('Perfil atualizado com sucesso!');
+        toast('Perfil updated com sucesso!');
     } catch (erro) {
         toast('Erro ao salvar os dados cadastrais.', true);
     }
-
     btn.classList.remove('carregando');
 }
 
@@ -159,7 +152,7 @@ function toast(msg, erro = false) {
     }, 3500);
 }
 
-// Controle de Abas
+// Controle de Abas Principais
 function switchTab(tabName) {
     const tabCadastro = document.getElementById('tab-cadastro');
     const tabReservas = document.getElementById('tab-reservas');
@@ -182,17 +175,38 @@ function switchTab(tabName) {
     }
 }
 
-// Carregar Reservas do Usuário
+// Controle das Sub-abas de Reservas (Ativas / Canceladas)
+function filtrarReservasPerfil(tipo) {
+    const listaAtivas = document.getElementById('lista-ativas-perfil');
+    const listaCanceladas = document.getElementById('lista-canceladas-perfil');
+    const botoes = document.querySelectorAll('.aba-filtro-btn');
+
+    botoes.forEach(btn => btn.classList.remove('ativa'));
+
+    if (tipo === 'ativas') {
+        listaAtivas.style.display = 'flex';
+        listaCanceladas.style.display = 'none';
+        botoes[0].classList.add('ativa');
+    } else {
+        listaAtivas.style.display = 'none';
+        listaCanceladas.style.display = 'flex';
+        botoes[1].classList.add('ativa');
+    }
+}
+
+// Carregar e Separar Reservas
 async function carregarReservas() {
-    const container = document.getElementById('lista-reservas');
-    if (!container) return;
+    const containerAtivas = document.getElementById('lista-ativas-perfil');
+    const containerCanceladas = document.getElementById('lista-canceladas-perfil');
+    if (!containerAtivas || !containerCanceladas) return;
 
     try {
         const res = await fetch('/DriverLux/public/api/reservas/minhas');
         const data = await res.json();
 
         if (data.status === 'success' && data.data && data.data.length > 0) {
-            container.innerHTML = '';
+            containerAtivas.innerHTML = '';
+            containerCanceladas.innerHTML = '';
             
             const formatarData = (dt) => {
                 if(!dt) return '—';
@@ -204,45 +218,78 @@ async function carregarReservas() {
 
             const formatarMoeda = (val) => parseFloat(val).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-            data.data.forEach(reserva => {
-                const card = document.createElement('div');
-                card.className = 'reserva-card';
+            // Divisão lógica das reservas por status
+            const reservasAtivas = data.data.filter(r => r.status.toLowerCase() !== 'cancelada');
+            const reservasCanceladas = data.data.filter(r => r.status.toLowerCase() === 'cancelada');
 
-                const statusClass = reserva.status.toLowerCase(); // confirmada, pendente, cancelada
+            // Renderizador HTML reutilizável para os cartões
+            const criarCardHTML = (reserva) => {
+                const statusClass = reserva.status.toLowerCase(); 
                 const fotoCarro = reserva.veiculo_imagem || 'https://cdn-icons-png.flaticon.com/512/3202/3202003.png';
 
-                card.innerHTML = `
-                    <div class="reserva-main">
-                        <img class="reserva-carro-img" src="${fotoCarro}" alt="Carro">
-                        <div class="reserva-info">
-                            <h3>${reserva.veiculo_modelo || 'Veículo'}</h3>
-                            <div class="reserva-periodo">
-                                <strong>Retirada:</strong> ${formatarData(reserva.data_retirada)}<br>
-                                <strong>Devolução:</strong> ${formatarData(reserva.data_devolucao)}
-                            </div>
-                            <div class="reserva-locais">
-                                📍 Retirada: ${reserva.local_retirada || 'Não inf.'} | Devolução: ${reserva.local_devolucao || 'Não inf.'}
+                return `
+                    <div class="reserva-card">
+                        <div class="reserva-main">
+                            <img class="reserva-carro-img" src="${fotoCarro}" alt="Carro">
+                            <div class="reserva-info">
+                                <h3>${reserva.veiculo_modelo || 'Veículo'}</h3>
+                                <div class="reserva-periodo">
+                                    <strong>Retirada:</strong> ${formatarData(reserva.data_retirada)}<br>
+                                    <strong>Devolução:</strong> ${formatarData(reserva.data_devolucao)}
+                                </div>
+                                <div class="reserva-locais">
+                                    📍 Retirada: ${reserva.local_retirada || 'Não inf.'} | Devolução: ${reserva.local_devolucao || 'Não inf.'}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="reserva-status-preco">
-                        <span class="reserva-status ${statusClass}">${reserva.status}</span>
-                        <div class="reserva-preco">${formatarMoeda(reserva.valor_total_previsto)}</div>
+                        <div class="reserva-status-preco">
+                            <span class="reserva-status ${statusClass}">${reserva.status}</span>
+                            <div class="reserva-preco">${formatarMoeda(reserva.valor_total_previsto)}</div>
+                        </div>
                     </div>
                 `;
-                container.appendChild(card);
-            });
+            };
+
+            // Processar Reservas Ativas
+            if (reservasAtivas.length > 0) {
+                reservasAtivas.forEach(reserva => {
+                    containerAtivas.insertAdjacentHTML('beforeend', criarCardHTML(reserva));
+                });
+            } else {
+                containerAtivas.innerHTML = `
+                    <div class="reserva-vazia">
+                        <p>Você não possui nenhuma reserva ativa ou pendente no momento.</p>
+                        <a href="/DriverLux/index.html" class="btn-reservar-agora">Alugar um Carro</a>
+                    </div>
+                `;
+            }
+
+            // Processar Reservas Canceladas
+            if (reservasCanceladas.length > 0) {
+                reservasCanceladas.forEach(reserva => {
+                    containerCanceladas.insertAdjacentHTML('beforeend', criarCardHTML(reserva));
+                });
+            } else {
+                containerCanceladas.innerHTML = `
+                    <div class="reserva-vazia">
+                        <p>Seu histórico de cancelamentos está limpo.</p>
+                    </div>
+                `;
+            }
+
         } else {
-            container.innerHTML = `
+            const telaVaziaGeral = `
                 <div class="reserva-vazia">
                     <p>Você ainda não realizou nenhuma reserva de carro.</p>
                     <a href="/DriverLux/index.html" class="btn-reservar-agora">Fazer Minha Primeira Reserva</a>
                 </div>
             `;
+            containerAtivas.innerHTML = telaVaziaGeral;
+            containerCanceladas.innerHTML = telaVaziaGeral;
         }
     } catch (e) {
         console.error("Erro ao carregar reservas:", e);
-        container.innerHTML = `
+        containerAtivas.innerHTML = `
             <div style="text-align: center; padding: 20px; color: var(--perigo);">
                 Ocorreu um erro ao carregar suas reservas. Tente novamente mais tarde.
             </div>
@@ -250,7 +297,6 @@ async function carregarReservas() {
     }
 }
 
-// Checa query string para abrir aba de reservas
 window.addEventListener('load', () => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('tab') === 'reservas') {
