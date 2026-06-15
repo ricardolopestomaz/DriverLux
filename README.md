@@ -15,6 +15,19 @@
 * [**Ricardo Lopes Tomaz**](https://github.com/ricardolopestomaz)
 
 ---
+## ✅ Entrega Final
+<div align="center">
+
+<img src="https://img.shields.io/badge/STATUS-CONCLUÍDO-28a745?style=for-the-badge&logo=checkmarx&logoColor=white"><br>
+  
+| 🚀 Release Final | 🎥 Demonstração | 🌐 Landing Page | 📄 Apresentação Final |
+|-----------------|----------------|----------------| ----------------| 
+| [v1.0.0](#) | [Assistir vídeo](#) | [Acessar](#) |[Ver Apresentação](#) |
+
+</div>
+
+
+---
 ## 📌 Links úteis
 <small>
 📅 <a href="./docs/sprints.md">Planejamento de Sprints</a><br>
@@ -36,7 +49,7 @@
 | Sprint 2 | [v0.2.0](https://github.com/ricardolopestomaz/DriverLux/releases/tag/v0.2.0) | ![Concluída](https://img.shields.io/badge/Concluída-green) |
 | Sprint 3 | [v0.3.0](https://github.com/ricardolopestomaz/DriverLux/releases/tag/v0.3.0) | ![Concluída](https://img.shields.io/badge/Concluída-green) |
 | Sprint 4 | [v0.4.0](https://github.com/ricardolopestomaz/DriverLux/releases/tag/v0.4.0) |  ![Concluída](https://img.shields.io/badge/Concluída-green)|
-| Sprint 5 | [v0.5.0]() | ![Concluída](https://img.shields.io/badge/Concluída-green)  |
+| Sprint 5 | [v0.5.0](https://github.com/ricardolopestomaz/DriverLux/releases/tag/v0.5.0) | ![Concluída](https://img.shields.io/badge/Concluída-green)  |
 
 ---
 ## 🚗 Drive Lux
@@ -53,7 +66,7 @@ Entre as principais funcionalidades do sistema estão:
 ---
 
 ## 🎯 Objetivo
-Desenvolver um sistema web para locação de veículos de luxo, permitindo o gerenciamento eficiente de clientes, veículos e reservas.
+O DriverLux foi desenvolvido com o objetivo de oferecer uma solução web completa para a gestão e locação de veículos de luxo, centralizando em uma única plataforma o gerenciamento de clientes, veículos, reservas e processos administrativos.
 
 ---
 ## 🛠️ Tecnologias Utilizadas
