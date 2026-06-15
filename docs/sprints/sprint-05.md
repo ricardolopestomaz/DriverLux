@@ -16,14 +16,13 @@ Corrigir os bugs do sistema, arrumar o layout para deixar o site bonito e respon
 |**Correção de Bugs e Estabilização do Sistema**| Equipe|
 |**Refinamento de Layout**| Anna Beatriz |
 |**Ajustes Finais no Fluxo de Reserva**| Anna Beatriz / Ricardo |
-|**Finalização e Integração do Painel Administrativo**| Pedro Ryan | 
+|**Finalização e Integração do Painel Administrativo**| Anna Beatriz | 
 |**Organização da apresentaçaõ final**| Equipe |
 
 ---
 
 ## ✅ Critérios de Aceite
 - Os principais bugs de login, reserva e pagamento foram corrigidos.
-- O site está bonito, alinhado e funcionando bem no celular e no computador.
 - O fluxo de reserva funciona do início ao fim sem erros ou travamentos.
 - O painel do administrador consegue salvar, alterar e excluir veículos, usuários e reservas.
 - O sistema foi todo testado simulando o uso de um cliente real.

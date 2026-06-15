@@ -40,14 +40,13 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <script>
-        // Middleware de autenticação idêntico ao admin.php
         window.addEventListener('load', async () => {
             try {
                 const res = await fetch('/DriverLux/public/api/usuarios/me');
                 const data = await res.json();
-                if (!data || !data.logado || (data.usuario.perfil !== 'administrador' && data.usuario.perfil !== 'admin')) {
-                    window.location.href = '/DriverLux/index.html';
-                }
+                if (!data || !data.logado || !data.usuario) { window.location.href = '/DriverLux/index.html'; return; }
+                const perfil = data.usuario.perfil;
+                if (perfil !== 'administrador' && perfil !== 'admin') { window.location.href = '/DriverLux/index.html'; }
             } catch (err) { window.location.href = '/DriverLux/index.html'; }
         });
     </script>
@@ -56,9 +55,22 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body>
     <div class="admin-container">
         <aside id="sidebar">
-            <div class="sidebar-logo"><img src="/DriverLux/public/assets/img/DriverLux2.png" alt="DriverLux"></div>
+            <div class="sidebar-logo">
+                <img src="/DriverLux/public/assets/img/DriverLux2.png" alt="DriverLux">
+            </div>
+
+            <div class="sidebar-perfil">
+                <img id="sidebar-avatar" class="sidebar-avatar" src="/DriverLux/public/assets/img/default-avatar.png"
+                    alt="Admin">
+                <div class="sidebar-perfil-info">
+                    <div class="sidebar-perfil-tag">Administrador</div>
+                    <div class="sidebar-perfil-nome" id="exibe-nome-admin">Carregando…</div>
+                </div>
+            </div>
+
             <nav>
                 <div class="nav-label">Menu</div>
+
                 <a href="admin.php" class="<?= basename($_SERVER['PHP_SELF']) == 'admin.php' ? 'ativo' : '' ?>">
                     <span class="nav-icon">🚗</span> Gestão de Frotas
                 </a>
@@ -75,9 +87,19 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <a href="cupons.php" class="<?= basename($_SERVER['PHP_SELF']) == 'cupons.php' ? 'ativo' : '' ?>">
                     <span class="nav-icon">🏷️</span> Cupons
                 </a>
+
+                <a href="/DriverLux/index.html">
+                    <span class="nav-icon">🏠</span> Home
+                </a>
+
                 <div class="nav-sep"></div>
             </nav>
+
+            <button class="logout-btn" onclick="logout()">
+                <span>🚪</span> Sair do Sistema
+            </button>
         </aside>
+
 
         <main class="main-content">
             <header class="admin-topbar">
@@ -146,5 +168,30 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </main>
     </div>
 </body>
+
+<script>
+
+    /* Carrega dados do admin na sidebar */
+    window.addEventListener('DOMContentLoaded', async () => {
+        try {
+            const res = await fetch('/DriverLux/public/api/usuarios/me');
+            const data = await res.json();
+            if (data.logado && data.usuario) {
+                document.getElementById('exibe-nome-admin').textContent = data.usuario.nome;
+                if (data.usuario.foto_perfil) {
+                    document.getElementById('sidebar-avatar').src = data.usuario.foto_perfil;
+                }
+            }
+        } catch (e) { console.error("Erro", e); }
+    });
+
+    /* Logout */
+    async function logout() {
+        try {
+            await fetch('/DriverLux/public/api/usuarios/logout', { method: 'POST' });
+        } catch (_) { }
+        window.location.href = '/DriverLux/index.html';
+    }
+</script>
 
 </html>
