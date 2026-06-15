@@ -19,7 +19,9 @@ function alternarAba(aba) {
 
 // Função para cancelar a reserva através da API
 async function cancelarReserva(reservaId) {
-    if (!confirm('Tem certeza que deseja cancelar esta reserva?')) {
+    const confirmou = await confirmarCancelamento();
+
+    if (!confirmou) {
         return;
     }
 
@@ -29,23 +31,73 @@ async function cancelarReserva(reservaId) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ 
-                status: 'Cancelada' 
+            body: JSON.stringify({
+                status: 'Cancelada'
             })
         });
 
         const resultado = await response.json();
 
         if (response.ok || resultado.status === 'success') {
-            alert('Reserva cancelada com sucesso!');
-            window.location.reload(); 
+
+            mostrarToast(
+                'Reserva cancelada com sucesso!',
+                'success'
+            );
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 1800);
+
         } else {
-            alert(resultado.erro || resultado.message || 'Erro ao cancelar a reserva.');
+
+            mostrarToast(
+                resultado.erro ||
+                resultado.message ||
+                'Erro ao cancelar a reserva.',
+                'error'
+            );
         }
+
     } catch (error) {
         console.error('Erro ao cancelar:', error);
-        alert('Não foi possível conectar ao servidor para cancelar.');
+
+        mostrarToast(
+            'Não foi possível conectar ao servidor para cancelar.',
+            'error'
+        );
     }
+}
+
+function confirmarCancelamento() {
+
+    return new Promise((resolve) => {
+
+        const modal = document.getElementById('modalConfirmacao');
+
+        const btnConfirmar = document.getElementById('btnConfirmarCancelamento');
+
+        const btnVoltar = document.getElementById('btnManterReserva');
+
+        modal.classList.add('active');
+
+        btnConfirmar.onclick = () => {
+            modal.classList.remove('active');
+            resolve(true);
+        };
+
+        btnVoltar.onclick = () => {
+            modal.classList.remove('active');
+            resolve(false);
+        };
+
+        modal.onclick = (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+                resolve(false);
+            }
+        };
+    });
 }
 
 // Carregamento inicial dos dados ao abrir a página
@@ -94,8 +146,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const fotoCarro = reserva.veiculo_imagem || 'https://cdn-icons-png.flaticon.com/512/3202/3202003.png';
                 const idAtual = reserva.id || reserva.id_reserva;
 
-                const botaoCancelar = statusClass !== 'cancelada' 
-                    ? `<button class="btn-cancelar-reserva" onclick="cancelarReserva('${idAtual}')">Cancelar Reserva</button>` 
+                const botaoCancelar = statusClass !== 'cancelada'
+                    ? `<button class="btn-cancelar-reserva" onclick="cancelarReserva('${idAtual}')">Cancelar Reserva</button>`
                     : '';
 
                 return `
@@ -164,6 +216,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     } catch (e) {
         console.error("Erro ao carregar reservas:", e);
+
         containerAtivas.innerHTML = `
             <div style="text-align: center; padding: 20px; color: #ff4d4d; font-weight: bold;">
                 Erro ao conectar ao servidor. Tente novamente mais tarde.
@@ -171,3 +224,39 @@ document.addEventListener('DOMContentLoaded', async () => {
         `;
     }
 });
+
+/* ==========================
+   TOAST DRIVERLUX
+========================== */
+function mostrarToast(mensagem, tipo = 'success') {
+
+    const toast = document.createElement('div');
+
+    toast.className = `toast-driverlux toast-${tipo}`;
+
+    toast.innerHTML = `
+        <span class="toast-icon">
+            ${tipo === 'success'
+            ? '✅'
+            : tipo === 'error'
+                ? '❌'
+                : '⚠️'}
+        </span>
+
+        <span>${mensagem}</span>
+    `;
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 50);
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    }, 4000);
+}

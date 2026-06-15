@@ -195,6 +195,9 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
                     <span class="nav-icon">🏷️</span> Cupons
                 </a>
 
+                <a href="/DriverLux/index.html">
+                    <span class="nav-icon">🏠</span> Home
+                </a>
                 <div class="nav-sep"></div>
             </nav>
 
@@ -297,7 +300,7 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
                                                 ✏ Editar
                                             </button>
                                             <?php
-                                            // Verifica se o carro está ativo (se for null, assume 1 por padrão)
+                                           
                                             $isAtivo = !isset($carro['ativo']) || $carro['ativo'] == 1;
                                             $corBtn = $isAtivo ? 'background-color: #e74c3c;' : 'background-color: #2ecc71;'; // Vermelho para Ocultar, Verde para Exibir
                                             $textoBtn = $isAtivo ? 'Ocultar do Site' : 'Devolver ao Site';

@@ -11,14 +11,15 @@ if (session_status() === PHP_SESSION_NONE) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minhas Reservas - DriverLux</title>
     <link rel="shortcut icon" href="../../../public/assets/img/corrida.png" type="image/x-icon">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/DriverLux/public/assets/css/style.css">
     <link rel="stylesheet" href="/DriverLux/public/assets/css/minhas-reservas.css">
 </head>
 
 <body class="reservas-body">
 
-<?php require_once __DIR__ . '/../components/header.php'; ?>
+    <?php require_once __DIR__ . '/../components/header.php'; ?>
 
     <main class="main-reservas">
         <div class="container-reservas">
@@ -47,6 +48,28 @@ if (session_status() === PHP_SESSION_NONE) {
             <a href="/DriverLux/index.html" class="btn-voltar-home"> Voltar para a Página Inicial</a>
         </div>
     </main>
+
+    <div id="modalConfirmacao" class="modal-confirmacao">
+        <div class="modal-confirmacao-box">
+
+            <h3>Cancelar Reserva</h3>
+
+            <p>
+                Tem certeza que deseja cancelar esta reserva?
+                Esta ação não poderá ser desfeita.
+            </p>
+
+            <div class="modal-acoes">
+                <button id="btnManterReserva" class="btn-modal-secundario">
+                    Voltar
+                </button>
+
+                <button id="btnConfirmarCancelamento" class="btn-modal-perigo">
+                    Cancelar Reserva
+                </button>
+            </div>
+        </div>
+    </div>
 
     <?php require_once __DIR__ . '/../components/footer.php'; ?>
     <script src="/DriverLux/public/assets/js/menu-usuario.js"></script>
