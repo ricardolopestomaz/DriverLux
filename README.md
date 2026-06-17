@@ -15,16 +15,29 @@
 * [**Ricardo Lopes Tomaz**](https://github.com/ricardolopestomaz)
 
 ---
+## ✅ Entrega Final
+<div align="center">
+
+<img src="https://img.shields.io/badge/STATUS-CONCLUÍDO-28a745?style=for-the-badge&logo=checkmarx&logoColor=white"><br>
+  
+| 🚀 Release Final | 🎥 Demonstração | 🌐 Landing Page | 📄 Apresentação Final |
+|-----------------|----------------|----------------| ----------------| 
+| [v1.0.0](#) | [Assistir vídeo](#) | [Acessar](#) |[Ver Apresentação](#) |
+
+</div>
+
+
+---
 ## 📌 Links úteis
 <small>
-📅 <a href="https://github.com/ricardolopestomaz/DriverLux/tree/develop/docs/sprints">Planejamento de Sprints</a><br>
+📅 <a href="./docs/sprints.md">Planejamento de Sprints</a><br>
 📊 <a href="https://trello.com/b/jGLr2fuT/projeto-engenharia-de-sofware">Planejamento no Trello</a><br>
-🎨 <a href="https://www.figma.com/design/i5DIkwI1BkifdePI8TkGH0/DriverLux?node-id=0-1&t=Y8u0nTKAGELsBTqX-1">Protótipo no Figma</a><br>
-📗 <a href="https://github.com/ricardolopestomaz/DriverLux/blob/develop/docs/requisitos-funcionais.md">Requisitos Funcionais</a><br>
-📙 <a href="https://github.com/ricardolopestomaz/DriverLux/blob/develop/docs/requisitos-n-funcionais.md">Requisitos Não Funcionais</a><br>
-🎭 <a href="https://github.com/ricardolopestomaz/DriverLux/blob/develop/docs/user-stories.md">User Stories</a><br>
-⚙️ <a href="https://github.com/ricardolopestomaz/DriverLux/blob/develop/docs/api.md">Documentação da API</a><br>
-📁 <a href="#">Estrutura do Projeto</a>
+🎨 <a href="https://www.figma.com/design/i5DIkwI1BkifdePI8TkGH0/DriverLux">Protótipo no Figma</a><br>
+📗 <a href="./docs/requisitos-funcionais.md">Requisitos Funcionais</a><br>
+📙 <a href="./docs/requisitos-n-funcionais.md">Requisitos Não Funcionais</a><br>
+🎭 <a href="./docs/user-stories.md">User Stories</a><br>
+⚙️ <a href="./docs/api.md">Documentação da API</a><br>
+🏗️ <a href="./docs/estrutura-do-projeto.md">Estrutura do Projeto</a>
 </small>
 
 ---
@@ -36,7 +49,8 @@
 | Sprint 2 | [v0.2.0](https://github.com/ricardolopestomaz/DriverLux/releases/tag/v0.2.0) | ![Concluída](https://img.shields.io/badge/Concluída-green) |
 | Sprint 3 | [v0.3.0](https://github.com/ricardolopestomaz/DriverLux/releases/tag/v0.3.0) | ![Concluída](https://img.shields.io/badge/Concluída-green) |
 | Sprint 4 | [v0.4.0](https://github.com/ricardolopestomaz/DriverLux/releases/tag/v0.4.0) |  ![Concluída](https://img.shields.io/badge/Concluída-green)|
-| Sprint 5 | [v0.5.0]() | ![Em andamento](https://img.shields.io/badge/Em%20Andamento-yellow)  |
+| Sprint 5 | [v0.5.0](https://github.com/ricardolopestomaz/DriverLux/releases/tag/v0.5.0) | ![Concluída](https://img.shields.io/badge/Concluída-green)  |
+
 ---
 ## 🚗 Drive Lux
 O Drive Lux é um sistema de locação de veículos de alto padrão, focado em marcas de luxo como Porsche, Ferrari e Rolls-Royce.
@@ -52,7 +66,7 @@ Entre as principais funcionalidades do sistema estão:
 ---
 
 ## 🎯 Objetivo
-Desenvolver um sistema web para locação de veículos de luxo, permitindo o gerenciamento eficiente de clientes, veículos e reservas.
+O DriverLux foi desenvolvido com o objetivo de oferecer uma solução web completa para a gestão e locação de veículos de luxo, centralizando em uma única plataforma o gerenciamento de clientes, veículos, reservas e processos administrativos.
 
 ---
 ## 🛠️ Tecnologias Utilizadas
@@ -67,7 +81,7 @@ Desenvolver um sistema web para locação de veículos de luxo, permitindo o ger
 
 ---
 
-## 🚀 Como rodar o projeto localmente
+## ⚙️ Configuração e Execução
 
 1. **Clone o repositório** dentro da pasta `htdocs` do seu servidor local (XAMPP/WAMP).
    >    ```bash
@@ -76,6 +90,7 @@ Desenvolver um sistema web para locação de veículos de luxo, permitindo o ger
    - Ative o MySQL no seu painel de controle.
    - Importe o arquivo `/docs/schema.sql` via PHPMyAdmin.
 4. **Ajuste a Conexão**: Verifique as credenciais no arquivo `/config/db_connect.php`.
-5. **Acesse no navegador**: `http://localhost/DriverLux/`
+5. **Inicie o Apache e MySQL pelo XAMPP.**
+6. **Acesse no navegador**: `http://localhost/DriverLux/`
 
 ---
