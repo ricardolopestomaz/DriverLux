@@ -22,7 +22,7 @@
   
 | 🚀 Release Final | 🎥 Demonstração | 🌐 Landing Page | 📄 Apresentação Final |
 |-----------------|----------------|----------------| ----------------| 
-| [v1.0.0](#) | [Assistir vídeo](#) | [Acessar](#) |[Ver Apresentação](#) |
+| [v1.0.0](#) | [Assistir vídeo](https://drive.google.com/file/d/1hWCukXE0qe_OrzoRnwaUddgPw9UiVU2_/view?usp=sharing) | [Acessar](#) |[Ver Apresentação](https://www.canva.com/design/DAHMHHZV-K8/QHKHtbq91dWaFS3ozb0oKg/view?utm_content=DAHMHHZV-K8&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hf434b5915d) |
 
 </div>
 
