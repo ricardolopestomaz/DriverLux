@@ -69,26 +69,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (empty($imagem_url)) {
             $imagem_url = '/DriverLux/public/assets/img/default-car.png';
         }
-        $stmt = $pdo->prepare("INSERT INTO veiculos (categoria_id, marca, modelo, ano, placa, chassi, imagem_url, status_disponibilidade)
-                               VALUES (:categoria_id, :marca, :modelo, :ano, :placa, :chassi, :imagem_url, :status_disponibilidade)");
-        $stmt->execute([
-            ':categoria_id' => $categoria_id,
-            ':marca' => $marca,
-            ':modelo' => $modelo,
-            ':ano' => $ano,
-            ':placa' => $placa,
-            ':chassi' => $chassi,
-            ':imagem_url' => $imagem_url,
-            ':status_disponibilidade' => $status_disponibilidade
-        ]);
-        header("Location: admin.php?categoria_id=$categoria_id&sucesso=cadastrado");
-        exit;
-
-    } elseif (isset($_POST['editar_veiculo'])) {
-        $veiculo_id = $_POST['veiculo_id'];
-        if ($imagem_url) {
-            $stmt = $pdo->prepare("UPDATE veiculos SET categoria_id=:categoria_id, marca=:marca, modelo=:modelo, ano=:ano,
-                                   placa=:placa, chassi=:chassi, imagem_url=:imagem_url, status_disponibilidade=:status_disponibilidade WHERE id=:id");
+        
+        try {
+            $stmt = $pdo->prepare("INSERT INTO veiculos (categoria_id, marca, modelo, ano, placa, chassi, imagem_url, status_disponibilidade)
+                                   VALUES (:categoria_id, :marca, :modelo, :ano, :placa, :chassi, :imagem_url, :status_disponibilidade)");
             $stmt->execute([
                 ':categoria_id' => $categoria_id,
                 ':marca' => $marca,
@@ -97,25 +81,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':placa' => $placa,
                 ':chassi' => $chassi,
                 ':imagem_url' => $imagem_url,
-                ':status_disponibilidade' => $status_disponibilidade,
-                ':id' => $veiculo_id
+                ':status_disponibilidade' => $status_disponibilidade
             ]);
-        } else {
-            $stmt = $pdo->prepare("UPDATE veiculos SET categoria_id=:categoria_id, marca=:marca, modelo=:modelo, ano=:ano,
-                                   placa=:placa, chassi=:chassi, status_disponibilidade=:status_disponibilidade WHERE id=:id");
-            $stmt->execute([
-                ':categoria_id' => $categoria_id,
-                ':marca' => $marca,
-                ':modelo' => $modelo,
-                ':ano' => $ano,
-                ':placa' => $placa,
-                ':chassi' => $chassi,
-                ':status_disponibilidade' => $status_disponibilidade,
-                ':id' => $veiculo_id
-            ]);
+            header("Location: admin.php?categoria_id=$categoria_id&sucesso=cadastrado");
+            exit;
+        } catch (PDOException $e) {
+            if ($e->getCode() == 23000) {
+                header("Location: admin.php?categoria_id=$categoria_id&erro=duplicado");
+                exit;
+            } else {
+                die("Erro ao cadastrar veículo: " . $e->getMessage());
+            }
         }
-        header("Location: admin.php?categoria_id=$categoria_id&sucesso=editado");
-        exit;
+
+    } elseif (isset($_POST['editar_veiculo'])) {
+        $veiculo_id = $_POST['veiculo_id'];
+        
+        try {
+            if ($imagem_url) {
+                $stmt = $pdo->prepare("UPDATE veiculos SET categoria_id=:categoria_id, marca=:marca, modelo=:modelo, ano=:ano,
+                                       placa=:placa, chassi=:chassi, imagem_url=:imagem_url, status_disponibilidade=:status_disponibilidade WHERE id=:id");
+                $stmt->execute([
+                    ':categoria_id' => $categoria_id,
+                    ':marca' => $marca,
+                    ':modelo' => $modelo,
+                    ':ano' => $ano,
+                    ':placa' => $placa,
+                    ':chassi' => $chassi,
+                    ':imagem_url' => $imagem_url,
+                    ':status_disponibilidade' => $status_disponibilidade,
+                    ':id' => $veiculo_id
+                ]);
+            } else {
+                $stmt = $pdo->prepare("UPDATE veiculos SET categoria_id=:categoria_id, marca=:marca, modelo=:modelo, ano=:ano,
+                                       placa=:placa, chassi=:chassi, status_disponibilidade=:status_disponibilidade WHERE id=:id");
+                $stmt->execute([
+                    ':categoria_id' => $categoria_id,
+                    ':marca' => $marca,
+                    ':modelo' => $modelo,
+                    ':ano' => $ano,
+                    ':placa' => $placa,
+                    ':chassi' => $chassi,
+                    ':status_disponibilidade' => $status_disponibilidade,
+                    ':id' => $veiculo_id
+                ]);
+            }
+            header("Location: admin.php?categoria_id=$categoria_id&sucesso=editado");
+            exit;
+        } catch (PDOException $e) {
+            if ($e->getCode() == 23000) {
+                header("Location: admin.php?categoria_id=$categoria_id&erro=duplicado");
+                exit;
+            } else {
+                die("Erro ao editar veículo: " . $e->getMessage());
+            }
+        }
     }
 }
 
@@ -160,7 +180,6 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
 <body>
     <div class="admin-container">
 
-        <!-- ═══ SIDEBAR ═══ -->
         <aside id="sidebar">
             <div class="sidebar-logo">
                 <img src="/DriverLux/public/assets/img/DriverLux2.png" alt="DriverLux">
@@ -206,10 +225,8 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
             </button>
         </aside>
 
-        <!-- ═══ CONTEÚDO ═══ -->
         <main class="main-content">
 
-            <!-- topbar -->
             <header class="admin-topbar">
                 <div class="topbar-titulo">
                     <h1>Gestão de Frotas</h1>
@@ -224,7 +241,6 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
 
             <div class="content-wrapper">
 
-                <!-- Alertas de sucesso -->
                 <?php if (isset($_GET['sucesso']) && $_GET['sucesso'] === 'cadastrado'): ?>
                     <div class="alerta-sucesso">
                         <span class="alerta-icon">✅</span>
@@ -241,9 +257,14 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
                         <span class="alerta-icon">❌</span>
                         Erro no upload: Apenas imagens válidas (JPG, JPEG, PNG, WEBP) são permitidas!
                     </div>
+                <?php elseif (isset($_GET['erro']) && $_GET['erro'] === 'duplicado'): ?>
+                    <div class="alerta-erro"
+                        style="background: #fdf2f2; border: 1.5px solid #f8b4b4; color: #9b1c1c; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: 600; display: flex; align-items: center; gap: 10px;">
+                        <span class="alerta-icon">⚠️</span>
+                        Erro: A placa ou o chassi informado já pertence a outro veículo cadastrado!
+                    </div>
                 <?php endif; ?>
 
-                <!-- Filtros de categoria -->
                 <div class="filtros">
                     <span class="filtros-label">Categoria:</span>
                     <a href="admin.php?categoria_id=2"
@@ -255,7 +276,6 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
                     </button>
                 </div>
 
-                <!-- Grid de veículos -->
                 <div class="fleet-section">
                     <div class="section-header">
                         <h3><?= htmlspecialchars($nome_categoria_atual) ?></h3>
@@ -300,9 +320,8 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
                                                 ✏ Editar
                                             </button>
                                             <?php
-                                           
                                             $isAtivo = !isset($carro['ativo']) || $carro['ativo'] == 1;
-                                            $corBtn = $isAtivo ? 'background-color: #e74c3c;' : 'background-color: #2ecc71;'; // Vermelho para Ocultar, Verde para Exibir
+                                            $corBtn = $isAtivo ? 'background-color: #e74c3c;' : 'background-color: #2ecc71;'; 
                                             $textoBtn = $isAtivo ? 'Ocultar do Site' : 'Devolver ao Site';
                                             ?>
                                             <a href="admin.php?toggle_ativo=1&id=<?= $carro['id'] ?>"
@@ -323,12 +342,8 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                 </div>
 
-            </div><!-- /content-wrapper -->
-        </main>
-    </div><!-- /admin-container -->
-
-    <!-- ═══ MODAL ═══ -->
-    <div id="modalVeiculo" class="modal">
+            </div></main>
+    </div><div id="modalVeiculo" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 id="modal-titulo">Novo Veículo</h2>
@@ -396,7 +411,6 @@ $veiculos = $stmtBusca->fetchAll(PDO::FETCH_ASSOC);
                         </div>
                     </div>
 
-                    <!-- Preview da imagem -->
                     <div class="preview-wrap" id="preview-wrap" style="display:none">
                         <img id="preview-img" src="" alt="Preview">
                     </div>

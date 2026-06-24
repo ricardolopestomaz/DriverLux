@@ -275,7 +275,6 @@ $opcoesKm = $kmResponse['data'] ?? [];
   <?php require_once __DIR__ . '/../components/footer.php'; ?>
 
   <script src="../../../public/assets/js/opcionais.js?v=30"></script>
-  <script src="/DriverLux/public/assets/js/custom-picker.js"></script>
 
 
   <script>
